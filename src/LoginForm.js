@@ -18,8 +18,8 @@ const LoginForm = () => {
         alert(response.data.message);
         const { role } = response.data; 
         localStorage.setItem('role', role); 
-        console.log('Rol guardado:', role); // Verificar el rol almacenado
-        console.log('Rol recibido:', localStorage.getItem('role')); // Verificar valor en localStorage
+        console.log('Rol guardado:', role); 
+        console.log('Rol recibido:', localStorage.getItem('role')); 
         navigate('/home'); 
       } catch (error) {
           alert(error.response?.data?.message || 'Error desconocido');

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const role = localStorage.getItem('role'); // Obtener el rol del localStorage
+    const role = localStorage.getItem('role');
     const navigate = useNavigate();
 
     return (

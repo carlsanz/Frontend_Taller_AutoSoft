@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AgregarUsuarioForm = () => {
+const AgregarUsuario = () => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -9,15 +9,14 @@ const AgregarUsuarioForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/usuarios/agregar', {
-                nombre,
-                email,
-                password,
-                role: 'Mecanico',  // El rol siempre será 'Mecanico'
+            const response = await axios.post('http://localhost:5000/usuarios/agregar', { 
+                nombre, 
+                email, 
+                contraseña: password 
             });
-            alert(response.data.message);  // Mostrar mensaje de éxito
+            alert(response.data.message);
         } catch (error) {
-            alert(error.response?.data?.message || 'Error al agregar el usuario');
+            alert(error.response?.data?.message || 'Error desconocido');
         }
     };
 
@@ -49,4 +48,4 @@ const AgregarUsuarioForm = () => {
     );
 };
 
-export default AgregarUsuarioForm;
+export default AgregarUsuario;
