@@ -1,45 +1,23 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
 
-import './login.css';
+import LoginForm from './LoginForm';
+import Home from './Home';
+import AgregarUsuarioForm from './AgregarUsuarioForm';
 
-import React, { useState } from 'react';
-import axios from 'axios';
-
-const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-          const response = await axios.post('http://localhost:5000/login', { email, password });
-          alert(response.data.message);
-      } catch (error) {
-          alert(error.response?.data?.message || 'Error desconocido');
-      }
-  };
-
+function App() {
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                required
-            />
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña"
-                required
-            />
-            <button type="submit">Iniciar sesión</button>
-        </form>
+        <Router>
+            <Routes>
+                <Route path="/" element={<LoginForm />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/agregar-usuario" element={<AgregarUsuarioForm />} />
+            </Routes>
+        </Router>
     );
-};
+}
 
-export default LoginForm;
+export default App;
 
 
 
