@@ -1,0 +1,109 @@
+body{
+   
+    background-image: url('./styles/pictures/IMG-20241007-WA0048.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    flex-direction: column;
+
+}
+
+#container {
+    text-align: center;
+}
+
+#header {
+    background-color: #DFECE6;
+    padding: 20px;
+    width: 100%; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    position: absolute; 
+    top: 0;
+    background-image: url('./styles/pictures/IMG-20241007-WA0047.png');
+    background-repeat: no-repeat;
+    background-size: 50px; 
+    background-position: left center; 
+    left: 0;
+}
+
+#header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+#header #logo {
+    width: 50px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+#form-container {
+    margin-top: 100px; 
+}
+
+
+#form1{
+    width: 350px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.4);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    color: #fff;
+    
+}
+
+#form1 h2{
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#form1 input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+#form1 input::placeholder{
+    color: #aaa;
+
+}
+
+#form1 button{
+    width: 50%;
+    padding: 15px;
+    margin-top: 15px;
+    background-color: #215A6D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#form1 button:hover{
+    background-color: #1e4b59;
+}
+
+#form1 a {
+    color: #fff;
+    text-decoration: underline;
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+ 
+
