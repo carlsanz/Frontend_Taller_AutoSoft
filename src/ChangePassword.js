@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import './ChangePassword.css';
 
 const ChangePassword = () => {
     const [email, setEmail] = useState('');
@@ -31,7 +32,12 @@ const ChangePassword = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        
+        <form onSubmit={handleSubmit} id="form1">
+            <header id="header">
+            <h1>AUTOSOFT</h1>
+            </header>
+
             <h2>Cambiar Contraseña</h2>
             <label>Email</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
