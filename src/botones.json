@@ -8,8 +8,8 @@
     },
     {
       "id": "agregar-empleados",
-      "titulo": "Agregar Empleados",
-      "ruta": "/agregar-empleados",
+      "titulo": "Cambiar Contraseña",
+      "ruta": "/cambiar-contraseña",
       "imagen": "/image/empleado.png",
       "visiblePara": "Administrador"
     },
@@ -50,8 +50,8 @@
       },
       {
         "id": "servicio",
-        "titulo": "Servicios",
-        "ruta": "/servicio",
+        "titulo": "Cambiar Contraseña",
+        "ruta": "/cambiar-contraseña",
         "imagen": "/image/servicio.png",
         "visiblePara": "Mecanico"
       },

@@ -4,6 +4,7 @@ import React from 'react';
 import LoginForm from './LoginForm';
 import Home from './Home';
 import AgregarUsuarioForm from './AgregarUsuarioForm';
+import ChangePassword from './ChangePassword';
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <Route path="/" element={<LoginForm />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/agregar-usuario" element={<AgregarUsuarioForm />} />
+                <Route path="/cambiar-contraseña" element={<ChangePassword />} />
             </Routes>
         </Router>
     );
