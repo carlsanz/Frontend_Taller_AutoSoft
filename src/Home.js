@@ -1,28 +1,14 @@
-<<<<<<< HEAD
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-=======
+
 import './Home.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import botones from './botones.json'; 
->>>>>>> main
 
 const Home = () => {
     const role = localStorage.getItem('role');
     const navigate = useNavigate();
 
     return (
-<<<<<<< HEAD
-        <div>
-            <h1>Bienvenido al Home</h1>
-            
-            {role === 'Administrador' && (
-               <button onClick={() => navigate('/agregar-usuario')}>
-               Agregar Nuevo Usuario
-             </button> // Solo se muestra para Administrador
-            )}
-=======
         <div id='principal'>
             <header>
                 <button id='btn-menu'>
@@ -48,13 +34,8 @@ const Home = () => {
                     <img id='logo' src="/image/logo.png" alt="Logo" />
                 </div>
             </div>
->>>>>>> main
         </div>
     );
 };
 
-<<<<<<< HEAD
 export default Home;
-=======
-export default Home;
->>>>>>> main

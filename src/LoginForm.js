@@ -1,17 +1,9 @@
 import './login.css';
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +26,6 @@ const LoginForm = () => {
   };
 
     return (
-<<<<<<< HEAD
     <div id="container">
       <header id="header">
        
@@ -43,19 +34,13 @@ const LoginForm = () => {
       <div id="form-container">
         <form onSubmit={handleSubmit} id="form1">
             <h2>Login</h2>
-=======
-        <form onSubmit={handleSubmit}>
->>>>>>> main
             <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-<<<<<<< HEAD
                 id="email"
-=======
->>>>>>> main
             />
             <input
                 type="password"
@@ -63,7 +48,6 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Contraseña"
                 required
-<<<<<<< HEAD
                 id="password"
             />
             <a href='#'>¿Olvidaste tu contraseña?</a>
@@ -74,12 +58,5 @@ const LoginForm = () => {
 
     );
 }; 
-=======
-            />
-            <button type="submit">Iniciar sesión</button>
-        </form>
-    );
-};
->>>>>>> main
 
 export default LoginForm;
