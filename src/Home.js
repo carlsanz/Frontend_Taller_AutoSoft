@@ -1,4 +1,3 @@
-
 import './Home.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +33,7 @@ const Home = () => {
                     <img id='logo' src="/image/logo.png" alt="Logo" />
                 </div>
             </div>
+
         </div>
     );
 };
