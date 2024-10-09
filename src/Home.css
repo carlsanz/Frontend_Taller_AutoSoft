@@ -1,0 +1,121 @@
+#principal {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    width: 100vw;
+    height: 15vh;
+    background-color: #215A6D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#btn-perfil{
+    height: 5rem;
+    width: 5rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: #215A6D;
+}
+
+#btn-perfil img{
+    width: 60px;  
+    height: 60px; 
+    object-fit: cover;
+
+}
+
+
+#body {
+    width: 100vw;
+    height: 85vh;
+    background-color: #DFECE6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 5rem; 
+    width: 90%;
+    max-width: 1200px;
+}
+
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+button {
+    height: 65%;
+    width: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: #DFECE6;
+    border:black;
+}
+
+#btn-menu{
+    height: 5rem;
+    width: 5rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: #215A6D;
+}
+#btn-menu img {
+    width: 60px;  
+    height: 60px; 
+    object-fit: cover;
+
+}
+
+#icon {
+    width: 8rem;  
+    height: 8rem; 
+    border-radius: 50%; 
+    object-fit: cover;  
+    border: 5px solid #000000; 
+    
+}
+
+
+
+#logo{
+   width: 14rem;
+   height: 14rem;
+   margin-left: 4rem;
+   opacity: 0.4;
+}
+
+h2 {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+
+button:hover {
+    background-color: inherit;
+    cursor: default;
+}
