@@ -68,3 +68,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<<<<<<< HEAD
+=======
+
+*Pantallas de la pagina Home*
+
+###Funcionamiento 
+
+Esta pantalla contiene los iconos y botones que le apareceran al usuario dependiendo el rol que estos tengan ya que hay acciones que solo puede hacer el administrador asi como acciones que solo podra hacer el mecanico 
+
+En esta ocacion solamente tiene ruta de direccionamiento la parte de crear usuarios y esto es co usuario administrador 
+>>>>>>> main
