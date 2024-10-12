@@ -35,6 +35,7 @@ const LoginForm = () => {
       <header id="header">
         <h1>AUTOSOFT</h1>
       </header>
+      <div id="imgFondo"></div>
       <div id="form-container">
         <form onSubmit={handleSubmit} id="form1">
           <h2>Login</h2>
