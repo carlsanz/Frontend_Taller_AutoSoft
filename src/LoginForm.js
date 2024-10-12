@@ -6,10 +6,26 @@ import { useNavigate } from 'react-router-dom';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
+
+  //Expresiones regualares 
+  const validateEmail = (value) =>{
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //validar email
+    if (!emailRegex.test(email)){
+      setEmailError('Por favor introduce un correo valido');
+    }else{
+      setEmailError('');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+  
+    if (emailError) return;
+
     try {
       const response = await axios.post('http://localhost:5000/auth/login', { email, password });
       alert(response.data.message);
@@ -42,11 +58,13 @@ const LoginForm = () => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {setEmail(e.target.value)
+            validateEmail(e.target.value);}}
             placeholder="Email"
             required
             id="email"
           />
+          {emailError && <p id="MsjError" className="error.message">{emailError}</p>}
           <input
             type="password"
             value={password}
