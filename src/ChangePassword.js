@@ -7,19 +7,19 @@ const ChangePassword = () => {
     const [email, setEmail] = useState('');
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const role = localStorage.getItem('role');  // Tomamos el rol del localStorage
-    const navigate = useNavigate(); // Inicializa useNavigate
+    const role = localStorage.getItem('role');  
+    const navigate = useNavigate(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             if (role === 'Administrador') {
-                // Petición para cambiar contraseña del mecánico
+                
                 const response = await axios.post('http://localhost:5000/api/password/admin', { email, newPassword });
                 alert(response.data.message);
             } else if (role === 'Mecanico') {
-                // Petición para cambiar contraseña del mecánico
+               
                 const response = await axios.post('http://localhost:5000/api/password/mecanico', { email, oldPassword, newPassword });
                 alert(response.data.message);
             }
