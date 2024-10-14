@@ -60,6 +60,7 @@ const LoginForm = () => {
             value={email}
             onChange={(e) => {setEmail(e.target.value)
             validateEmail(e.target.value);}}
+            onBlur={(e)=> validateEmail(e.target.value)}
             placeholder="Email"
             required
             id="email"
