@@ -14,9 +14,9 @@
       "visiblePara": "Administrador"
     },
     {
-      "id": "reportes",
-      "titulo": "Reportes",
-      "ruta": "/reportes",
+      "id": "Clientes",
+      "titulo": "Clientes",
+      "ruta": "/clientes",
       "imagen": "/image/reporte.png",
       "visiblePara": "Administrador"
     },
