@@ -24,6 +24,22 @@
     align-items: center;
     z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
 }
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: white; /* Para que el fondo sea igual al input */
+  }
 /* 
 input, select {
     display: block;

@@ -43,7 +43,7 @@ body{
 }
 
 #header h1 {
-    margin: 0;
+    margin: 40px;
     font-size: 1.5em;
     color: #333;
 }
@@ -162,3 +162,27 @@ button:hover {
     margin-top: 2px;
     margin-bottom: 2px;
 }
+
+.password-container {
+    position: relative;
+    width: 100%; /* Asegúrate que el contenedor ocupe todo el ancho del input */
+  }
+  
+  .password-container input {
+    width: 100%;
+    padding-right: 40px; /* Deja espacio para el ícono a la derecha */
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 30px; /* Ajusta según lo necesites para que el ícono esté dentro del input */
+    top: 50%; /* Centra el ícono verticalmente */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888; /* Puedes ajustar el color para mayor visibilidad */
+  }
+  
+  input::placeholder {
+    font-style: italic;
+    color: #aaa;
+  }

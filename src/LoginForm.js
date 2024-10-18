@@ -2,10 +2,14 @@ import './login.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
 
@@ -46,6 +50,11 @@ const LoginForm = () => {
     }
   };
 
+  // cambia el estado para mostrar/ocultar la contraseña
+  const togglePasswordVisibility = () =>{
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div id="container">
       <header id="header">
@@ -66,14 +75,21 @@ const LoginForm = () => {
             id="email"
           />
           {emailError && <p id="MsjError" className="error.message">{emailError}</p>}
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
-            required
-            id="password"
-          />
+
+          <div className="password-container">
+              <input
+                type={showPassword ? 'text' : 'password'} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+                required
+                id="password"
+              />
+              <span onClick={togglePasswordVisibility} className="eye-icon">
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </span>
+            </div>
+
           <button type="submit">Iniciar sesión</button>
         </form>
       </div>

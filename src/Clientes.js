@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Clientes.css'; // Asegúrate de tener los estilos necesarios
 import axios from 'axios';
 import Modal from 'react-modal';
@@ -8,6 +8,7 @@ const Clientes = () => {
     const [cliente, setCliente] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [colonias, setColonias] = useState([]);
     const [formData, setFormData] = useState({
         Identidad: '',
         Id_colonia: '',
@@ -23,11 +24,29 @@ const Clientes = () => {
     });
     const role = localStorage.getItem('role');
 
+    //obtener las colonias al cargar componentes
+    useEffect(()=>{
+        const fetchColonias = async ()=> {
+            try {
+                const response = await axios.get('http://localhost:5000/api/colonias');
+                setColonias(response.data);
+                } catch (error) {
+                    console.error('Error al obtener colonias', error);
+        }
+};
+fetchColonias();
+}, []);
+
     const handleSearch = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/api/clientes/${identidad}`);
+
+            let clienteData = response.data;
+
+            if (clienteData.Fecha_nac){
+                clienteData.Fecha_nac = new Date(clienteData.Fecha_nac).toISOString().split('T')[0];
+            }
             setCliente(response.data);
-            alert('Cliente encontrado');
             setFormData(response.data); // Cargar los datos en el formulario
             setIsModalOpen(true); // Abrir modal al encontrar el cliente
             setIsEditMode(false); // No modo edición al buscar
@@ -56,16 +75,13 @@ const Clientes = () => {
     };
 
     const handleEdit = () => {
-        if (cliente) {
-            setIsModalOpen(true);
-            setIsEditMode(true);
-        }
+        setIsEditMode(true); // Habilitar el modo edición
     };
 
     const handleDelete = async () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/clientes/${cliente.Identidad}`);
+                await axios.delete(`http://localhost:5000/api/clientes/${formData.Identidad}`);
                 alert('Cliente eliminado');
                 setCliente(null);
                 setIdentidad('');
@@ -83,18 +99,23 @@ const Clientes = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (isEditMode) {
-            await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
-            alert('Cliente actualizado');
-        } else {
-            await axios.post('http://localhost:5000/api/clientes', formData);
-            alert('Cliente agregado');
+    
+        try {
+            if (isEditMode) {
+                await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
+                alert('Cliente actualizado');
+            } else {
+                await axios.post('http://localhost:5000/api/clientes', formData);
+                alert('Cliente agregado');
+            }
+    
+            setIsModalOpen(false); // Cerrar modal después de agregar o actualizar
+            setCliente(null); // Limpiar datos del cliente después de la operación
+            setIdentidad(''); // Limpiar identidad para nueva búsqueda
+        } catch (error) {
+            alert('Error al agregar o actualizar el cliente');
+            console.error(error);
         }
-
-        setIsModalOpen(false);
-        setCliente(null);
-        setIdentidad('');
     };
 
     return (
@@ -118,48 +139,136 @@ const Clientes = () => {
                 </>
             )}
 
-            <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-                <h2>{isEditMode ? 'Editar Cliente' : 'Agregar Cliente'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <label>Identidad</label>
-                    <input type="text" name="Identidad" value={formData.Identidad} onChange={handleInputChange} required />
+<Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+    <h2>{isEditMode ? 'Editar Cliente' : 'Detalles del Cliente'}</h2>
+    <form onSubmit={handleSubmit}>
+        <label>Identidad</label>
+        <input
+            type="text"
+            name="Identidad"
+            value={formData.Identidad}
+            onChange={handleInputChange}
+            readOnly={!isEditMode} // Solo editable si estamos en modo edición
+        />
 
-                    <label>Id Colonia</label>
-                    <input type="number" name="Id_colonia" value={formData.Id_colonia} onChange={handleInputChange} required />
+        <label>Colonia</label>
+        <select
+            name="Id_colonia"
+            value={formData.Id_colonia}
+            onChange={handleInputChange}
+            disabled={!isEditMode} // Solo editable si estamos en modo edición
+        >
+            <option value="">--Selecciona una colonia--</option>
+            {colonias.map((colonia) => (
+                <option key={colonia.Id_colonia} value={colonia.Id_colonia}>
+                    {colonia.Nombre}
+                </option>
+            ))}
+        </select>
 
-                    <label>Primer Nombre</label>
-                    <input type="text" name="P_nombre" value={formData.P_nombre} onChange={handleInputChange} required />
+        <label>Primer Nombre</label>
+        <input
+            type="text"
+            name="P_nombre"
+            value={formData.P_nombre}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Segundo Nombre</label>
-                    <input type="text" name="S_nombre" value={formData.S_nombre} onChange={handleInputChange} />
+        <label>Segundo Nombre</label>
+        <input
+            type="text"
+            name="S_nombre"
+            value={formData.S_nombre}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Primer Apellido</label>
-                    <input type="text" name="P_apellido" value={formData.P_apellido} onChange={handleInputChange} required />
+        <label>Primer Apellido</label>
+        <input
+            type="text"
+            name="P_apellido"
+            value={formData.P_apellido}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Segundo Apellido</label>
-                    <input type="text" name="S_apellido" value={formData.S_apellido} onChange={handleInputChange} />
+        <label>Segundo Apellido</label>
+        <input
+            type="text"
+            name="S_apellido"
+            value={formData.S_apellido}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Dirección</label>
-                    <input type="text" name="Direccion" value={formData.Direccion} onChange={handleInputChange} required />
+        <label>Dirección</label>
+        <input
+            type="text"
+            name="Direccion"
+            value={formData.Direccion}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Teléfono</label>
-                    <input type="text" name="Telefono" value={formData.Telefono} onChange={handleInputChange} />
+        <label>Teléfono</label>
+        <input
+            type="text"
+            name="Telefono"
+            value={formData.Telefono}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Fecha de Nacimiento</label>
-                    <input type="date" name="Fecha_nac" value={formData.Fecha_nac} onChange={handleInputChange} required />
+        <label>Fecha de Nacimiento</label>
+        <input
+            type="date"
+            name="Fecha_nac"
+            value={formData.Fecha_nac}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Correo</label>
-                    <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} required />
+        <label>Correo</label>
+        <input
+            type="email"
+            name="correo"
+            value={formData.correo}
+            onChange={handleInputChange}
+            readOnly={!isEditMode}
+        />
 
-                    <label>Género</label>
-                    <select name="Genero" value={formData.Genero} onChange={handleInputChange}>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Masculino">Masculino</option>
-                    </select>
+        <label>Género</label>
+        <select
+            name="Genero"
+            value={formData.Genero}
+            onChange={handleInputChange}
+            disabled={!isEditMode}
+        >
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+        </select>
 
-                    <button type="submit">{isEditMode ? 'Actualizar' : 'Agregar'}</button>
-                </form>
-            </Modal>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <button type="button" onClick={() => setIsModalOpen(false)}>
+                Aceptar
+            </button>
+            {role === 'Administrador' && (
+                <>
+                    <button type="button" onClick={handleEdit}>
+                        Actualizar
+                    </button>
+                    <button type="button" onClick={handleSubmit}>
+                        Guardar
+                    </button>
+                    <button type="button" onClick={handleDelete}>
+                        Eliminar
+                    </button>
+                </>
+            )}
+        </div>
+    </form>
+</Modal>
         </div>
     );
 };
