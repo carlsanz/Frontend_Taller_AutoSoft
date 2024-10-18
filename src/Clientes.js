@@ -8,6 +8,7 @@ const Clientes = () => {
     const [cliente, setCliente] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [isAddingMode, setIsAddingMode] = useState(false);
     const [colonias, setColonias] = useState([]);
     const [formData, setFormData] = useState({
         Identidad: '',
@@ -37,28 +38,29 @@ const Clientes = () => {
 fetchColonias();
 }, []);
 
-    const handleSearch = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/api/clientes/${identidad}`);
-
-            let clienteData = response.data;
-
-            if (clienteData.Fecha_nac){
-                clienteData.Fecha_nac = new Date(clienteData.Fecha_nac).toISOString().split('T')[0];
-            }
-            setCliente(response.data);
-            setFormData(response.data); // Cargar los datos en el formulario
-            setIsModalOpen(true); // Abrir modal al encontrar el cliente
-            setIsEditMode(false); // No modo edición al buscar
-        } catch (error) {
-            alert('Cliente no encontrado');
-            setCliente(null);
+// para la busqueda de los clientes mediante identidad
+const handleSearch = async () => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/clientes/${identidad}`);
+        let clienteData = response.data;
+        if (clienteData.Fecha_nac) {
+            clienteData.Fecha_nac = new Date(clienteData.Fecha_nac).toISOString().split('T')[0];
         }
-    };
-
+        setCliente(response.data);
+        setFormData(response.data);  // Cargar datos en el formulario
+        setIsModalOpen(true);  // Abrir modal
+        setIsEditMode(false);  // No edición al buscar
+        setIsAddingMode(false);  // No agregar
+    } catch (error) {
+        alert('Cliente no encontrado');
+        setCliente(null);
+    }
+};
+//para agregar los nuevos clientes
     const handleAdd = () => {
         setIsModalOpen(true);
         setIsEditMode(false);
+        setIsAddingMode(true); // Activar modo agregar
         setFormData({
             Identidad: '',
             Id_colonia: '',
@@ -73,11 +75,11 @@ fetchColonias();
             Genero: 'Femenino',
         }); // Limpiar el formulario
     };
-
+    // para manejo de la actualizacion de los clientes
     const handleEdit = () => {
         setIsEditMode(true); // Habilitar el modo edición
     };
-
+    // para manejo de la eliminacion de los clientes
     const handleDelete = async () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
@@ -85,33 +87,35 @@ fetchColonias();
                 alert('Cliente eliminado');
                 setCliente(null);
                 setIdentidad('');
-                setIsModalOpen(false); // Cerrar modal al eliminar
+                setIsModalOpen(false);  // Cerrar modal al eliminar
             } catch (error) {
                 alert('Error al eliminar el cliente');
             }
         }
     };
-
+    // manejo de los cambios en los inputs del formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();  // Evitar recarga de la página
     
         try {
-            if (isEditMode) {
-                await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
-                alert('Cliente actualizado');
-            } else {
+            if (isAddingMode) {
+                // Si estamos en modo de agregar, hacer POST
                 await axios.post('http://localhost:5000/api/clientes', formData);
-                alert('Cliente agregado');
+                alert('Cliente agregado exitosamente');
+            } else if (isEditMode) {
+                // Si estamos en modo de edición, hacer PUT para actualizar
+                await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
+                alert('Cliente actualizado exitosamente');
             }
-    
-            setIsModalOpen(false); // Cerrar modal después de agregar o actualizar
-            setCliente(null); // Limpiar datos del cliente después de la operación
-            setIdentidad(''); // Limpiar identidad para nueva búsqueda
+            // Cerrar modal y limpiar estado
+            setIsModalOpen(false);
+            setCliente(null);
+            setIdentidad('');  // Limpiar campo de identidad
         } catch (error) {
             alert('Error al agregar o actualizar el cliente');
             console.error(error);
@@ -140,7 +144,7 @@ fetchColonias();
             )}
 
 <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-    <h2>{isEditMode ? 'Editar Cliente' : 'Detalles del Cliente'}</h2>
+<h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
     <form onSubmit={handleSubmit}>
         <label>Identidad</label>
         <input
@@ -148,7 +152,7 @@ fetchColonias();
             name="Identidad"
             value={formData.Identidad}
             onChange={handleInputChange}
-            readOnly={!isEditMode} // Solo editable si estamos en modo edición
+            readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
         />
 
         <label>Colonia</label>
@@ -156,7 +160,7 @@ fetchColonias();
             name="Id_colonia"
             value={formData.Id_colonia}
             onChange={handleInputChange}
-            disabled={!isEditMode} // Solo editable si estamos en modo edición
+            disabled={!isEditMode && !isAddingMode}
         >
             <option value="">--Selecciona una colonia--</option>
             {colonias.map((colonia) => (
@@ -172,7 +176,7 @@ fetchColonias();
             name="P_nombre"
             value={formData.P_nombre}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Segundo Nombre</label>
@@ -181,7 +185,7 @@ fetchColonias();
             name="S_nombre"
             value={formData.S_nombre}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Primer Apellido</label>
@@ -190,7 +194,7 @@ fetchColonias();
             name="P_apellido"
             value={formData.P_apellido}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Segundo Apellido</label>
@@ -199,7 +203,7 @@ fetchColonias();
             name="S_apellido"
             value={formData.S_apellido}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Dirección</label>
@@ -208,7 +212,7 @@ fetchColonias();
             name="Direccion"
             value={formData.Direccion}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Teléfono</label>
@@ -217,7 +221,7 @@ fetchColonias();
             name="Telefono"
             value={formData.Telefono}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Fecha de Nacimiento</label>
@@ -226,7 +230,7 @@ fetchColonias();
             name="Fecha_nac"
             value={formData.Fecha_nac}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Correo</label>
@@ -235,7 +239,7 @@ fetchColonias();
             name="correo"
             value={formData.correo}
             onChange={handleInputChange}
-            readOnly={!isEditMode}
+            readOnly={!isEditMode && !isAddingMode}
         />
 
         <label>Género</label>
@@ -243,32 +247,38 @@ fetchColonias();
             name="Genero"
             value={formData.Genero}
             onChange={handleInputChange}
-            disabled={!isEditMode}
+            disabled={!isEditMode && !isAddingMode}
         >
             <option value="Femenino">Femenino</option>
             <option value="Masculino">Masculino</option>
         </select>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            <button type="button" onClick={() => setIsModalOpen(false)}>
-                Aceptar
-            </button>
-            {role === 'Administrador' && (
-                <>
-                    <button type="button" onClick={handleEdit}>
-                        Actualizar
-                    </button>
-                    <button type="button" onClick={handleSubmit}>
-                        Guardar
-                    </button>
-                    <button type="button" onClick={handleDelete}>
-                        Eliminar
-                    </button>
-                </>
-            )}
-        </div>
-    </form>
-</Modal>
+                        {isAddingMode ? (
+                            <>
+                                <button type="button" onClick={() => setIsModalOpen(false)}>
+            Cancelar
+        </button>
+        <button type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
+                            </>
+                        ) : (
+                            <>
+                                <button type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
+        {role === 'Administrador' && (
+            <>
+                <button type="button" onClick={handleEdit} disabled={!cliente}>
+                    Actualizar
+                </button>
+                <button type="button" onClick={handleDelete} disabled={!cliente}>
+                    Eliminar
+                </button>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 };
