@@ -136,12 +136,7 @@ const handleSearch = async () => {
             <button onClick={handleAdd} disabled={role !== 'Administrador' && !cliente}>
                 Agregar Cliente
             </button>
-            {role === 'Administrador' && (
-                <>
-                    <button onClick={handleEdit} disabled={!cliente}>Actualizar Cliente</button>
-                    <button onClick={handleDelete} disabled={!cliente}>Eliminar Cliente</button>
-                </>
-            )}
+            
 
 <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
 <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
