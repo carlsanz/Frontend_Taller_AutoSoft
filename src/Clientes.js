@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Clientes.css'; // Asegúrate de tener los estilos necesarios
+import './Clientes.css'; 
 import axios from 'axios';
 import Modal from 'react-modal';
 
@@ -9,7 +9,7 @@ const Clientes = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddingMode, setIsAddingMode] = useState(false);
-    const [colonias, setColonias] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]);
     const [formData, setFormData] = useState({
         Identidad: '',
         Id_colonia: '',
@@ -21,21 +21,21 @@ const Clientes = () => {
         Telefono: '',
         Fecha_nac: '',
         correo: '',
-        Genero: 'Femenino', // Valor por defecto
+        Genero: 'Femenino', 
     });
     const role = localStorage.getItem('role');
 
     //obtener las colonias al cargar componentes
     useEffect(()=>{
-        const fetchColonias = async ()=> {
+        const fetchDepartamentos = async ()=> {
             try {
-                const response = await axios.get('http://localhost:5000/api/colonias');
-                setColonias(response.data);
+                const response = await axios.get('http://localhost:5000/api/departamentos');
+                setDepartamentos(response.data);
                 } catch (error) {
-                    console.error('Error al obtener colonias', error);
+                    console.error('Error al obtener los departamentos', error);
         }
 };
-fetchColonias();
+fetchDepartamentos();
 }, []);
 
 // para la busqueda de los clientes mediante identidad
@@ -127,7 +127,7 @@ const handleSearch = async () => {
             <h2>Administrar Clientes</h2>
             <input
                 type="text"
-                placeholder="Buscar por número de identidad"
+                placeholder="Ingrese el numero de identidad"
                 value={identidad}
                 onChange={(e) => setIdentidad(e.target.value)}
             />
@@ -150,17 +150,17 @@ const handleSearch = async () => {
             readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
         />
 
-        <label>Colonia</label>
+        <label>Departamento</label>
         <select
-            name="Id_colonia"
-            value={formData.Id_colonia}
+            name="Id_departamento"
+            value={formData.Id_departamento}
             onChange={handleInputChange}
             disabled={!isEditMode && !isAddingMode}
         >
-            <option value="">--Selecciona una colonia--</option>
-            {colonias.map((colonia) => (
-                <option key={colonia.Id_colonia} value={colonia.Id_colonia}>
-                    {colonia.Nombre}
+            <option value="">--Selecciona un departamento--</option>
+            {departamentos.map((departamento) => (
+                <option key={departamento.Id_departamento} value={departamento.Id_departamento}>
+                    {departamento.Nombre}
                 </option>
             ))}
         </select>
