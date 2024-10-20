@@ -2,61 +2,101 @@ import './login.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
 
-
-  const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await axios.post('http://localhost:5000/auth/login', { email, password });
-        alert(response.data.message);
-        const { role } = response.data; 
-        localStorage.setItem('role', role); 
-        console.log('Rol guardado:', role); 
-        console.log('Rol recibido:', localStorage.getItem('role')); 
-        navigate('/home'); 
-      } catch (error) {
-          alert(error.response?.data?.message || 'Error desconocido');
-      }
+  //Expresiones regualares 
+  const validateEmail = (value) =>{
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //validar email
+    if (!emailRegex.test(email)){
+      setEmailError('Por favor introduce un correo valido');
+    }else{
+      setEmailError('');
+    }
   };
 
-    return (
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+  
+    if (emailError) return;
+
+    try {
+      const response = await axios.post('http://localhost:5000/auth/login', { email, password });
+      alert(response.data.message);
+
+      const { role, primerIngreso } = response.data; // Recibir primerIngreso
+      localStorage.setItem('role', role); 
+      console.log('Rol guardado:', role);
+
+      if (primerIngreso) {
+        // Si es el primer ingreso, redirigir a la página de cambio de contraseña
+        navigate('/cambiar-contraseña');
+      } else {
+        // Si no es el primer ingreso, redirigir al home
+        navigate('/home');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error desconocido');
+    }
+  };
+
+  // cambia el estado para mostrar/ocultar la contraseña
+  const togglePasswordVisibility = () =>{
+    setShowPassword(!showPassword);
+  };
+
+  return (
     <div id="container">
       <header id="header">
-       
         <h1>AUTOSOFT</h1>
       </header>
+      <div id="imgFondo"></div>
       <div id="form-container">
         <form onSubmit={handleSubmit} id="form1">
-            <h2>Login</h2>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                required
-                id="email"
-            />
-            <input
-                type="password"
+          <h2>Login</h2>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => {setEmail(e.target.value)
+            validateEmail(e.target.value);}}
+            onBlur={(e)=> validateEmail(e.target.value)}
+            placeholder="Email"
+            required
+            id="email"
+          />
+          {emailError && <p id="MsjError" className="error.message">{emailError}</p>}
+
+          <div className="password-container">
+              <input
+                type={showPassword ? 'text' : 'password'} 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Contraseña"
                 required
                 id="password"
-            />
-            <a href='#'>¿Olvidaste tu contraseña?</a>
-            <button type="submit">Iniciar sesión</button>
-        </form>
-        </div>
-        </div>
+              />
+              <span onClick={togglePasswordVisibility} className="eye-icon">
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </span>
+            </div>
 
-    );
-}; 
+          <button type="submit">Iniciar sesión</button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default LoginForm;
+
+

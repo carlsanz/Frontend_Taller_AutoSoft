@@ -5,6 +5,7 @@ import LoginForm from './LoginForm';
 import Home from './Home';
 import AgregarUsuarioForm from './AgregarUsuarioForm';
 import ChangePassword from './ChangePassword';
+import Clientes from './Clientes';
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/agregar-usuario" element={<AgregarUsuarioForm />} />
                 <Route path="/cambiar-contraseña" element={<ChangePassword />} />
+                <Route path="/clientes" element={<Clientes />} />
             </Routes>
         </Router>
     );
