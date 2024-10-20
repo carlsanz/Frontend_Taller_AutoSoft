@@ -1,121 +1,195 @@
+/* Estilo general del body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2d2d29; /* Color de fondo oscuro */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Cambiado a flex-start para que el contenido no esté centrado verticalmente */
+    height: 100vh;
+}
+
+/* Estilo general del contenedor principal */
 #principal {
     width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Evita que haya scroll en todo el contenedor principal */
 }
 
-header {
+/* Header fijo en la parte superior */
+.head-home {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
-    height: 15vh;
-    background-color: #215A6D;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-#btn-perfil{
-    height: 5rem;
-    width: 5rem;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin: 1rem;
-    padding: 1rem;
-    background-color: #215A6D;
-}
-
-#btn-perfil img{
-    width: 60px;  
-    height: 60px; 
-    object-fit: cover;
-
-}
-
-
-#body {
-    width: 100vw;
-    height: 85vh;
+    height: 50vh;
     background-color: #DFECE6;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 10; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Información personal (parte superior del header) */
+#personal-information {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-   
+    height: 20%;
+    width: 100vw;
+    margin-right: 10rem;
 }
 
-
-.grid-container {
+/* Menú de botones */
+#menu {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 5rem; 
-    width: 90%;
-    max-width: 1200px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    width: 100%;
+    height: 80%;
+    justify-items: center;
+    align-items: center;
+    margin-top: 3rem;
 }
 
-
+/* Elemento dentro de la cuadrícula del menú */
 .grid-item {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 5px; /* Espacio entre el icono y el título */
 }
-
 
 button {
-    height: 65%;
-    width: 100%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin: 1rem;
-    padding: 1rem;
-    background-color: #DFECE6;
-    border:black;
+    background-color: transparent; /* Fondo transparente para alinear bien */
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
 }
 
-#btn-menu{
-    height: 5rem;
-    width: 5rem;
+
+/* Iconos dentro de los botones */
+#icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid black;
+}
+
+/* Botones del perfil y menú */
+#btn-perfil, #btn-menu {
+    position:static;
+    height: 50px;
+    width: 80px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center;
-    margin: 1rem;
-    padding: 1rem;
-    background-color: #215A6D;
+    background-position:initial;
+    border: none;
+    color: black;
+   
 }
-#btn-menu img {
-    width: 60px;  
-    height: 60px; 
+
+#btn-perfil img, #btn-menu img {
+    width: 40px;
+    height: 40px;
     object-fit: cover;
 
 }
 
-#icon {
-    width: 8rem;  
-    height: 8rem; 
-    border-radius: 50%; 
-    object-fit: cover;  
-    border: 5px solid #000000; 
-    
+
+#target-citas {
+    margin-top: 50vh; 
+    width: 100vw;
+    height: calc(50vh ); 
+    background-image: url('./styles/pictures/IMG-20241007-WA0048.png');
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    background-position: center;
+    overflow-y:scroll; 
+    padding: 40px; 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    box-sizing: border-box; 
 }
 
 
-
-#logo{
-   width: 14rem;
-   height: 14rem;
-   margin-left: 4rem;
-   opacity: 0.4;
-}
-
-h2 {
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
+.card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px;
     text-align: center;
+    height: 13rem;
 }
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-button:hover {
-    background-color: inherit;
-    cursor: default;
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    border: 3px solid #3CA2A2;
+    max-width: 500px;
+    width: 100%;
+    height: 50%;
+    position: relative;
+}
+
+.modal-content img{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.bt-cambiar-pass {
+    height: 4rem;
+    width: 14rem;
+    border: none;
+    background:#3CA2A2;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#close{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: 1rem;
+}
+
+#btn-logout{
+    background-color: rgb(255, 64, 64);
+    color:#f8f8f0;
+    height: 2rem;
+    width: 7rem;
+    border-radius: 0px;
+
 }

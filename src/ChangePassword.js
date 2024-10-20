@@ -1,3 +1,4 @@
+import './AgregarUsuarios.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
@@ -26,35 +27,45 @@ const ChangePassword = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Cambiar Contraseña</h2>
-            <label>Correo Electrónico</label>
-            <input 
-                type="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                required 
-            />
-            <label>Contraseña Anterior</label>
-            <input 
-                type="password" 
-                value={oldPassword} 
-                onChange={(e) => setOldPassword(e.target.value)} 
-                required 
-            />
-            <label>Nueva Contraseña</label>
-            <input 
-                type="password" 
-                value={newPassword} 
-                onChange={(e) => setNewPassword(e.target.value)} 
-                required 
-            />
-            <button type="submit">Cambiar Contraseña</button>
-        </form>
+        <div className='container'>
+            <div className="form-header">
+                <h2 className="form-title">...Cambiar contraseña</h2>
+            </div>
+            <form className='user-form' onSubmit={handleSubmit}>
+                <label>Por seguridad debes cambiar tu contraseña</label>
+                <input 
+                    className="form-input"
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required 
+                />
+                <input 
+                    className="form-input"
+                    type="password" 
+                    value={oldPassword} 
+                    onChange={(e) => setOldPassword(e.target.value)} 
+                    placeholder="Contraseña Anterior"
+                    required 
+                />
+                <input 
+                    className="form-input"
+                    type="password" 
+                    value={newPassword} 
+                    onChange={(e) => setNewPassword(e.target.value)} 
+                    placeholder="Nueva Contraseña"
+                    required 
+                />
+                <button className='submit-button' type="submit">Cambiar Contraseña</button>
+            </form>
+        </div>
     );
 };
 
 export default ChangePassword;
+
+
+
 
 
 

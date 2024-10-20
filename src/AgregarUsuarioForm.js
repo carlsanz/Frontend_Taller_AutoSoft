@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './AgregarUsuarios.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const AgregarUsuario = () => {
     const [nombre, setNombre] = useState('');
@@ -9,6 +11,7 @@ const AgregarUsuario = () => {
     const [emailError, setEmailError] = useState('');
     const [password, setPassword] = useState('');
     const [firstLogin, setFirstLogin] = useState(true); // Campo para primer inicio de sesión
+    const navigate = useNavigate();
 
     //Expresiones regulares 
     //validacion nombre
@@ -48,59 +51,62 @@ const AgregarUsuario = () => {
                 firstLogin // Se envía el campo firstLogin en la solicitud
             });
             alert(response.data.message);
+            navigate('/home');
         } catch (error) {
             alert(error.response?.data?.message || 'Error desconocido');
         }
     };
 
     return (
-        <div className="form-container">
+        <div className="container">
             <div className="form-header">
-                <h2 className="form-title"> Creando usuario</h2>
-                <button className="cancel-button" onClick={() => {/* lógica para cancelar */}}>
+                <h2 className="form-title">...Creando usuario</h2>
+                <button className="cancel-button" onClick={() => {navigate('/home')}}>
                     Cancelar
                 </button>
             </div>
             <form className="user-form" onSubmit={handleSubmit}>
-                <input
-                    className="form-input"
-                    type="text"
-                    value={nombre}
-                    onChange={(e) => {setNombre(e.target.value)
-                                validateName(e.target.value);}}
-                    onBlur={(e)=> validateName(e.target.value)}            
-                    placeholder="Nombre"
-                    required
-                />
-                {nombreError && <p id="MsjError" className="error.message">{nombreError}</p>}
-                <input
-                    className="form-input"
-                    type="email"
-                    value={email}
-                    onChange={(e) => {setEmail(e.target.value)
-                        validateEmail(e.target.value);}}
-                    onBlur={(e)=> validateEmail(e.target.value)}
-                    placeholder="Email"
-                    required
-                />
-                {emailError && <p id="MsjError" className="error.message">{emailError}</p>}
-                <input
-                    className="form-input"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Contraseña"
-                    required
-                />
-                <label>
-                    Primer inicio de sesión:
-                    <input
-                        type="checkbox"
-                        checked={firstLogin}
-                        onChange={(e) => setFirstLogin(e.target.checked)}
-                    />
-                </label>
-                <button className="submit-button" type="submit">Agregar Usuario</button>
+                        <input
+                            className="form-input"
+                            type="text"
+                            value={nombre}
+                            onChange={(e) => {setNombre(e.target.value)
+                                        validateName(e.target.value);}}
+                            onBlur={(e)=> validateName(e.target.value)}            
+                            placeholder="Nombre"
+                            required
+                        />
+                        {nombreError && <p id="MsjError" className="error.message">{nombreError}</p>}
+                        <input
+                            className="form-input"
+                            type="email"
+                            value={email}
+                            onChange={(e) => {setEmail(e.target.value)
+                                validateEmail(e.target.value);}}
+                            onBlur={(e)=> validateEmail(e.target.value)}
+                            placeholder="Email"
+                            required
+                        />
+                        {emailError && <p id="MsjError" className="error.message">{emailError}</p>}
+                        <input
+                            className="form-input"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Contraseña"
+                            required
+                        />
+                        <label>
+                            Primer inicio de sesión:
+                            <input
+                                type="checkbox"
+                                checked={firstLogin}
+                                onChange={(e) => setFirstLogin(e.target.checked)}
+                            />
+                        </label>
+                    
+                    <button className="submit-button" type="submit" > Agregar Usuario</button>
+            
             </form>
         </div>
     );

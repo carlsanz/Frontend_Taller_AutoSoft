@@ -10,18 +10,28 @@ body {
     height: 100vh;
   }
   
-  .form-container {
-    background-color: #dfece6;
-    border-radius: 8px;
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #DFECE6;
     overflow: hidden;
-    width: 100%;
-    max-width: 800px;
+    width: 100vw;
+    height: 100vh;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-container{
+    background-color: #fff;
+    height: 100vh;
+    width: 80vw;
   }
   
   /* Barra de título */
   .form-header {
     background-color: #92c7a3;
+    height: auto;
+    width: 100vw;
     color: #2d2d29;
     padding: 15px;
     display: flex;
@@ -36,10 +46,9 @@ body {
   }
   
   .cancel-button {
-    background: none;
-    border: 1 px;
-    border-color: white;
-    border-radius: 0 px;
+    border:solid #fff 2px;
+    background-color: #92c7a3 ;
+    width: 7rem;
     color: #2d2d29;
     cursor: pointer;
     font-size: 16px;
@@ -52,14 +61,22 @@ body {
   }
   
   /* Formulario */
-  .user-form {
-    padding: 20px;
+  
+  .user-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    width: 65vw;
+    padding-top: 50px;
+    
   }
   
   .form-input {
     display: block;
-    width: 100%;
+    width: 50%;
     padding: 10px;
+    margin-top: 15px;
     margin-bottom: 15px;
     border: 1px solid #3ca2a2;
     border-radius: 4px;
@@ -72,7 +89,9 @@ body {
   }
   
   .submit-button {
-    background-color: #3ca2a2;
+    width: 12rem;
+    background-color: #2D2D29;
+    height: 3.5rem;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -86,9 +105,9 @@ body {
   }
   
   .submit-button:hover {
-    background-color: #3ca2a2;
-    color: white;
-    border: none;
+    background-color: #fff;
+    color: #2D2D29;
+    border: 2px solid #2D2D29;
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
