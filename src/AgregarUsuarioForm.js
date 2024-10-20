@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './Clientes.css'; // Asegúrate de tener los estilos necesarios
-import Modal from 'react-modal'; // Asegúrate de tener react-modal instalado
+import './Clientes.css'; 
+import Modal from 'react-modal'; 
 
-Modal.setAppElement('#root'); // Cambia '#root' por el ID de tu elemento raíz
+Modal.setAppElement('#root'); 
 
 const AgregarUsuario = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +20,6 @@ const AgregarUsuario = () => {
         Direccion: '',
         Telefono: '',
         Fecha_nac: '',
-        Correo: '',
         Genero: '',
         Ocupacion: '',
         Salario: '',
@@ -34,105 +33,24 @@ const AgregarUsuario = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        console.log('Datos que se envían:', formData); // Log de los datos que se envían
 
         try {
-            // 1. Enviar datos del Usuario
-            const userResponse = await fetch('http://localhost:5000/usuarios', { // Cambia a la URL correcta
+            const response = await fetch('http://localhost:5000/usuarios-completo', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    Nombre: formData.Nombre,
-                    Email: formData.Email,
-                    Contraseña: formData.Contraseña,
-                    Rol: formData.Rol
-                }),
+                body: JSON.stringify(formData),
             });
 
-            if (!userResponse.ok) {
-                const errorData = await userResponse.json(); // Captura el error para ver qué está fallando
-                console.error('Error al agregar usuario:', errorData); // Muestra el error en la consola
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error al agregar usuario:', errorData);
                 throw new Error('Error al agregar usuario');
-            }
-
-            const user = await userResponse.json(); // Obtener el ID de usuario creado
-
-            // 2. Enviar datos de Persona
-            console.log('Datos de Persona que se envían:', {
-                Identidad: formData.Identidad,
-                Id_colonia: formData.Id_colonia,
-                P_nombre: formData.P_nombre,
-                S_nombre: formData.S_nombre,
-                P_apellido: formData.P_apellido,
-                S_apellido: formData.S_apellido,
-                Direccion: formData.Direccion,
-                Telefono: formData.Telefono,
-                Fecha_nac: formData.Fecha_nac,
-                Correo: formData.Correo,
-                Genero: formData.Genero
-            });
-
-            const personaResponse = await fetch('http://localhost:5000/personas', { // Cambia a la URL correcta
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    Identidad: formData.Identidad,
-                    Id_colonia: formData.Id_colonia,
-                    P_nombre: formData.P_nombre,
-                    S_nombre: formData.S_nombre,
-                    P_apellido: formData.P_apellido,
-                    S_apellido: formData.S_apellido,
-                    Direccion: formData.Direccion,
-                    Telefono: formData.Telefono,
-                    Fecha_nac: formData.Fecha_nac,
-                    Correo: formData.Correo,
-                    Genero: formData.Genero
-                }),
-            });
-
-            if (!personaResponse.ok) {
-                const errorData = await personaResponse.json(); // Captura el error para ver qué está fallando
-                console.error('Error al agregar persona:', errorData); // Muestra el error en la consola
-                throw new Error('Error al agregar persona');
-            }
-
-            // 3. Enviar datos de Empleado
-            console.log('Datos de Empleado que se envían:', {
-                Identidad: formData.Identidad,
-                Ocupacion: formData.Ocupacion,
-                Salario: formData.Salario,
-                Fecha_contratacion: formData.Fecha_contratacion,
-                Id_usuario: user.Id_usuario // Asegúrate de que esto sea el ID correcto
-            });
-
-            const empleadoResponse = await fetch('http://localhost:5000/empleados', { // Cambia a la URL correcta
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    Identidad: formData.Identidad,
-                    Ocupacion: formData.Ocupacion,
-                    Salario: formData.Salario,
-                    Fecha_contratacion: formData.Fecha_contratacion,
-                    Id_usuario: user.Id_usuario // Asegúrate de que esto sea el ID correcto
-                }),
-            });
-
-            if (!empleadoResponse.ok) {
-                const errorData = await empleadoResponse.json(); // Captura el error para ver qué está fallando
-                console.error('Error al agregar empleado:', errorData); // Muestra el error en la consola
-                throw new Error('Error al agregar empleado');
             }
 
             alert('Datos agregados exitosamente');
             setIsModalOpen(false);
-            // Limpiar el formulario
             setFormData({
                 Nombre: '',
                 Email: '',
@@ -147,7 +65,6 @@ const AgregarUsuario = () => {
                 Direccion: '',
                 Telefono: '',
                 Fecha_nac: '',
-                Correo: '',
                 Genero: '',
                 Ocupacion: '',
                 Salario: '',
@@ -201,16 +118,13 @@ const AgregarUsuario = () => {
                     <input type="text" name="S_apellido" value={formData.S_apellido} onChange={handleInputChange} />
 
                     <label>Dirección</label>
-                    <input type="text" name="Direccion" value={formData.Direccion} onChange={handleInputChange} required />
+                    <input type="text" name="Direccion" value={formData.Direccion} onChange={handleInputChange} />
 
                     <label>Teléfono</label>
                     <input type="text" name="Telefono" value={formData.Telefono} onChange={handleInputChange} />
 
                     <label>Fecha de Nacimiento</label>
                     <input type="date" name="Fecha_nac" value={formData.Fecha_nac} onChange={handleInputChange} required />
-
-                    <label>Correo</label>
-                    <input type="email" name="Correo" value={formData.Correo} onChange={handleInputChange} required />
 
                     <label>Género</label>
                     <input type="text" name="Genero" value={formData.Genero} onChange={handleInputChange} required />
@@ -226,9 +140,9 @@ const AgregarUsuario = () => {
                     <label>Fecha de Contratación</label>
                     <input type="date" name="Fecha_contratacion" value={formData.Fecha_contratacion} onChange={handleInputChange} required />
 
-                    <button type="submit">Enviar</button>
+                    <button type="submit">Guardar</button>
+                    <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
                 </form>
-                <button onClick={() => setIsModalOpen(false)}>Cerrar</button>
             </Modal>
         </div>
     );
