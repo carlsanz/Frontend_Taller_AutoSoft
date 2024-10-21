@@ -96,4 +96,11 @@ body {
     /*display: block;*/ /* Hacer que el botón sea un bloque */
     /*margin: 0 auto;*/ /* Centrar horizontalmente */
   }
+
+  #MsjError{
+    color: red;
+    font-size: 17px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
   
