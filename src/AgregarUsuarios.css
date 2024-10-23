@@ -104,3 +104,7 @@ body {
     margin-bottom: 2px;
 }
   
+button{
+  background-color: blueviolet;
+  width: 10vh;
+}
