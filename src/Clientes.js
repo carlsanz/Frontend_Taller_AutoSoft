@@ -29,7 +29,7 @@ const Clientes = () => {
     useEffect(()=>{
         const fetchColonias = async ()=> {
             try {
-                const response = await axios.get('http://localhost:5000/api/colonias');
+                const response = await axios.get('http://localhost:5001/api/colonias');
                 setColonias(response.data);
                 } catch (error) {
                     console.error('Error al obtener colonias', error);
