@@ -1,4 +1,4 @@
-import './AgregarUsuarios.css';
+import './Formularios.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
@@ -30,9 +30,11 @@ const ChangePassword = () => {
         <div className='container'>
             <div className="form-header">
                 <h2 className="form-title">...Cambiar contraseña</h2>
+                <button className="cancel-button" onClick={() => {navigate('/home')}}>
+                        Cancelar
+                </button>
             </div>
             <form className='user-form' onSubmit={handleSubmit}>
-                <label>Por seguridad debes cambiar tu contraseña</label>
                 <input 
                     className="form-input"
                     type="email" 

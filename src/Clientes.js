@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import './Clientes.css'; // Asegúrate de tener los estilos necesarios
+import './Formularios.css'; // Asegúrate de tener los estilos necesarios
 import axios from 'axios';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 const Clientes = () => {
+    const navigate = useNavigate();
     const [identidad, setIdentidad] = useState('');
     const [cliente, setCliente] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,8 +125,13 @@ const handleSearch = async () => {
     };
 
     return (
-        <div>
-            <h2>Administrar Clientes</h2>
+        <div className='container'>
+        <div className='form-header'>
+                <h2 className="form-title" >..Agregando Usuario y Empleado</h2>
+                <button className="cancel-button" onClick={() => {navigate('/home')}}>
+                        Cancelar
+                </button>
+            </div>
             <input
                 type="text"
                 placeholder="Buscar por número de identidad"
@@ -140,138 +147,155 @@ const handleSearch = async () => {
 
 <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
 <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
-    <form onSubmit={handleSubmit}>
-        <label>Identidad</label>
-        <input
-            type="text"
-            name="Identidad"
-            value={formData.Identidad}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
-        />
+    <form className='form-container' onSubmit={handleSubmit}>
+    <div className='cont-externo'>
+    <div className='cont-cliente'>
+        <div className='cont-cliente-interno'>
+            <label>Identidad</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Identidad"
+                value={formData.Identidad}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
+            />
 
-        <label>Colonia</label>
-        <select
-            name="Id_colonia"
-            value={formData.Id_colonia}
-            onChange={handleInputChange}
-            disabled={!isEditMode && !isAddingMode}
-        >
-            <option value="">--Selecciona una colonia--</option>
-            {colonias.map((colonia) => (
-                <option key={colonia.Id_colonia} value={colonia.Id_colonia}>
-                    {colonia.Nombre}
-                </option>
-            ))}
-        </select>
+            <label>Colonia</label>
+            <select
+                className='form-input'
+                name="Id_colonia"
+                value={formData.Id_colonia}
+                onChange={handleInputChange}
+                disabled={!isEditMode && !isAddingMode}
+            >
+                <option value="">--Selecciona una colonia--</option>
+                {colonias.map((colonia) => (
+                    <option key={colonia.Id_colonia} value={colonia.Id_colonia}>
+                        {colonia.Nombre}
+                    </option>
+                ))}
+            </select>
 
-        <label>Primer Nombre</label>
-        <input
-            type="text"
-            name="P_nombre"
-            value={formData.P_nombre}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Primer Nombre</label>
+            <input
+                className='form-input'
+                type="text"
+                name="P_nombre"
+                value={formData.P_nombre}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Segundo Nombre</label>
-        <input
-            type="text"
-            name="S_nombre"
-            value={formData.S_nombre}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Segundo Nombre</label>
+            <input
+                className='form-input'
+                type="text"
+                name="S_nombre"
+                value={formData.S_nombre}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Primer Apellido</label>
-        <input
-            type="text"
-            name="P_apellido"
-            value={formData.P_apellido}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Primer Apellido</label>
+            <input
+                className='form-input'
+                type="text"
+                name="P_apellido"
+                value={formData.P_apellido}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Segundo Apellido</label>
-        <input
-            type="text"
-            name="S_apellido"
-            value={formData.S_apellido}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Segundo Apellido</label>
+            <input
+                className='form-input'
+                type="text"
+                name="S_apellido"
+                value={formData.S_apellido}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+            </div>
+            <div className='cont-cliente-interno'>
+            <label>Dirección</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Direccion"
+                value={formData.Direccion}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Dirección</label>
-        <input
-            type="text"
-            name="Direccion"
-            value={formData.Direccion}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Teléfono</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Telefono"
+                value={formData.Telefono}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Teléfono</label>
-        <input
-            type="text"
-            name="Telefono"
-            value={formData.Telefono}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Fecha de Nacimiento</label>
+            <input
+                className='form-input'
+                type="date"
+                name="Fecha_nac"
+                value={formData.Fecha_nac}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Fecha de Nacimiento</label>
-        <input
-            type="date"
-            name="Fecha_nac"
-            value={formData.Fecha_nac}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
+            <label>Correo</label>
+            <input
+                className='form-input'
+                type="email"
+                name="correo"
+                value={formData.correo}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
 
-        <label>Correo</label>
-        <input
-            type="email"
-            name="correo"
-            value={formData.correo}
-            onChange={handleInputChange}
-            readOnly={!isEditMode && !isAddingMode}
-        />
-
-        <label>Género</label>
-        <select
-            name="Genero"
-            value={formData.Genero}
-            onChange={handleInputChange}
-            disabled={!isEditMode && !isAddingMode}
-        >
-            <option value="Femenino">Femenino</option>
-            <option value="Masculino">Masculino</option>
-        </select>
-
+            <label>Género</label>
+            <select
+                className='form-input'
+                name="Genero"
+                value={formData.Genero}
+                onChange={handleInputChange}
+                disabled={!isEditMode && !isAddingMode}
+            >
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+            </select>
+            </div>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                        {isAddingMode ? (
+        {isAddingMode ? (
                             <>
-                                <button type="button" onClick={() => setIsModalOpen(false)}>
+        <button className='submit-button' type="button" onClick={() => setIsModalOpen(false)}>
             Cancelar
         </button>
-        <button type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
+        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
                             </>
                         ) : (
                             <>
-                                <button type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
+        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
         {role === 'Administrador' && (
             <>
-                <button type="button" onClick={handleEdit} disabled={!cliente}>
+                <button className='submit-button' type="button" onClick={handleEdit} disabled={!cliente}>
                     Actualizar
                 </button>
-                <button type="button" onClick={handleDelete} disabled={!cliente}>
+                <button className='submit-button' type="button" onClick={handleDelete} disabled={!cliente}>
                     Eliminar
                 </button>
                                     </>
                                 )}
                             </>
                         )}
-                    </div>
+            </div>
+            </div>
                 </form>
             </Modal>
         </div>
