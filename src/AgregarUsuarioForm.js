@@ -140,8 +140,8 @@ const AgregarUsuario = () => {
                     <label>Fecha de Contratación</label>
                     <input type="date" name="Fecha_contratacion" value={formData.Fecha_contratacion} onChange={handleInputChange} required />
 
-                    <button type="submit">Guardar</button>
-                    <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                    <button className="boton-guardar" type="submit">Guardar</button>
+                    <button className="boton-guardar" onClick={() => setIsModalOpen(false)}>Cancelar</button>
                 </form>
             </Modal>
         </div>

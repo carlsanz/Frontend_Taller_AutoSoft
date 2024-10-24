@@ -65,7 +65,7 @@ body {
 }
 
 button {
-    background-color: transparent; /* Fondo transparente para alinear bien */
+    background-color: #3CA2A2; /* Fondo transparente para alinear bien */
     border: none;
     display: flex;
     justify-content: center;
