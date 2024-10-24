@@ -68,6 +68,13 @@
         "ruta": "/repuestos-utilizados",
         "imagen": "/image/repuestos.png",
         "visiblePara": "Mecanico"
+      },
+      {
+        "id": "servicios",
+        "titulo": "Servicios",
+        "ruta": "/servicios",
+        "imagen": "/image/nueva-cuenta.png",
+        "visiblePara": ["Administrador", "Mecanico"]
       }
   ]
   
