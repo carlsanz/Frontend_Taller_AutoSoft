@@ -171,9 +171,9 @@ const resetForm = () => {
                     onChange={(e) => setIdentidadABuscar(e.target.value)}
                     required
                     />
-                    <button type="submit">Buscar</button>
+                    <button type="submit" className='submit-button'>Buscar</button>
             </form>
-            <button onClick={() => { setIsModalOpen(true); resetForm(); }}>Agregar</button>
+            <button className='submit-button' onClick={() => { setIsModalOpen(true); resetForm(); }}>Agregar</button>
             <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
              <h2>{isEditMode ? 'Actualizar Usuario' : 'Formulario de Registro'}</h2>
              <form className='form-container' onSubmit={handleSubmit}>

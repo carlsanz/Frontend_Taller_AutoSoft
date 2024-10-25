@@ -11,10 +11,10 @@ const Clientes = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddingMode, setIsAddingMode] = useState(false);
-    const [colonias, setColonias] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]);
     const [formData, setFormData] = useState({
         Identidad: '',
-        Id_colonia: '',
+        Id_departamento: '',
         P_nombre: '',
         S_nombre: '',
         P_apellido: '',
@@ -29,15 +29,15 @@ const Clientes = () => {
 
     //obtener las colonias al cargar componentes
     useEffect(()=>{
-        const fetchColonias = async ()=> {
+        const fetchDepartamentos = async ()=> {
             try {
-                const response = await axios.get('http://localhost:5000/api/colonias');
-                setColonias(response.data);
+                const response = await axios.get('http://localhost:5000/api/departamentos');
+                setDepartamentos(response.data);
                 } catch (error) {
-                    console.error('Error al obtener colonias', error);
+                    console.error('Error al obtener los departamentos', error);
         }
 };
-fetchColonias();
+fetchDepartamentos();
 }, []);
 
 // para la busqueda de los clientes mediante identidad
@@ -65,7 +65,7 @@ const handleSearch = async () => {
         setIsAddingMode(true); // Activar modo agregar
         setFormData({
             Identidad: '',
-            Id_colonia: '',
+            Id_departamento: '',
             P_nombre: '',
             S_nombre: '',
             P_apellido: '',
@@ -127,22 +127,57 @@ const handleSearch = async () => {
     return (
         <div className='container'>
         <div className='form-header'>
-                <h2 className="form-title" >..Agregando Usuario y Empleado</h2>
+                <h2 className="form-title" >Clientes</h2>
                 <button className="cancel-button" onClick={() => {navigate('/home')}}>
                         Cancelar
                 </button>
-            </div>
-            <input
+            </div> 
+
+            <div className='gestiones'>
+            <button className="btn-agregar" onClick={handleAdd} disabled={role !== 'Administrador' && !cliente}>
+                Agregar Cliente
+            </button>
+              <input
+                className='input-buscar'
                 type="text"
                 placeholder="Buscar por número de identidad"
                 value={identidad}
                 onChange={(e) => setIdentidad(e.target.value)}
             />
-            <button onClick={handleSearch}>Buscar</button>
+            <button className='btn-buscar' onClick={handleSearch}>Buscar</button>
+            </div>
 
-            <button onClick={handleAdd} disabled={role !== 'Administrador' && !cliente}>
-                Agregar Cliente
-            </button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Identidad</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Genero</th>
+                        <th>Direccion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Clientes.length === 0 ? (
+                        <tr>
+                            <td colSpan="5"></td>
+                        </tr>
+                    ) : (
+                        Clientes.map((clientes) => (
+                            <tr key={clientes.identidad}>
+                                <td>{clientes.P_nombre}</td>
+                                <td>{clientes.P_apellido}</td>
+                                <td>{clientes.Genero}</td>
+                                <td>{clientes.Direccion}</td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+
+
+
+
             
 
 <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
@@ -161,18 +196,18 @@ const handleSearch = async () => {
                 readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
             />
 
-            <label>Colonia</label>
+            <label>Departamento</label>
             <select
                 className='form-input'
-                name="Id_colonia"
-                value={formData.Id_colonia}
+                name="Id_departamento"
+                value={formData.Id_departamento}
                 onChange={handleInputChange}
                 disabled={!isEditMode && !isAddingMode}
             >
-                <option value="">--Selecciona una colonia--</option>
-                {colonias.map((colonia) => (
-                    <option key={colonia.Id_colonia} value={colonia.Id_colonia}>
-                        {colonia.Nombre}
+                <option value="">--Selecciona un departamento--</option>
+                {departamentos.map((departamentos) => (
+                    <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
+                        {departamentos.Nombre}
                     </option>
                 ))}
             </select>
