@@ -35,6 +35,13 @@
       "visiblePara": "Administrador"
     },
     {
+      "id": "Autos",
+      "titulo": "Autos",
+      "ruta": "/autos",
+      "imagen": "/image/inventarios.png",
+      "visiblePara": "Administrador"
+    },
+    {
         "id": "cliente",
         "titulo": "Cientes",
         "ruta": "/clientes",
