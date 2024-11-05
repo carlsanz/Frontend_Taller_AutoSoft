@@ -61,8 +61,10 @@ const Autos = () => {
             setAutoSeleccionado(response.data);
             setIdentidad(response.data.Identidad);
             setModalAbierto(true);
-            setIsEditMode(false); // No edición al buscar
+            setIsEditMode(true); // No edición al buscar
             setIsAddingMode(false);
+
+            
         } catch (error) {
             alert('Auto no encontrado');
             setAutoSeleccionado(null);
@@ -222,30 +224,40 @@ const Autos = () => {
                 onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Numero_vin: e.target.value })}
                 readOnly={!isEditMode && !isAddingMode}
             />
+            
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                {isAddingMode ? (
-                    <>
-                        <button className='btn-auto' type="button" onClick={() => setModalAbierto(false)}>
-                            Cancelar
-                        </button>
-                        <button className='btn-auto' type="button" onClick={handleGuardar}>
-                            Guardar
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        {role === 'Administrador' && autoSeleccionado?.Id && (
-                            <button className='btn-auto' type="button" onClick={handleEliminar}>Eliminar</button>
-                        )}
-                        {autoSeleccionado?.Id && (
-                            <button className='btn-auto' type="button" onClick={handleEdit}>
-                                Actualizar
-                            </button>
-                        )}
-                        <button className='btn-auto' type="button" onClick={() => setModalAbierto(false)}>Cancelar</button>
-                    </>
-                )}
-            </div>
+
+
+    {isAddingMode ? (
+        <>
+            <button className='btn-auto' type="button" onClick={() => setModalAbierto(false)}>
+                Cancelar
+            </button>
+            <button className='btn-auto' type="button" onClick={handleGuardar}>
+                Guardar
+            </button>
+        </>
+    ) : (
+        <>
+            {role === 'Administrador' && autoSeleccionado?.Id_auto && (
+                <button className='btn-auto' type="button" onClick={handleEliminar}>
+                    Eliminar
+                </button>
+            )}
+            {autoSeleccionado?.Id_auto && (
+                <button className='btn-auto' type="button" onClick={handleEdit}>
+                    Actualizar
+                </button>
+            )}
+            <button className='btn-auto' type="button" onClick={() => setModalAbierto(false)}>
+                Cancelar
+            </button>
+        </>
+    )}
+</div>
+
+
+
         </div>
     </form>
 </Modal>
