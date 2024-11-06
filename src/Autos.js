@@ -109,7 +109,7 @@ const Autos = () => {
 
             if (autoSeleccionado.Id && isEditMode) {
                 // Actualización
-                await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Id}`, autoParaGuardar);
+                await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
                 alert('Auto actualizado exitosamente');
             } else if (isAddingMode) {
                 // Nuevo registro
@@ -128,7 +128,7 @@ const Autos = () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
                 if (autoSeleccionado && autoSeleccionado.Id) {
-                    await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Id}`);
+                    await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
                     alert('Auto eliminado exitosamente');
                 }
                 fetchAutos();
