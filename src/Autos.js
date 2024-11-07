@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 const Autos = () => {
     const [placa, setPlaca] = useState('');
     const [autos, setAutos] = useState([]);
+    
     const [modalAbierto, setModalAbierto] = useState(false);
     const [autoSeleccionado, setAutoSeleccionado] = useState(null);
     const [identidad, setIdentidad] = useState('');
@@ -161,6 +162,20 @@ const Autos = () => {
 
     
 
+    useEffect(() => {
+        
+        axios.get('http://localhost:5000/autos/todos') 
+            .then(response => {
+                setAutos(response.data);
+            })
+            .catch(error => {
+                console.error("Error al obtener los autos:", error);
+            });
+    }, []);
+
+
+
+
     return (
         <div className="container">
             <p className='text-3xl uppercase'>Gestión de Autos</p>
@@ -267,28 +282,28 @@ const Autos = () => {
 </Modal>
 
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Placa</th>
-                        <th>Modelo</th>
-                        <th>Tipo</th>
-                        <th>Color</th>
-                        <th>Número VIN</th>
+<table>
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Modelo</th>
+                    <th>Tipo</th>
+                    <th>Color</th>
+                    <th>Número VIN</th>
+                </tr>
+            </thead>
+            <tbody>
+                {autos.map((auto) => (
+                    <tr key={auto.Id_auto}>
+                        <td>{auto.Placa}</td>
+                        <td>{auto.Modelo}</td>
+                        <td>{auto.Tipo}</td>
+                        <td>{auto.Color}</td>
+                        <td>{auto.Numero_vin}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {autos.map((auto) => (
-                        <tr key={auto.Id_auto}>
-                            <td>{auto.Placa}</td>
-                            <td>{auto.Modelo}</td>
-                            <td>{auto.Tipo}</td>
-                            <td>{auto.Color}</td>
-                            <td>{auto.Numero_vin}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                ))}
+            </tbody>
+        </table>
         </div>
     );
 };
