@@ -7,6 +7,7 @@ body {
     justify-content: center;
     align-items: flex-start; /* Cambiado a flex-start para que el contenido no esté centrado verticalmente */
     height: 100vh;
+    width: 100vw;
 }
 
 

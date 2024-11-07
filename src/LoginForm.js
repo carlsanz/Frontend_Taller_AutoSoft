@@ -1,7 +1,8 @@
-import './login.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import taller3 from './styles/pictures/taller3.jpg';
+import logo2 from './styles/pictures/logo2-removebg-preview.png';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +10,6 @@ const LoginForm = () => {
   const [emailError, setEmailError] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
-
 
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,55 +28,94 @@ const LoginForm = () => {
 
       const { role, primerIngreso, nombre } = response.data;
 
-      // Guardar datos en localStorage como booleano
       localStorage.setItem('role', role);
       localStorage.setItem('email', email);
       localStorage.setItem('primerIngreso', JSON.stringify(primerIngreso));
       localStorage.setItem('nombre', nombre);
 
-      navigate('/home'); // Redirigir al home
+      navigate('/home');
     } catch (error) {
       setLoginError(error.response?.data?.message || 'Error desconocido');
     }
   };
 
   return (
-    <div id="container">
-      <header className="head-form">
-        <h1>AUTOSOFT</h1>
-      </header>
-      <div id="imgFondo"></div>
-      <div id="form-container">
-        <form onSubmit={handleSubmit} id="form1">
-          <h2>Login</h2>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              validateEmail(e.target.value);
-            }}
-            placeholder="Email"
-            required
-            id="email"
+    <div
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ backgroundImage: `url(${taller3})` }}
+    >
+      <div className="place-self-center bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto mt-10"
+            style={{ backgroundColor: '#1F1F1F', opacity: 0.9}}>
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img
+            alt="Your Company"
+            src={logo2}
+            className="mx-auto"
+            style={{ height: '170px', width: 'auto' }}
           />
-          {emailError && <p className="error-message">{emailError}</p>}
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
-            required
-            id="password"
-          />
-          <button type="submit">Iniciar sesión</button>
-          {loginError && <p className="error-message">{loginError}</p>}
-        </form>
+        </div>
+
+        <div className="mt-10">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-white">
+                Correo
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    validateEmail(e.target.value);
+                  }}
+                  required
+                  autoComplete="email"
+                  placeholder="Email"
+                  className="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#F6B51B] text-base"
+                />
+                {emailError && <p className="text-sm text-red-600 mt-1">{emailError}</p>}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-white">
+                Contraseña
+              </label>
+              <div className="mt-2">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  placeholder="Contraseña"
+                  className="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#F6B51B] text-base"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{ backgroundColor: '#F6B51B' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#D99A17'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#F6B51B'}
+              >
+                Iniciar sesión
+              </button>
+              {loginError && <p className="text-sm text-red-600 mt-1">{loginError}</p>}
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 };
 
 export default LoginForm;
-
-
