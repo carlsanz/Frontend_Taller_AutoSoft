@@ -8,6 +8,7 @@ const Clientes = () => {
     const navigate = useNavigate();
     const [identidad, setIdentidad] = useState('');
     const [cliente, setCliente] = useState(null);
+    const [clientes, setClientes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddingMode, setIsAddingMode] = useState(false);
@@ -124,6 +125,25 @@ const handleSearch = async () => {
         }
     };
 
+
+    
+
+// Obtener clientes al cargar el componente
+useEffect(() => {
+    const fetchClientes = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/todos');
+            setClientes(response.data);  // Llenar el estado con los datos de clientes
+        } catch (error) {
+            console.error('Error al obtener los clientes', error);
+        }
+    };
+
+    fetchClientes();
+}, []);
+
+
+
     return (
         <div className='container'>
         <div className='form-header'>
@@ -158,21 +178,23 @@ const handleSearch = async () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {Clientes.length === 0 ? (
-                        <tr>
-                            <td colSpan="5"></td>
-                        </tr>
-                    ) : (
-                        Clientes.map((clientes) => (
-                            <tr key={clientes.identidad}>
-                                <td>{clientes.P_nombre}</td>
-                                <td>{clientes.P_apellido}</td>
-                                <td>{clientes.Genero}</td>
-                                <td>{clientes.Direccion}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
+    {clientes.length === 0 ? (
+        <tr>
+            <td colSpan="5">No hay clientes registrados</td>
+        </tr>
+    ) : (
+        clientes.map((cliente) => (
+            <tr key={cliente.Identidad}>
+                <td>{cliente.Identidad}</td>
+                <td>{cliente.P_nombre} {cliente.S_nombre}</td>
+                <td>{cliente.P_apellido} {cliente.S_apellido}</td>
+                <td>{cliente.Genero}</td>
+                <td>{cliente.Direccion}</td>
+            </tr>
+        ))
+    )}
+</tbody>
+
             </table>
 
 
