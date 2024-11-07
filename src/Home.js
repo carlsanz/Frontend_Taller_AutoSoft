@@ -3,6 +3,7 @@ import { Bars3Icon, BellIcon, XMarkIcon, PlusIcon, MagnifyingGlassIcon } from '@
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from './styles/pictures/logo.PNG';
 
 const Home = () => {
 const navigation = [
@@ -67,8 +68,8 @@ function classNames(...classes) {
               <div className="flex flex-shrink-0 items-center">
                 <img
                   alt="Your Company"
-                  src="/image/WhatsApp Image 2024-09-30 at 7.04.38 PM-fotor-20241006193033.png"
-                  className="h-8 w-auto"
+                  src={logo}
+                  className="h-10 w-auto"
                 />
               </div>
               <div className="hidden sm:ml-6 sm:block">
@@ -121,7 +122,7 @@ function classNames(...classes) {
                       href="h"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Your Profile
+                      Perfil
                     </a>
                   </MenuItem>
                   <MenuItem>

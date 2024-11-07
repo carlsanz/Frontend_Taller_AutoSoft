@@ -3,6 +3,8 @@ import { TrashIcon, ArrowPathIcon, Bars3Icon, BellIcon, XMarkIcon, PlusIcon, Mag
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
+import logo from './styles/pictures/logo.PNG';
+import { Link } from 'react-router-dom';
 Modal.setAppElement('#root'); 
 
 const Servicios = ({ rolUsuario }) => {
@@ -170,8 +172,8 @@ const handleSubmit = async (e) => {
               <div className="flex flex-shrink-0 items-center">
                 <img
                   alt="Your Company"
-                  src="/image/WhatsApp Image 2024-09-30 at 7.04.38 PM-fotor-20241006193033.png"
-                  className="h-8 w-auto"
+                  src={logo}
+                  className="h-10 w-auto"
                 />
               </div>
               <div className="hidden sm:ml-6 sm:block">
@@ -224,23 +226,23 @@ const handleSubmit = async (e) => {
                       href="h"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Your Profile
+                      Perfil
                     </a>
                   </MenuItem>
                   <MenuItem>
-                    <a
-                      href="hh"
+                    <Link
+                      to="/cambiar-contraseña"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Settings
-                    </a>
+                      Cambiar contraseña
+                    </Link>
                   </MenuItem>
                   <MenuItem>
                     <button
                       onClick={() => navigate("/")}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Sign out
+                      Salir
                     </button>
                   </MenuItem>
                 </MenuItems>
