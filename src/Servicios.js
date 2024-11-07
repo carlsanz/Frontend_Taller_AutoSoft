@@ -1,9 +1,7 @@
-
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { TrashIcon, ArrowPathIcon, Bars3Icon, BellIcon, XMarkIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import './Formularios.css';
 import Modal from 'react-modal';
 Modal.setAppElement('#root'); 
 
@@ -12,11 +10,17 @@ const navigation = [
   { name: 'Home', ruta: "/Home", current: true },
   { name: 'Servicios', ruta: "/servicios", current: false },
   { name: 'Inventario', ruta: "#", current: false },
-  { name: 'Repuestos', ruta: "/repuestos-utilizados", current: false },
+  { name: 'Repuestos', ruta: "/repuestos", current: false },
   { name: 'Empleados', ruta: "/agregar-usuario", current: false },
   { name: 'Autos', ruta: "/autos", current: false },
   { name: 'Clientes', ruta: "/clientes", current: false },
 ]
+const navigate = useNavigate();
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
 
 const [servicios, setServicios] = useState([]);
 const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,17 +152,7 @@ const handleSubmit = async (e) => {
 };
 
 
-
-
-const navigate = useNavigate();
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
-
   return (
-  
     <div style={{ width: '100vw', overflowX: 'hidden'  }} className="relative flex-col h-screen " >
       <Disclosure as="nav" className="bg-gray-800  w-full top-0 fixed">
         <div className="mx-0 max-w-full lg px-8">
@@ -292,8 +286,7 @@ function classNames(...classes) {
               type="button"
               className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
               <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
-            
-              </button>
+        </button>
 
            {rolUsuario === 'Administrador' && (
             <button
@@ -346,36 +339,33 @@ function classNames(...classes) {
                 </tbody>
             </table>
 
-            <Modal style={{overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 rounded-lg max-w-2xl mx-auto my-8"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 rounded-lg max-w-2xl mx-auto my-8"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
                        
                         
-                        <form className="flex flex-col items-center w-full h-full" onSubmit={handleSubmit}>
-                         <h2>{isEditing ? 'Actualizar Servicio' : 'Agregar Nuevo Servicio'}</h2>
-                         
-                         <div className="flex flex-col justify-around h-64">
+                        <form className="flex flex-col justify-between text-center w-full h-full " onSubmit={handleSubmit}>
+                         <h2>{isEditing ? 'Detalles del servicio' : 'Agregar Nuevo Servicio'}</h2>
+                         <div style={{height:"28rem"}} className="flex flex-col justify-between p-6 ">
                          
                                 <label>Nombre</label>
-                                <input className="h-12 block font-medium text-gray-900" type="text" name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-3 text-gray-900" type="text" name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
 
                                 <label>Precio</label>
-                                <input className="h-12 block font-medium text-gray-900" type="number" name="Precio" value={formData.Precio} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-3 text-gray-900" type="number" name="Precio" value={formData.Precio} onChange={handleInputChange} required />
 
                                 <label>Tipo de Servicio</label>
-                                <select className="h-12 w-full border-gray-300 border block font-medium text-gray-900" name="Tipo_servicio" value={formData.Tipo_servicio} onChange={handleInputChange}>
+                                <select className="h-12 block font-medium my-3 text-gray-900" name="Tipo_servicio" value={formData.Tipo_servicio} onChange={handleInputChange}>
                                     <option value="" disabled>Seleccione el tipo de servicio</option>
                                     <option value="Preventivo">Preventivo</option>
                                     <option value="Correctivo">Correctivo</option>
                                 </select>
-                                </div>
-                                <div className='cont-cliente-interno'>
                                 <label>Descripción</label>
-                                <textarea className="h-28 w-full border-gray-300 border block font-medium text-gray-900" type="text" name="Descripcion" value={formData.Descripcion} onChange={handleInputChange} required />
+                                <textarea className="h-80 block font-medium my-3 text-gray-900" type="text" name="Descripcion" value={formData.Descripcion} onChange={handleInputChange} required />
                                 </div>
                                 
                             
-                            <div className="m-10 flex content-end justify-end items-center  w-full h-28">
-                                <button className='submit-button' type="submit">{isEditing ? 'Actualizar Servicio' : 'Agregar Servicio'}</button>
-                                <button className='submit-button' type="button" onClick={() => setIsModalOpen(false)}>Cerrar</button>
+                            <div className=" flex content-end justify-around items-center  w-full h-20">
+                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">{isEditing ? 'Actualizar Servicio' : 'Agregar Servicio'}</button>
+                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={() => setIsModalOpen(false)}>Cerrar</button>
                             </div>
                             
                             
@@ -384,11 +374,7 @@ function classNames(...classes) {
         
 
 
-  </div>
-      
-
-
-       
+  </div>   
       
       </div>
       </div>

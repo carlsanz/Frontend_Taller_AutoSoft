@@ -8,6 +8,7 @@ import ChangePassword from './ChangePassword';
 import Clientes from './Clientes';
 import Servicios from './Servicios';
 import Autos from './Autos'; // Importa el componente Autos
+import Repuestos from './Repuestos';
 
 function App() {
     const role = localStorage.getItem('role');
@@ -21,6 +22,8 @@ function App() {
                 <Route path="/clientes" element={<Clientes />} />
                 <Route path="/servicios" element={<Servicios rolUsuario={role} />} />
                 <Route path="/autos" element={<Autos />} />
+                <Route path="/repuestos" element={<Repuestos />} />
+
             </Routes>
         </Router>
     );
