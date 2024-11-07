@@ -12,14 +12,14 @@ Modal.setAppElement('#root');
 const Repuestos = () => {
          //Elementos del Nav
          const navigation = [
-            { name: 'Home', ruta: "/Home", current: true },
-            { name: 'Servicios', ruta: "/servicios", current: false },
-            { name: 'Inventario', ruta: "#", current: false },
-            { name: 'Repuestos', ruta: "/repuestos", current: false },
-            { name: 'Empleados', ruta: "/agregar-usuario", current: false },
-            { name: 'Autos', ruta: "/autos", current: false },
-            { name: 'Clientes', ruta: "/clientes", current: false },
-          ]
+          { name: 'Home', ruta: "/Home", current: true },
+          { name: 'Servicios', ruta: "/servicios", current: false },
+          { name: 'Inventario', ruta: "/inventario", current: false },
+          { name: 'Repuestos', ruta: "/repuestos", current: false },
+          { name: 'Empleados', ruta: "/agregar-usuario", current: false },
+          { name: 'Autos', ruta: "/autos", current: false },
+          { name: 'Clientes', ruta: "/clientes", current: false },
+        ]
     
         function classNames(...classes) {
             return classes.filter(Boolean).join(' ')

@@ -8,15 +8,15 @@ import { Link } from 'react-router-dom';
 Modal.setAppElement('#root'); 
 
 const Servicios = ({ rolUsuario }) => {
-const navigation = [
-  { name: 'Home', ruta: "/Home", current: true },
-  { name: 'Servicios', ruta: "/servicios", current: false },
-  { name: 'Inventario', ruta: "#", current: false },
-  { name: 'Repuestos', ruta: "/repuestos", current: false },
-  { name: 'Empleados', ruta: "/agregar-usuario", current: false },
-  { name: 'Autos', ruta: "/autos", current: false },
-  { name: 'Clientes', ruta: "/clientes", current: false },
-]
+  const navigation = [
+    { name: 'Home', ruta: "/Home", current: true },
+    { name: 'Servicios', ruta: "/servicios", current: false },
+    { name: 'Inventario', ruta: "/inventario", current: false },
+    { name: 'Repuestos', ruta: "/repuestos", current: false },
+    { name: 'Empleados', ruta: "/agregar-usuario", current: false },
+    { name: 'Autos', ruta: "/autos", current: false },
+    { name: 'Clientes', ruta: "/clientes", current: false },
+  ]
 const navigate = useNavigate();
 
 function classNames(...classes) {
