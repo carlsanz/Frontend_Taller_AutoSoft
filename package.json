@@ -17,6 +17,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "flowbite": "^2.5.2",
+    "flowbite-react": "^0.10.2",
     "my-login-app": "file:",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
