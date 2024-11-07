@@ -1,58 +1,8 @@
-.modal {
-    /* Estilos para el contenedor del modal */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: white; /* Fondo del modal */
-    border-radius: 8px; /* Bordes redondeados */
-    padding: 20px; /* Espaciado interno */
-    width: 400px; /* Ancho del modal */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra */
-}
 
-.modal-overlay {
-    /* Estilos para la superposición del modal */
-    background-color: rgba(0, 0, 0, 0.75); /* Color de fondo oscuro */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
-}
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-color: white; /* Para que el fondo sea igual al input */
-  }
 
-  /* Estilos generales */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #2d2d29;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
+
+
+
   .container {
     display: flex;
     flex-direction: column;
@@ -64,13 +14,7 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  .form-container{
-    display: flex;
-    justify-content: space-evenly;
-    background-color: #fff;
-    height: 100vh;
-    width: 80vw;
-  }
+
 
   #botones-servicio{
     display: flex;
@@ -79,45 +23,8 @@ body {
 
   }
 
-  .form-input-descripcion{
-    display: block;
-    width: 50%;
-    padding: 10px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #3ca2a2;
-    border-radius: 4px;
-    box-sizing:content-box;
-    font-size: 14px;
-    height: 12rem;
-  }
-  
-  .cont-externo{
-    display: flex;
-    flex-direction: column;
-    
-  }
 
-  .cont-interno{
-    border: 2px solid #3ca2a2;
-    border-radius: 4px;
-    width: 33vw;
-    padding-left: 50px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    
-  }
-
-  .cont-cliente{
-    display: flex;
-    justify-content: space-around;
-    border: 2px solid #3ca2a2;
-    border-radius: 4px;
-    width: 70vw;
-    padding-left: 50px;
-    padding-top: 1rem;
-    
-  }
+ 
 
   .cont-cliente-interno{
     width: 33vw;
@@ -125,17 +32,7 @@ body {
   }
   
   /* Barra de título */
-  .form-header {
-    background-color: #92c7a3;
-    height: auto;
-    width: 100vw;
-    color: #2d2d29;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
+ 
   .form-title {
     margin: 0;
     font-size: 18px;
@@ -169,17 +66,6 @@ body {
     
   }
   
-  .form-input {
-    display: block;
-    width: 50%;
-    padding: 10px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #3ca2a2;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 14px;
-  }
   
   .form-input::placeholder {
     color: #999;
@@ -201,17 +87,7 @@ body {
     margin-bottom: 20px;
   }
   
-  .submit-button:hover {
-    background-color: #fff;
-    color: #2D2D29;
-    border: 2px solid #2D2D29;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    /*display: block;*/ /* Hacer que el botón sea un bloque */
-    /*margin: 0 auto;*/ /* Centrar horizontalmente */
-  }
+ 
   
   #MsjError{
     color: red;
@@ -256,77 +132,10 @@ input, select {
 }*/
 
 
-table {
-  width: 95%;
-  border-collapse: collapse;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
-}
 
-th:last-child, td:last-child {
-  width: 200px; 
-}
 
-td:last-child {
-  display: flex;
-  gap: 12px; 
-  justify-content: flex-start
-  ; 
-}
 
-thead tr:hover {
-  background-color: initial; 
-  color: inherit; 
-}
 
-thead {
-  background-color: #333;
-  color: #fff;
-}
-
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
-}
-
-#botones-servicios button {
-  border: none;
-  
-  text-align: center;
-  text-decoration: none;
-  font-size: 15px;
-  
-  cursor: pointer;
-  border-radius: 5px;
-  white-space: nowrap;
-  display: inline-block;
-  min-width: 80px;
-  display: flex;
-  gap: 10px; 
-}
-
-.btn-actualizar{
-  border: none;
-  
-  text-align: center;
-  text-decoration: none;
-  font-size: 15px;
-  
-  cursor: pointer;
-  border-radius: 5px;
-  white-space: nowrap;
-  display: inline-block;
-  min-width: 80px;
-  display: flex;
-  gap: 10px; 
-}
 
 .btn-borrar {
   background-color: #f44336;
@@ -357,12 +166,7 @@ tr:hover {
 
 }
 
-.btn-buscar {
-  background-color: #3ca2a2;
-  color: white;
-  height: 2.5rem;
-  width: 7rem;
-}
+
 
 .btn-agregar:hover, .btn-volver:hover, .btn-actualizar:hover {
   background-color: #377d3b;
@@ -389,48 +193,7 @@ tr:hover {
 
 
 
-.modal-overlay {
-    /* Estilos para la superposición del modal */
-    background-color: rgba(0, 0, 0, 0.75); /* Color de fondo oscuro */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
-}
 
-
-
-.modal-content form {
-  display: flex;
-  flex-direction: column;
-  align-items: center
-}
-
-
-.modal-content button {
-  width: auto; 
-  padding: 0px 20px; 
-  margin: 5px; 
-}
-
-
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: white; /* Fondo del modal */
-  border-radius: 8px; /* Bordes redondeados */
-  padding: 20px; /* Espaciado interno */
-  width: 400px; /* Ancho del modal */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra */
-}
 
 .gestiones{
   background-color: transparent;
