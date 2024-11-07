@@ -8,6 +8,9 @@ Modal.setAppElement('#root'); // Cambia '#root' por el ID de tu elemento raíz
 
 const AgregarUsuario = () => {
     const navigate = useNavigate();
+    
+    const [empleados, setEmpleados] = useState([]);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [departamentos, setDepartamentos] = useState([]);
     const [formData, setFormData] = useState({
@@ -66,7 +69,7 @@ const formatDate = (dateString) => {
 const handleBuscarUsuario = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.get(`http://localhost:5000/usuarios-completo/${identidadABuscar}`);
+        const response = await axios.get(`http://localhost:5000/usuarios-completo/empleados/${identidadABuscar}`);
         
         // Aplicamos el formato a las fechas antes de actualizar el estado
         const usuario = response.data;
@@ -154,6 +157,22 @@ const resetForm = () => {
     setIsEditMode(false);
 };
 
+useEffect(() => {
+    // Llamada al backend para obtener los datos de los empleados
+    fetch('http://localhost:5000/usuarios-completo/empleados')  // Cambia el puerto y la ruta si es necesario
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then((data) => setEmpleados(data))
+        .catch((error) => console.error('Error al obtener empleados:', error));
+}, []);
+
+
+
+
 
     return (
         <div className='container'>
@@ -174,6 +193,40 @@ const resetForm = () => {
                     <button type="submit" className='submit-button'>Buscar</button>
             </form>
             <button className='submit-button' onClick={() => { setIsModalOpen(true); resetForm(); }}>Agregar</button>
+
+            <table>
+            <thead>
+                <tr>
+                    <th>Identidad</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Genero</th>
+                    <th>Direccion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {empleados.length === 0 ? (
+                    <tr>
+                        <td colSpan="5">No hay empleados registrados</td>
+                    </tr>
+                ) : (
+                    empleados.map((empleado) => (
+                        <tr key={empleado.Identidad}>
+                            <td>{empleado.Identidad}</td>
+                            <td>{empleado.Nombre}</td>
+                            <td>{empleado.Apellido}</td>
+                            <td>{empleado.Genero}</td>
+                            <td>{empleado.Direccion}</td>
+                        </tr>
+                    ))
+                )}
+            </tbody>
+        </table>
+
+
+
+
+
             <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
              <h2>{isEditMode ? 'Actualizar Usuario' : 'Formulario de Registro'}</h2>
              <form className='form-container' onSubmit={handleSubmit}>

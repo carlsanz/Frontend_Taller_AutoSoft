@@ -159,6 +159,8 @@ const Autos = () => {
         }
     };
 
+    
+
     return (
         <div className="container">
             <p className='text-3xl uppercase'>Gestión de Autos</p>
@@ -254,6 +256,8 @@ const Autos = () => {
             </button>
         </>
     )}
+
+    
 </div>
 
 
@@ -275,7 +279,7 @@ const Autos = () => {
                 </thead>
                 <tbody>
                     {autos.map((auto) => (
-                        <tr key={auto.Id}>
+                        <tr key={auto.Id_auto}>
                             <td>{auto.Placa}</td>
                             <td>{auto.Modelo}</td>
                             <td>{auto.Tipo}</td>
