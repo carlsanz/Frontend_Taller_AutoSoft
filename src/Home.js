@@ -2,6 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
 const navigation = [
@@ -124,19 +125,19 @@ function classNames(...classes) {
                     </a>
                   </MenuItem>
                   <MenuItem>
-                    <a
-                      href="hh"
+                    <Link
+                      to="/cambiar-contraseña"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Settings
-                    </a>
+                      Cambiar contraseña
+                    </Link>
                   </MenuItem>
                   <MenuItem>
                     <button
                       onClick={() => navigate("/")}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
-                      Sign out
+                      Salir
                     </button>
                   </MenuItem>
                 </MenuItems>
