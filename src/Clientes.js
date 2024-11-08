@@ -50,7 +50,7 @@ const Clientes = () => {
     useEffect(()=>{
         const fetchDepartamentos = async ()=> {
             try {
-                const response = await axios.get('http://localhost:5000/api/departamentos');
+                const response = await axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/departamentos');
                 setDepartamentos(response.data);
                 } catch (error) {
                     console.error('Error al obtener los departamentos', error);
@@ -62,7 +62,7 @@ fetchDepartamentos();
 // para la busqueda de los clientes mediante identidad
 const handleSearch = async () => {
     try {
-        const response = await axios.get(`http://localhost:5000/api/clientes/${identidad}`);
+        const response = await axios.get(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/clientes/${identidad}`);
         let clienteData = response.data;
         if (clienteData.Fecha_nac) {
             clienteData.Fecha_nac = new Date(clienteData.Fecha_nac).toISOString().split('T')[0];
@@ -104,7 +104,7 @@ const handleSearch = async () => {
     const handleDelete = async () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/clientes/${formData.Identidad}`);
+                await axios.delete(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/clientes/${formData.Identidad}`);
                 alert('Cliente eliminado');
                 setCliente(null);
                 setIdentidad('');
@@ -126,11 +126,11 @@ const handleSearch = async () => {
         try {
             if (isAddingMode) {
                 // Si estamos en modo de agregar, hacer POST
-                await axios.post('http://localhost:5000/api/clientes', formData);
+                await axios.post('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/clientes', formData);
                 alert('Cliente agregado exitosamente');
             } else if (isEditMode) {
                 // Si estamos en modo de edición, hacer PUT para actualizar
-                await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
+                await axios.put(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/clientes/${formData.Identidad}`, formData);
                 alert('Cliente actualizado exitosamente');
             }
             // Cerrar modal y limpiar estado
@@ -150,7 +150,7 @@ const handleSearch = async () => {
 useEffect(() => {
     const fetchClientes = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/todos');
+            const response = await axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/todos');
             setClientes(response.data);  // Llenar el estado con los datos de clientes
         } catch (error) {
             console.error('Error al obtener los clientes', error);

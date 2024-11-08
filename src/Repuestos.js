@@ -49,8 +49,8 @@ const Repuestos = () => {
         const obtenerProveedoresYMarcas = async () => {
             try {
                 const [proveedoresRes, marcasRes] = await Promise.all([
-                    axios.get('http://localhost:5000/repuestos/proveedores'),
-                    axios.get('http://localhost:5000/repuestos/marcas'),
+                    axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos/proveedores'),
+                    axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos/marcas'),
                 ]);
                 setProveedores(proveedoresRes.data);
                 setMarcas(marcasRes.data);
@@ -72,7 +72,7 @@ const Repuestos = () => {
 
     const obtenerRepuestos = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/repuestos/');
+            const response = await axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos/');
             const repuestosData = response.data;
     
             // Asignar nombres de marcas y proveedores en lugar de IDs
@@ -133,7 +133,7 @@ const Repuestos = () => {
     const handleDelete = async (idRepuesto) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este repuesto?')) {
             try {
-                await axios.delete(`http://localhost:5000/repuestos/${idRepuesto}`);
+                await axios.delete(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos/${idRepuesto}`);
                 alert('Repuesto eliminado');
                 obtenerRepuestos(); // Refresca la lista de repuestos después de eliminar
             } catch (error) {
@@ -154,10 +154,10 @@ const Repuestos = () => {
         e.preventDefault();
         try {
             if (isAddingMode) {
-                await axios.post('http://localhost:5000/repuestos', formData);
+                await axios.post('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos', formData);
                 alert('Repuesto agregado exitosamente');
             } else if (isEditMode) {
-                await axios.put(`http://localhost:5000/repuestos/${formData.Id_repuesto}`, formData);
+                await axios.put(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/repuestos/${formData.Id_repuesto}`, formData);
                 alert('Repuesto actualizado exitosamente');
             }
             setModalIsOpen(false);

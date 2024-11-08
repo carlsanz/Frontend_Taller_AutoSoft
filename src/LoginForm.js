@@ -21,7 +21,7 @@ const LoginForm = () => {
     if (emailError) return;
 
     try {
-      const response = await axios.post('http://localhost:5000/auth/login', { email, password });
+      const response = await axios.post('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/auth/login', { email, password });
 
       console.log('Respuesta del backend:', response.data);
       alert(response.data.message);

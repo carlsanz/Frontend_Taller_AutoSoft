@@ -42,7 +42,7 @@ console.log(localStorage.getItem('role')); // Verficar rol
 useEffect(() => {
     const obtenerServicios = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/servicios/obtener');
+            const response = await fetch('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/servicios/obtener');
             if (!response.ok) {
                 throw new Error('Error al obtener los servicios');
             }
@@ -62,7 +62,7 @@ const handleDelete = async (id) => {
         return;
     }
     try {
-        const response = await fetch(`http://localhost:5000/api/servicios/borrar/${id}`, {
+        const response = await fetch(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/servicios/borrar/${id}`, {
             method: 'DELETE',
         });
 
@@ -100,7 +100,7 @@ const handleSubmit = async (e) => {
 
     if (isEditing) {
         try {
-            const response = await fetch(`http://localhost:5000/api/servicios/actualizar/${selectedServiceId}`, {
+            const response = await fetch(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/servicios/actualizar/${selectedServiceId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ const handleSubmit = async (e) => {
         }
     } else {
         try {
-            const response = await fetch('http://localhost:5000/api/servicios/agregar', {
+            const response = await fetch('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/servicios/agregar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

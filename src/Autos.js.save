@@ -42,9 +42,9 @@ const Autos = () => {
         try {
             const [respuestaAutos, respuestaModelos, respuestaTipos, respuestaColores] = await Promise.all([
                 axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/obtener'),
-                axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/modelos'),
-                axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/tipos'),
-                axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/colores')
+                axios.get('http://localhost:5000/autos/modelos'),
+                axios.get('http://localhost:5000/autos/tipos'),
+                axios.get('http://localhost:5000/autos/colores')
             ]);
 
             setModelos(respuestaModelos.data);
@@ -77,7 +77,7 @@ const Autos = () => {
     // Función para buscar un auto por placa y abrir el modal en modo edición
     const handleBuscar = async () => {
         try {
-            const response = await axios.get(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/placa/${placa}`);
+            const response = await axios.get(`http://localhost:5000/autos/placa/${placa}`);
             setAutoSeleccionado(response.data);
             setIdentidad(response.data.Identidad);
             setModalAbierto(true);
@@ -129,11 +129,11 @@ const Autos = () => {
 
             if (autoSeleccionado.Id && isEditMode) {
                 // Actualización
-                await axios.put(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
+                await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
                 alert('Auto actualizado exitosamente');
             } else if (isAddingMode) {
                 // Nuevo registro
-                await axios.post('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos', autoParaGuardar);
+                await axios.post('http://localhost:5000/autos', autoParaGuardar);
                 alert('Auto guardado exitosamente');
             }
             fetchAutos();
@@ -148,7 +148,7 @@ const Autos = () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
                 if (autoSeleccionado && autoSeleccionado.Id) {
-                    await axios.delete(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/${autoSeleccionado.Placa}`);
+                    await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
                     alert('Auto eliminado exitosamente');
                 }
                 fetchAutos();
@@ -166,7 +166,7 @@ const Autos = () => {
 
         if (nuevaIdentidad.length === 13) {
             try {
-                const response = await axios.get(`http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/identidad/${nuevaIdentidad}`);
+                const response = await axios.get(`http://localhost:5000/autos/identidad/${nuevaIdentidad}`);
                 if (response.data) {
                     alert(`Cliente encontrado: ${response.data.Nombre}`);
                 } else {
@@ -183,7 +183,7 @@ const Autos = () => {
 
     useEffect(() => {
         
-        axios.get('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/autos/todos') 
+        axios.get('http://localhost:5000/autos/todos') 
             .then(response => {
                 setAutos(response.data);
             })

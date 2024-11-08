@@ -13,7 +13,7 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/password/mecanico', {
+      const response = await axios.post('http://ec2-3-137-140-141.us-east-2.compute.amazonaws.com:5000/api/password/mecanico', {
         email,
         oldPassword,
         newPassword
