@@ -10,28 +10,29 @@ import Servicios from './Servicios';
 import Autos from './Autos'; 
 import Repuestos from './Repuestos';
 import Inventario from './Inventario';
+import Nav from './Nav';
 
 function App() {
     const role = localStorage.getItem('role');
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<LoginForm />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/agregar-usuario" element={<AgregarUsuarioForm />} />
-                <Route path="/cambiar-contraseña" element={<ChangePassword />} />
-                <Route path="/clientes" element={<Clientes />} />
-                <Route path="/servicios" element={<Servicios rolUsuario={role} />} />
-                <Route path="/autos" element={<Autos />} />
-                <Route path="/repuestos" element={<Repuestos />} />
-                <Route path="/inventario" element={<Inventario rolUsuario={role} />} />
 
-            </Routes>
+    return (
+        // Envolvemos el Layout y las rutas en Router
+        <Router>
+            <Nav>
+                <Routes>
+                    <Route path="/" element={<LoginForm />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/agregar-usuario" element={<AgregarUsuarioForm />} />
+                    <Route path="/cambiar-contraseña" element={<ChangePassword />} />
+                    <Route path="/clientes" element={<Clientes />} />
+                    <Route path="/servicios" element={<Servicios rolUsuario={role} />} />
+                    <Route path="/autos" element={<Autos />} />
+                    <Route path="/repuestos" element={<Repuestos />} />
+                    <Route path="/inventario" element={<Inventario rolUsuario={role} />} />
+                </Routes>
+            </Nav>
         </Router>
     );
 }
 
 export default App;
-
-
-

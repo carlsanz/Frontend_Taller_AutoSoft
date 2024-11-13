@@ -41,7 +41,7 @@ const LoginForm = () => {
 
   return (
     <div
-      className="absolute inset-0 bg-cover bg-center"
+      className="absolute inset-0 bg-cover border-y-indigo-500 bg-center h-screen, w-screen"
       style={{ backgroundImage: `url(${taller3})` }}
     >
       <div className="place-self-center bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto mt-10"
