@@ -25,7 +25,7 @@ const Home = () => {
 
   return (
     <div style={{ width: '100vw', overflowX: 'hidden' }} className="flex-col h-screen">
-      <div className="bg-gray-100 min-h-full relative max-w-full">
+      <div className="-z-10 bg-gray-100 min-h-full relative max-w-full">
         {/* Imagen de fondo */}
         <img className="relative h-96 w-full m-0 p-0" src="image/vehiculo.jpg" alt="vehículo" />
 

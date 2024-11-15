@@ -171,7 +171,7 @@ useEffect(() => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
      
       <form className="flex h-auto justify-center min-w-full" onSubmit={handleBuscarUsuario}>
                 <input

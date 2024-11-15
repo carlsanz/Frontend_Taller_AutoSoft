@@ -138,9 +138,8 @@ const handleSubmit = async (e) => {
   return (
     <div 
     style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-    className="absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+    className="-z-10 absolute  p-32 pb-0 flex flex-col h-screen justify-center" >
      <div className="flex h-auto justify-center min-w-full">
-        
         <input
           id="buscar-home"
           name="Buscar-cliente"
@@ -151,22 +150,23 @@ const handleSubmit = async (e) => {
          
         <button
               type="button"
-              className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-              <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
+              className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+              >
+              <MagnifyingGlassIcon  className="h-6 w-6" />
         </button>
 
            {rolUsuario === 'Administrador' && (
             <button
-            onClick={() => { setIsEditing(false); setIsModalOpen(true); }}
+              onClick={() => { setIsEditing(false); setIsModalOpen(true); }}
               type="button"
               className=" w-11 h-11 my-5 mx-2 flex items-center justify-center  rounded-md bg-yellow-500  p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
             >
-              <PlusIcon aria-hidden="true" className="h-6 w-6" />
+            <PlusIcon className="h-6 w-6" />
             </button>)}
         </div>
 
         <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">
-        <table className="table-row-group bg-white justify-center rounded-none m-0 p-0 mt-0 pt-0 ">
+        <table className=" table-row-group h-auto bg-white justify-center rounded-none m-0 p-0 mt-0 pt-0 ">
                 <thead >
                     <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
                          <th className="text-center text-white m-12 p-2">Nombre</th>

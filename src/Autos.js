@@ -15,46 +15,10 @@ const Autos = () => {
     const [colores, setColores] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddingMode, setIsAddingMode] = useState(false);
+  
 
 
     const role = localStorage.getItem('role');
-
-    // Función para obtener todos los autos y datos de desplegables
-    const fetchAutos = async () => {
-        try {
-            const [respuestaAutos, respuestaModelos, respuestaTipos, respuestaColores] = await Promise.all([
-                axios.get('http://localhost:5000/autos/obtener'),
-                axios.get('http://localhost:5000/autos/modelos'),
-                axios.get('http://localhost:5000/autos/tipos'),
-                axios.get('http://localhost:5000/autos/colores')
-            ]);
-
-            setModelos(respuestaModelos.data);
-            setTipos(respuestaTipos.data);
-            setColores(respuestaColores.data);
-
-            const autosConNombres = respuestaAutos.data.map((auto) => {
-                const modeloNombre = respuestaModelos.data.find(m => m.Id_modelo === auto.Id_modelo)?.Nombre ;
-                const tipoNombre = respuestaTipos.data.find(t => t.Id_tipo === auto.Id_tipo)?.Nombre ;
-                const colorNombre = respuestaColores.data.find(c => c.Id_color === auto.Id_color)?.Nombre ;
-
-                return {
-                    ...auto,
-                    Modelo: modeloNombre,
-                    Tipo: tipoNombre,
-                    Color: colorNombre
-                };
-            });
-
-            setAutos(autosConNombres);
-        } catch (error) {
-            console.error('Error al obtener datos:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchAutos();
-    }, []);
 
     // Función para buscar un auto por placa y abrir el modal en modo edición
     const handleBuscar = async () => {
@@ -72,6 +36,51 @@ const Autos = () => {
             setAutoSeleccionado(null);
         }
     };
+
+    useEffect(()=>{
+    const fetchModelos = async ()=> {
+    try{
+        const response = await axios.get('http://localhost:5000/autos/modelos');
+        setModelos(response.data);
+       }
+       catch(error){
+          console.error('Error al obtener los modelos', error);
+       }
+
+    };
+    fetchModelos();
+    }, []);
+
+    
+    useEffect(()=>{
+        const fetchTipos = async ()=> {
+        try{
+            const response = await axios.get('http://localhost:5000/autos/tipos');
+            setTipos (response.data);
+           }
+           catch(error){
+              console.error('Error al obtener los tipos', error);
+           }
+    
+        };
+        fetchTipos();
+        }, []);
+
+    
+     useEffect(()=>{
+            const fetchColores = async ()=> {
+            try{
+                const response = await axios.get('http://localhost:5000/autos/colores');
+                setColores (response.data);
+               }
+               catch(error){
+                  console.error('Error al obtener los colores', error);
+               }
+        
+            };
+            fetchColores();
+            }, []);
+    
 
     // Función para abrir el formulario de agregar un nuevo auto
     const handleAgregar = () => {
@@ -118,7 +127,6 @@ const Autos = () => {
                 await axios.post('http://localhost:5000/autos', autoParaGuardar);
                 alert('Auto guardado exitosamente');
             }
-            fetchAutos();
             setModalAbierto(false);
         } catch (error) {
             console.error('Error al guardar o actualizar el auto:', error);
@@ -133,7 +141,6 @@ const Autos = () => {
                     await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
                     alert('Auto eliminado exitosamente');
                 }
-                fetchAutos();
                 setModalAbierto(false);
             } catch (error) {
                 console.error('Error al eliminar el auto:', error);
@@ -164,14 +171,19 @@ const Autos = () => {
     
 
     useEffect(() => {
-        
-        axios.get('http://localhost:5000/autos/todos') 
-            .then(response => {
+        const fetchAutos = async () => {
+            try{
+                const response = await axios.get('http://localhost:5000/autos/todos') 
                 setAutos(response.data);
-            })
-            .catch(error => {
+            }
+            catch(error) {
                 console.error("Error al obtener los autos:", error);
-            });
+            }
+
+        };
+
+        fetchAutos();
+
     }, []);
 
 
@@ -180,7 +192,7 @@ const Autos = () => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'scroll', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute  p-32 pb-0 flex flex-col h-screen justify-center" >
       <div className="flex h-auto justify-center min-w-full">
       <input
                 type="text"
@@ -209,7 +221,12 @@ const Autos = () => {
                 </tr>
             </thead>
             <tbody>
-                {autos.map((auto) => (
+            {autos.length === 0 ? (
+            <tr>
+            <td colSpan="5">No hay autos registrados</td>
+           </tr>
+           ) : (
+                autos.map((auto) => (
                     <tr key={auto.Id_auto}>
                         <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Placa}</td>
                         <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Modelo}</td>
@@ -225,7 +242,8 @@ const Autos = () => {
                                 </button>
                        </td>
                     </tr>
-                ))}
+                ))
+            )}
             </tbody>
         </table>
 

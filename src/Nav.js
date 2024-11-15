@@ -6,23 +6,33 @@ import logo from './styles/pictures/logo.PNG';
 import { Link, useNavigate, useLocation  } from 'react-router-dom';
 Modal.setAppElement('#root'); 
 
-const Nav = ({ children }) => {
+const Nav = () => {
+
     const navigation = [
         { name: 'Home', ruta: "/home" },
-        { name: 'Servicios', ruta: "/servicios" },
-        { name: 'Inventario', ruta: "/inventario" },
-        { name: 'Repuestos', ruta: "/repuestos" },
-        { name: 'Empleados', ruta: "/agregar-usuario" },
-        { name: 'Autos', ruta: "/autos" },
-        { name: 'Clientes', ruta: "/clientes" },
+        { name: 'Citas', ruta: "/citas", rol: ['Administrador','Mecanico'] },
+        { name: 'Servicios', ruta: "/servicios", rol: ['Administrador','Mecanico'] },
+        { name: 'Inventario', ruta: "/inventario", rol: ['Administrador']},
+        { name: 'Repuestos', ruta: "/repuestos", rol: ['Administrador', 'Mecanico']},
+        { name: 'Empleados', ruta: "/agregar-usuario", rol: ['Administrador'] },
+        { name: 'Autos', ruta: "/autos", rol: ['Administrador','Mecanico'] },
+        { name: 'Clientes', ruta: "/clientes", rol: ['Administrador','Mecanico']  },
     ];
 
+    const role = localStorage.getItem('role') || '';
+    console.log(localStorage.getItem('role'))
+
+    const filteredNavigation = navigation.filter(
+        (item) => !item.rol || item.rol.includes(role)
+    );
+    
+
     const solutions = [
-        { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-        { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
-        { name: 'Security', description: "Your customers' data will be safe and secure", href: '#', icon: FingerPrintIcon },
-        { name: 'Integrations', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-        { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
+        { name: 'Agregar Cita', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
+        { name: 'Reagendar cita', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
+        { name: 'Cancelar cita', description: "Your customers' data will be safe and secure", href: '#', icon: FingerPrintIcon },
+        { name: 'Ver todas las citas', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
+        { name: 'Generar factura', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
       ]
       const callsToAction = [
         { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
@@ -63,7 +73,7 @@ const Nav = ({ children }) => {
                                     </div>
                                     <div className="hidden sm:block sm:ml-6">
                                         <div className="flex space-x-4">
-                                            {navigation.map((item) => (
+                                            {filteredNavigation.map((item) => (
                                                 <button
                                                     key={item.name}
                                                     onClick={() => navigate(item.ruta)}
@@ -78,8 +88,8 @@ const Nav = ({ children }) => {
                                     </div>
                                     <Popover className="relative">
       <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-        <span>Solutions</span>
-        <ChevronDownIcon aria-hidden="true" className="h-5 w-5" />
+        <span  className='flex items-center justify-start content-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+         >Citas  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
       </PopoverButton>
 
       <PopoverPanel
@@ -183,7 +193,6 @@ const Nav = ({ children }) => {
                 )}
             </Disclosure>
             )}
-            <main className="pt-16">{children}</main>
 
         </div>
     );

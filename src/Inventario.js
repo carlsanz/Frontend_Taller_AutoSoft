@@ -18,9 +18,7 @@ const Inventario = ({ rolUsuario }) => {
       const [inventarioData, setInventarioData] = useState({
           Id_inventario: '',
           Fecha_ingreso: '',
-          Cantidad_disponible: '',
-          Fecha_inicio: '',
-          Fecha_fin: ''
+          Cantidad_disponible: ''
       });
   
       useEffect(() => {
@@ -91,9 +89,7 @@ const Inventario = ({ rolUsuario }) => {
           setInventarioData({
               Id_inventario: item.Id_inventario,
               Fecha_ingreso: item.Fecha_ingreso,
-              Cantidad_disponible: item.Cantidad_disponible,
-              Fecha_inicio: item.Fecha_inicio,
-              Fecha_fin: item.Fecha_fin
+              Cantidad_disponible: item.Cantidad_disponible
           });
           setRepuestoSeleccionado(item.Id_repuesto);
           setMostrarFormulario(true);
@@ -116,9 +112,7 @@ const Inventario = ({ rolUsuario }) => {
           setInventarioData({
               Id_inventario: '',
               Fecha_ingreso: '',
-              Cantidad_disponible: '',
-              Fecha_inicio: '',
-              Fecha_fin: ''
+              Cantidad_disponible: ''
           });
           setRepuestoSeleccionado('');
           setEditMode(false);
@@ -133,7 +127,7 @@ const Inventario = ({ rolUsuario }) => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute  p-32 pb-0 flex flex-col h-screen justify-center" >
 
 
       <div className="flex h-auto justify-center min-w-full">
@@ -171,8 +165,6 @@ const Inventario = ({ rolUsuario }) => {
                         <th className="text-center text-white m-12 p-2">Precio</th>
                         <th className="text-center text-white m-12 p-2">Cantidad</th>
                         <th className="text-center text-white m-12 p-2">Fecha Ingreso</th>
-                        <th className="text-center text-white m-12 p-2">Fecha Inicio</th>
-                        <th className="text-center text-white m-12 p-2">Fecha Fin</th>
                         {rolUsuario === "Administrador" && <th className="text-center text-white m-12 p-2"> Acciones</th>}
                     </tr>
                 </thead>
@@ -187,8 +179,6 @@ const Inventario = ({ rolUsuario }) => {
                                 <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.precio}</td>
                                 <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Cantidad_disponible}</td>
                                 <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Fecha_ingreso || "Fecha inválida"}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Fecha_inicio || "Fecha inválida"}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Fecha_fin || "Fecha inválida"}</td>
                                 
                                 {/* Mostrar botones de editar y eliminar solo para Administrador */}
                                 {rolUsuario === "Administrador"  && (
@@ -246,28 +236,7 @@ const Inventario = ({ rolUsuario }) => {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="col-md-4">
-                            <label>Fecha Inicio</label>
-                            <input
-                                type="date"
-                                className="form-control"
-                                name="Fecha_inicio"
-                                value={inventarioData.Fecha_inicio}
-                                onChange={handleChange}
-                                min={inventarioData.Fecha_ingreso}
-                            />
-                        </div>
-                        <div className="col-md-4">
-                            <label>Fecha Fin</label>
-                            <input
-                                type="date"
-                                className="form-control"
-                                name="Fecha_fin"
-                                value={inventarioData.Fecha_fin}
-                                onChange={handleChange}
-                                min={inventarioData.Fecha_inicio}
-                            />
-                        </div>
+                        
                         <div className="col-md-4">
                             <label>Cantidad Disponible</label>
                             <input

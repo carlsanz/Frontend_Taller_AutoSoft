@@ -11,14 +11,17 @@ import Autos from './Autos';
 import Repuestos from './Repuestos';
 import Inventario from './Inventario';
 import Nav from './Nav';
+import Citas from './Citas';
+
+
 
 function App() {
     const role = localStorage.getItem('role');
 
     return (
-        // Envolvemos el Layout y las rutas en Router
+       
         <Router>
-            <Nav>
+                <Nav />
                 <Routes>
                     <Route path="/" element={<LoginForm />} />
                     <Route path="/home" element={<Home />} />
@@ -29,8 +32,8 @@ function App() {
                     <Route path="/autos" element={<Autos />} />
                     <Route path="/repuestos" element={<Repuestos />} />
                     <Route path="/inventario" element={<Inventario rolUsuario={role} />} />
+                    <Route path="/citas" element={<Citas />} />
                 </Routes>
-            </Nav>
         </Router>
     );
 }

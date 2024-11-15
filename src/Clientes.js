@@ -147,7 +147,7 @@ useEffect(() => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="absolute  p-32 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute  p-32 bg-red-300 flex flex-col h-screen justify-center" >
       <div className="flex h-auto justify-center min-w-full">
       <input
                 className="w-3/5 my-5 rounded-md border-0 py-1.5  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-950 sm:text-sm/6"
@@ -160,7 +160,7 @@ useEffect(() => {
             <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
             </button>
             <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd} disabled={role !== 'Administrador' && !cliente}>
-            <PlusIcon aria-hidden="true" className="h-6 w-6" />
+            <PlusIcon className="h-6 w-6" />
             </button>    
      </div>
      <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">

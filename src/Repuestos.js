@@ -153,7 +153,7 @@ const Repuestos = () => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
 
 
       <div className="flex h-auto justify-center min-w-full">
@@ -166,11 +166,11 @@ const Repuestos = () => {
                 />
                 <button type="button"
                  className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"onClick={handleSearch}>
-                    <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
+                    <MagnifyingGlassIcon  className="h-6 w-6" />
                 </button>
                 <button  type="button"
               className=" w-11 h-11 my-5 mx-2 flex items-center justify-center  rounded-md bg-yellow-500  p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd}>
-                <PlusIcon aria-hidden="true" className="h-6 w-6" />
+                <PlusIcon className="h-6 w-6" />
                 </button>
       </div>
       <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">

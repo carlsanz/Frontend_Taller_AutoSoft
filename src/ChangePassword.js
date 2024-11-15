@@ -28,12 +28,8 @@ const ChangePassword = () => {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${taller3})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
+    style={{  width: '100vw', overflowX: 'visible',  backgroundSize: 'cover', backgroundPosition: ' top', backgroundImage: `url(${taller3})` }}
+    className="relative min-h-full flex items-center justify-center"
     >
       <div className="bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto my-10"
            style={{ backgroundColor: '#1F1F1F', opacity: 0.9 }}>
