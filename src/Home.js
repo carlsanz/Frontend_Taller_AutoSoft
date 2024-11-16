@@ -15,6 +15,8 @@ const Home = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [estadosCitas, setEstadosCitas] = useState([]);
+    const [placa, setPlaca] = useState("");  // Estado para almacenar el valor del input de placa
     const [formData, setFormData] = useState({
         Id_cliente: '',
         Id_empleados: '',
@@ -28,7 +30,71 @@ const Home = () => {
         
     }, []);
 
+    useEffect(() => {
+      const idEmpleado = localStorage.getItem('idEmpleados'); // Obtener el valor desde localStorage
+      if (idEmpleado) {
+          setFormData(prevData => ({
+              ...prevData,
+              Id_empleados: idEmpleado // Asignar el Id_empleado a formData
+          }));
+      }
+  }, []); // Solo se ejecuta una vez cuando el componente se monta
 
+
+    useEffect(() => {
+      const obtenerEstadosCitas = async () => {
+        try {
+          const response = await axios.get('http://localhost:5000/citas/estados');
+          setEstadosCitas(response.data); // Almacenar los estados de citas en el estado
+        } catch (error) {
+          console.error('Error al obtener estados de citas:', error);
+        }
+      };
+      obtenerEstadosCitas();
+    }, []);
+
+   
+
+
+    
+    let searchTimeout = null; // Temporizador global para evitar múltiples solicitudes innecesarias
+
+    const handleAutoSearch = (value) => {
+      clearTimeout(searchTimeout); // Cancela cualquier temporizador previo
+    
+      if (value.length >= 4) { // Solo busca si hay al menos 4 caracteres
+        searchTimeout = setTimeout(() => {
+          // Endpoint del backend para buscar autos por placa
+          fetch(`http://localhost:5000/citas/placa/${value}`)
+            .then((response) => {
+              if (!response.ok) throw new Error("Automóvil no encontrado"); // Si no encuentra el auto, lanza un error
+              return response.json();
+            })
+            .then((data) => {
+              if (data) {
+                console.log("Automóvil encontrado:", data);
+    
+                // Solo actualiza el estado internamente (sin modificar el valor del input)
+                setFormData((prevData) => ({
+                  ...prevData,
+                  Id_auto: data.Id_auto, // Guardamos el ID del auto internamente
+                  Id_cliente: data.Id_cliente, // Guardamos el ID del cliente internamente
+                }));
+    
+                // Alerta de éxito al encontrar el automóvil y cliente
+                alert(`Auto encontrado: ID Auto = ${data.Id_auto}, ID Cliente = ${data.Id_cliente}`);
+              }
+            })
+            .catch((error) => {
+              console.error("Error al buscar el automóvil:", error.message);
+              // Solo muestra la alerta si realmente no se encuentra el automóvil
+              if (error.message !== "Automóvil no encontrado") {
+                alert("Hubo un error al realizar la búsqueda.");
+              }
+            });
+        }, 500); // Espera 500ms después de que el usuario deje de escribir
+      }
+    };
 
  
 
@@ -41,6 +107,9 @@ const Home = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        console.log('Datos enviados al backend:', formData);
+
         try {
             const method = isEditMode ? 'PUT' : 'POST';
             const url = isEditMode 
@@ -140,23 +209,86 @@ const Home = () => {
           </button>
         </div>
 
-        <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} contentLabel="Formulario de Cita">
-                <form className="flex flex-col justify-around text-center w-full h-full " onSubmit={handleSubmit}>
-                <h2>{isEditMode ? 'Editar Cita' : 'Agregar Cita'}</h2>
-                <div style={{height:"30rem"}} className="flex flex-col justify-between p-6 pt-0 ">
-                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_cliente" value={formData.Id_cliente} onChange={handleInputChange} placeholder="ID Cliente" required />
-                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_empleados" value={formData.Id_empleados} onChange={handleInputChange} placeholder="ID Empleado" required />
-                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_auto" value={formData.Id_auto} onChange={handleInputChange} placeholder="ID Auto" required />
-                    <input className="h-12 block font-medium my-3 text-gray-900" name="Fecha_ingreso" value={formData.Fecha_ingreso} onChange={handleInputChange} type="date" required />
-                    <textarea style={{height:"6rem"}} className="h-80 block font-medium my-3 text-gray-900" name="Descripcion" value={formData.Descripcion} onChange={handleInputChange} placeholder="Descripción" required />
-                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_estado" value={formData.Id_estado} onChange={handleInputChange} placeholder="ID Estado" required />
-                    <div className=" flex content-end justify-around items-center  w-full h-15">
-                    <button type="submit" className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >{isEditMode ? 'Actualizar' : 'Agregar'}</button>
-                    <button type="button" className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                    </div>
-                    </div>
-                </form>
-            </Modal>
+        <Modal
+  style={{
+    content: { backgroundColor: "white" },
+    overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },
+  }}
+  className="h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"
+  isOpen={isModalOpen}
+  onRequestClose={() => setIsModalOpen(false)}
+  contentLabel="Formulario de Cita"
+>
+  <form className="flex flex-col justify-around text-center w-full h-full" onSubmit={handleSubmit}>
+    <h2>{isEditMode ? "Editar Cita" : "Agregar Cita"}</h2>
+    <div style={{ height: "30rem" }} className="flex flex-col justify-between p-6 pt-0">
+
+    <input
+  className="h-12 block font-medium my-3 text-gray-900"
+  name="placa"  // Nombre cambiado a "placa" para evitar confusión
+  value={placa}  // Usa el estado 'placa' para controlar el valor del input
+  onChange={(e) => {
+    setPlaca(e.target.value);  // Actualiza el valor de la placa
+    handleAutoSearch(e.target.value); // Realiza la búsqueda al escribir
+  }}
+  placeholder="Ingrese la placa del automóvil"
+/>
+
+      <input
+        className="h-12 block font-medium my-3 text-gray-900"
+        name="Fecha_ingreso"
+        value={formData.Fecha_ingreso}
+        onChange={handleInputChange}
+        type="date"
+        required
+      />
+      <textarea
+        style={{ height: "6rem" }}
+        className="h-80 block font-medium my-3 text-gray-900"
+        name="Descripcion"
+        value={formData.Descripcion}
+        onChange={handleInputChange}
+        placeholder="Descripción"
+        required
+      />
+     <div>
+          <label>Estado de Cita</label>
+          <select
+            className="h-12 block font-medium my-3 text-gray-900"
+            name="Id_estado"
+            value={formData.Id_estado}
+            onChange={handleInputChange}
+          >
+            <option value="">Selecciona un estado</option>
+            {estadosCitas.map((estado) => (
+              <option key={estado.Id_estado} value={estado.Id_estado}>
+                {estado.Nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+
+
+      <div className="flex content-end justify-around items-center w-full h-15">
+        <button
+          type="submit"
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          {isEditMode ? "Actualizar" : "Agregar"}
+        </button>
+        <button
+          type="button"
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+          onClick={() => setIsModalOpen(false)}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+</Modal>
+
 
         {/* Sección de citas */}
         <div className="bg-gray-100">

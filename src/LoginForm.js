@@ -26,12 +26,15 @@ const LoginForm = () => {
       console.log('Respuesta del backend:', response.data);
       alert(response.data.message);
 
-      const { role, primerIngreso, nombre } = response.data;
+      const { role, primerIngreso, nombre, idEmpleados  } = response.data;
+
+      console.log('id_empleado desde backend:', idEmpleados);
 
       localStorage.setItem('role', role);
       localStorage.setItem('email', email);
       localStorage.setItem('primerIngreso', JSON.stringify(primerIngreso));
       localStorage.setItem('nombre', nombre);
+      localStorage.setItem('idEmpleados', idEmpleados); // 
 
       navigate('/home');
     } catch (error) {
