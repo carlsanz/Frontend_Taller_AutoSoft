@@ -1,7 +1,92 @@
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import React from 'react';
+import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
+import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import { ChartPieIcon, CursorArrowRaysIcon,FingerPrintIcon,SquaresPlusIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Modal from 'react-modal';
+
+
+Modal.setAppElement('#root');
 
 const Home = () => {
+
+  const role = localStorage.getItem('role') || '';
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [formData, setFormData] = useState({
+        Id_cliente: '',
+        Id_empleados: '',
+        Id_auto: '',
+        Fecha_ingreso: '',
+        Descripcion: '',
+        Id_estado: ''
+    });
+
+    useEffect(() => {
+        
+    }, []);
+
+
+
+ 
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const method = isEditMode ? 'PUT' : 'POST';
+            const url = isEditMode 
+                ? `http://localhost:5000/citas/${formData.Id_cita}`
+                : 'http://localhost:5000/citas';
+
+            await axios({
+                method,
+                url,
+                data: formData
+            });
+
+            alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
+            setIsModalOpen(false);
+            resetForm();
+        } catch (error) {
+            console.error('Error al guardar la cita:', error);
+            alert('Error al guardar la cita');
+        }
+    };
+
+    
+    const resetForm = () => {
+        setFormData({
+            Id_cliente: '',
+            Id_empleados: '',
+            Id_auto: '',
+            Fecha_ingreso: '',
+            Descripcion: '',
+            Id_estado: ''
+        });
+        setIsEditMode(false);
+    };
+
+  const solutions = [
+    { name: 'Agregar Cita', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
+    { name: 'Reagendar cita', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
+    { name: 'Cancelar cita', description: "Your customers' data will be safe and secure", href: '#', icon: FingerPrintIcon },
+    { name: 'Ver todas las citas', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
+    { name: 'Generar factura', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
+  ]
+  const callsToAction = [
+    { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
+    { name: 'Contact sales', href: '#', icon: PhoneIcon },
+  ]
+
   const posts = [
     {
       id: 1,
@@ -24,10 +109,12 @@ const Home = () => {
   ];
 
   return (
-    <div style={{ width: '100vw', overflowX: 'hidden' }} className="flex-col h-screen">
-      <div className="-z-10 bg-gray-100 min-h-full relative max-w-full">
+    <div style={{ width: '100vw', overflowX: 'scroll' }} className="flex-col h-screen">
+      <div className=" bg-gray-100 min-h-full relative max-w-full">
         {/* Imagen de fondo */}
         <img className="relative h-96 w-full m-0 p-0" src="image/vehiculo.jpg" alt="vehículo" />
+        {role === 'Mecanico' && (
+        <div id='Vista_Mecanico'>
 
         {/* Barra de búsqueda */}
         <div className="flex items-center justify-center w-full mt-5">
@@ -40,17 +127,36 @@ const Home = () => {
           />
           <button
             type="button"
+            
             className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
           </button>
           <button
-            type="button"
+           onClick={() => { setIsModalOpen(true); resetForm(); }}
             className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
+
+        <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} contentLabel="Formulario de Cita">
+                <form className="flex flex-col justify-around text-center w-full h-full " onSubmit={handleSubmit}>
+                <h2>{isEditMode ? 'Editar Cita' : 'Agregar Cita'}</h2>
+                <div style={{height:"30rem"}} className="flex flex-col justify-between p-6 pt-0 ">
+                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_cliente" value={formData.Id_cliente} onChange={handleInputChange} placeholder="ID Cliente" required />
+                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_empleados" value={formData.Id_empleados} onChange={handleInputChange} placeholder="ID Empleado" required />
+                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_auto" value={formData.Id_auto} onChange={handleInputChange} placeholder="ID Auto" required />
+                    <input className="h-12 block font-medium my-3 text-gray-900" name="Fecha_ingreso" value={formData.Fecha_ingreso} onChange={handleInputChange} type="date" required />
+                    <textarea style={{height:"6rem"}} className="h-80 block font-medium my-3 text-gray-900" name="Descripcion" value={formData.Descripcion} onChange={handleInputChange} placeholder="Descripción" required />
+                    <input className="h-12 block font-medium my-3 text-gray-900" name="Id_estado" value={formData.Id_estado} onChange={handleInputChange} placeholder="ID Estado" required />
+                    <div className=" flex content-end justify-around items-center  w-full h-15">
+                    <button type="submit" className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >{isEditMode ? 'Actualizar' : 'Agregar'}</button>
+                    <button type="button" className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                    </div>
+                    </div>
+                </form>
+            </Modal>
 
         {/* Sección de citas */}
         <div className="bg-gray-100">
@@ -71,6 +177,50 @@ const Home = () => {
                       >
                         {post.category.title}
                       </a>
+                      <Popover className="relative">
+                                    <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                                        <span  className='flex items-center justify-start content-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+                                        >Citas  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
+                                    </PopoverButton>
+
+                                    <PopoverPanel
+                                        transition
+                                        className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+                                    >
+                                        <div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm/6 shadow-lg ring-1 ring-gray-900/5">
+                                        <div className="p-4">
+                                            {solutions.map((item) => (
+                                            <div key={item.name} className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
+                                                <div className="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                                <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" />
+                                                </div>
+                                                <div>
+                                                <a href={item.href} className="font-semibold text-gray-900">
+                                                    {item.name}
+                                                    <span className="absolute inset-0" />
+                                                </a>
+                                                <p className="mt-1 text-gray-600">{item.description}</p>
+                                                </div>
+                                            </div>
+                                            ))}
+                                        </div>
+                                        <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+                                            {callsToAction.map((item) => (
+                                            <a
+                                                key={item.name}
+                                                href={item.href}
+                                                className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                                            >
+                                                <item.icon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
+                                                {item.name}
+                                            </a>
+                                            ))}
+                                        </div>
+                                        </div>
+                                    </PopoverPanel>
+                                    </Popover>
+                      
+
                     </div>
                     <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
                       <a href={post.href}>{post.title}</a>
@@ -95,6 +245,13 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </div>)}
+
+      {role === 'Administrador' && (
+      <div id='Vista_administrdor'>
+
+      </div>
+      )}
       </div>
     </div>
   );
