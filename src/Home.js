@@ -31,14 +31,16 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-      const idEmpleado = localStorage.getItem('idEmpleados'); // Obtener el valor desde localStorage
+      const idEmpleado = localStorage.getItem('idEmpleados');
       if (idEmpleado) {
           setFormData(prevData => ({
               ...prevData,
-              Id_empleados: idEmpleado // Asignar el Id_empleado a formData
+              Id_empleados: idEmpleado
           }));
       }
-  }, []); // Solo se ejecuta una vez cuando el componente se monta
+  }, []);
+  
+ 
 
 
     useEffect(() => {
