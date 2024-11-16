@@ -30,17 +30,7 @@ const Home = () => {
         
     }, []);
 
-    useEffect(() => {
-      const idEmpleado = localStorage.getItem('idEmpleados');
-      if (idEmpleado) {
-          setFormData(prevData => ({
-              ...prevData,
-              Id_empleados: idEmpleado
-          }));
-      }
-  }, []);
-  
- 
+    
 
 
     useEffect(() => {
@@ -109,8 +99,16 @@ const Home = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const idEmpleado = localStorage.getItem('idEmpleados');
 
-        console.log('Datos enviados al backend:', formData);
+        // Asegurarse de que el formData tenga siempre el id_empleado
+        const finalFormData = {
+            ...formData,
+            Id_empleados: idEmpleado || "", // Si no existe id_empleado, enviar vacío
+        };
+
+        console.log('Datos enviados al backend:', finalFormData); // Verifica los datos
+
 
         try {
             const method = isEditMode ? 'PUT' : 'POST';
@@ -121,7 +119,7 @@ const Home = () => {
             await axios({
                 method,
                 url,
-                data: formData
+                data: finalFormData
             });
 
             alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
