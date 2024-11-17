@@ -159,10 +159,10 @@ const Home = () => {
   const posts = [
     {
       id: 1,
-      title: 'Boost your conversion rate',
+      title: 'Nombre del cliente    Placa del auto',
       href: '#',
       description:
-        'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
+        'Descripcion de la cita',
       date: 'Mar 16, 2020',
       datetime: '2020-03-16',
       category: { title: 'Marketing', href: '#' },
@@ -170,8 +170,7 @@ const Home = () => {
         name: 'Michael Foster',
         role: 'Co-Founder / CTO',
         href: '#',
-        imageUrl:
-          'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        
       },
     },
     // Más publicaciones...
@@ -343,8 +342,7 @@ const Home = () => {
                                                 href={item.href}
                                                 className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
                                             >
-                                                <item.icon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
-                                                {item.name}
+                                                
                                             </a>
                                             ))}
                                         </div>

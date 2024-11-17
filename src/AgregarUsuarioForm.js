@@ -1,8 +1,8 @@
 import { TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import React, {useEffect, useState } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal'; // Asegúrate de tener react-modal instalado
-Modal.setAppElement('#root'); // Cambia '#root' por el ID de tu elemento raíz
+import Modal from 'react-modal'; 
+Modal.setAppElement('#root'); 
 
 
 
@@ -10,6 +10,8 @@ const AgregarUsuario = () => {
     const [empleados, setEmpleados] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [departamentos, setDepartamentos] = useState([]);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [identidadABuscar, setIdentidadABuscar] = useState('');
     const [formData, setFormData] = useState({
         Nombre: '',
         Email: '', // Este es el único campo de correo
@@ -30,9 +32,7 @@ const AgregarUsuario = () => {
         Fecha_contratacion: '',
         Primer_ingreso:''
     });
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [identidadABuscar, setIdentidadABuscar] = useState('');
-
+   
     //obetener los departamentos
     useEffect(()=>{
         const fetchDepartamentos = async ()=> {
@@ -171,7 +171,7 @@ useEffect(() => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute  p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
+        className="-z-10 absolute p-32 pb-0  flex flex-col h-screen justify-center" >
      
       <form className="flex h-auto justify-center min-w-full" onSubmit={handleBuscarUsuario}>
                 <input
@@ -185,7 +185,7 @@ useEffect(() => {
                <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit" >
                  <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
                 </button>
-               <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"  onClick={() => { setIsModalOpen(true); resetForm(); }}>
+               <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"  onClick={() => {resetForm(); setIsModalOpen(true); }}>
                   <PlusIcon aria-hidden="true" className="h-6 w-6" />
                 </button>
         </form>
@@ -229,101 +229,87 @@ useEffect(() => {
             </tbody>
         </table>
 
-            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 p-5 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 top-11 p-5 px-10 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
              <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
              <h2>{isEditMode ? 'Actualizar Usuario' : 'Formulario de Registro'}</h2>
 
-                <div style={{height:"28rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
-                  <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
-                           <h3>Datos personales</h3>
-                            <label>Identidad</label>
-                            <input className='form-input' type="text" name="Identidad" value={formData.Identidad} onChange={handleInputChange} required />
-
-                            <label>Primer Nombre</label>
-                            <input className='form-input'  type="text" name="P_nombre" value={formData.P_nombre} onChange={handleInputChange} required />
-
-                            <label>Segundo Nombre</label>
-                            <input className='form-input'  type="text" name="S_nombre" value={formData.S_nombre} onChange={handleInputChange} />
-
-                            <label>Primer Apellido</label>
-                            <input className='form-input'  type="text" name="P_apellido" value={formData.P_apellido} onChange={handleInputChange} required />
-
-                            <label>Segundo Apellido</label>
-                            <input className='form-input'  type="text" name="S_apellido" value={formData.S_apellido} onChange={handleInputChange} />
+                <div style={{height:"25rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
+                  <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
+                                <input className="h-12 block font-medium my-2 text-gray-900"  type="text" placeholder='Identidad' name="Identidad" value={formData.Identidad} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-2 text-gray-900"   type="text" placeholder='Primer nombre'  name="P_nombre" value={formData.P_nombre} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-2 text-gray-900"   type="text" placeholder='Segundo nombre'  name="S_nombre" value={formData.S_nombre} onChange={handleInputChange} />
+                                <input className="h-12 block font-medium my-2 text-gray-900"   type="text" placeholder='Primer apellido'  name="P_apellido" value={formData.P_apellido} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-2 text-gray-900"   type="text" placeholder='Segundo apellido'  name="S_apellido" value={formData.S_apellido} onChange={handleInputChange} />
+                                <select
+                                className="h-12 block font-medium my-2 text-gray-900"
+                                name="Genero"
+                                value={formData.Genero}
+                                onChange={handleInputChange}
+                            >
+                                <option value="" disabled>Genero</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Masculino">Masculino</option>
+                            </select>
+                        
                   </div>
-
-                <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
-                            <label>Dirección</label>
-                            <input className='form-input'  type="text" name="Direccion" value={formData.Direccion} onChange={handleInputChange} />
-                             
-                            <label>Departamento</label>
-                            <select
-                                className='form-input'
+                <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
+                               
+                                <select
+                                className="h-12 block font-medium my-2 text-gray-900"
                                 name="Id_departamento"
                                 value={formData.Id_departamento}
                                 onChange={handleInputChange}
                                 //disabled={!isEditMode}
                             >
-                            <option value="">--Selecciona un departamento--</option>
+                            <option value="">Seleccione su departamento</option>
                                 {departamentos.map((departamento) => (
                                     <option key={departamento.Id_departamento} value={departamento.Id_departamento}>
                                     {departamento.Nombre}
                                     </option>
                                 ))}
                             </select>
-                            <label>Teléfono</label>
-                            <input className='form-input'  type="text" name="Telefono" value={formData.Telefono} onChange={handleInputChange} />
+                            <textarea  className="h-36 block font-medium my-2 text-gray-900"  type="text" placeholder='Ingrese la direccion del empleado' name="Direccion" value={formData.Direccion} onChange={handleInputChange} />
+                             <input className="h-12 block font-medium my-2 text-gray-900"  type="text" placeholder='Telefono' name="Telefono" value={formData.Telefono} onChange={handleInputChange} />
 
-                            <label>Fecha de Nacimiento</label>
-                            <input 
-                                className='form-input' 
+                            <input            
+                                className="h-12 block font-medium my-2 text-gray-900" 
                                 type="date" 
+                                placeholder='Fecha de nacimiento' 
                                 name="Fecha_nac" 
                                 value={formData.Fecha_nac} 
                                 onChange={handleInputChange} 
                                 required 
                             />
-                            <label>Género</label>
-                            <input className='form-input'  type="text" name="Genero" value={formData.Genero} onChange={handleInputChange} required />
                     </div>
-                    <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
+                    <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
                             <h3>Datos de Usuario</h3>
-                            <label>Nombre</label>
-                            <input className='form-input' type="text" name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
-
-                            <label>Email</label>
-                            <input className='form-input' type="email" name="Email" value={formData.Email} onChange={handleInputChange} required />
-
-                            <label>Contraseña</label>
-                            <input className='form-input' type="password" name="Contraseña" value={formData.Contraseña} onChange={handleInputChange} required />
-
-                            <label>Rol</label>
-                            <input className='form-input' type="text" name="Rol" value={formData.Rol} onChange={handleInputChange} required />
-
+                                    <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Nombre de usuario'  name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
+                                    <input className="h-12 block font-medium my-2 text-gray-900" type="email" placeholder='Correo electrónico'  name="Email" value={formData.Email} onChange={handleInputChange} required />
+                                    <input className="h-12 block font-medium my-2 text-gray-900" type="password" placeholder='Contraseña'  name="Contraseña" value={formData.Contraseña} onChange={handleInputChange} required />
+                                    <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Rol'  name="Rol" value={formData.Rol} onChange={handleInputChange} required />
+                            <div className='flex flex-col justify-center items-center'>
                             <label> Primer inicio de sesión:</label>
                             <input
-                                className='form-input'
+                                className="h-5 w-5 block font-medium my-2 text-gray-900"
                                 type="checkbox"
                                 name='Primer_ingreso'
                                 value={formData.Primer_ingreso}
                                 
                             />
+                            </div>
                     </div>
                 
 
                             {/* Campos de Empleados */}
-                    <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
+                    <div style={{height:"23rem"}} className="flex flex-col justify-start p-5 ">
                             <h3>Datos de Empleado</h3>
-                            <label>Ocupación</label>
-                            <input className='form-input'  type="text" name="Ocupacion" value={formData.Ocupacion} onChange={handleInputChange} required />
+                            <input className="h-12 block font-medium my-2 text-gray-900"  placeholder='Ocupación'  type="text" name="Ocupacion" value={formData.Ocupacion} onChange={handleInputChange} required />
 
-                            <label>Salario</label>
-                            <input className='form-input'  type="number" name="Salario" value={formData.Salario} onChange={handleInputChange} required />
+                            <input className="h-12 block font-medium my-2 text-gray-900"  placeholder='Salario'  type="number" name="Salario" value={formData.Salario} onChange={handleInputChange} required />
 
-                            <label>Fecha de Contratación</label>
-                            <input 
-                                className='form-input' 
+                           <input className="h-12 block font-medium my-2 text-gray-900"           
                                 type="date" 
+                                placeholder='Fecha de contratacion' 
                                 name="Fecha_contratacion" 
                                 value={formData.Fecha_contratacion} 
                                 onChange={handleInputChange} 
@@ -331,7 +317,7 @@ useEffect(() => {
                             />
                         </div>
                         </div>
-                        <div className=" flex content-end justify-around items-center  pt-8 w-full h-20" >
+                        <div className=" flex content-end justify-evenly items-center  pt-8 w-full h-20" >
                             <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">{isEditMode ? 'Actualizar' : 'Guardar'}</button>
                             {isEditMode && (
                                 <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleEliminarUsuario} style={{ backgroundColor: 'red', color: 'white' }}>

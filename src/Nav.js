@@ -12,7 +12,7 @@ const Nav = () => {
         { name: 'Citas', ruta: "/citas", rol: ['Administrador'] },
         { name: 'Servicios', ruta: "/servicios", rol: ['Administrador','Mecanico'] },
         { name: 'Inventario', ruta: "/inventario", rol: ['Administrador']},
-        { name: 'Repuestos', ruta: "/repuestos", rol: ['Administrador', 'Mecanico']},
+        { name: 'Repuestos', ruta: "/repuestos", rol: ['Mecanico']},
         { name: 'Empleados', ruta: "/agregar-usuario", rol: ['Administrador'] },
         { name: 'Autos', ruta: "/autos", rol: ['Administrador','Mecanico'] },
         { name: 'Clientes', ruta: "/clientes", rol: ['Administrador','Mecanico']  },

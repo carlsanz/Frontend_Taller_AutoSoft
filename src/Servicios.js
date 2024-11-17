@@ -206,27 +206,21 @@ const handleSubmit = async (e) => {
                 </tbody>
             </table>
 
-            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 rounded-lg max-w-2xl mx-auto my-8"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 top-11 p-5 rounded-lg max-w-2xl mx-auto my-8"  isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
                        
                         
                         <form className="flex flex-col justify-between text-center w-full h-full " onSubmit={handleSubmit}>
                          <h2>{isEditing ? 'Detalles del servicio' : 'Agregar Nuevo Servicio'}</h2>
-                         <div style={{height:"28rem"}} className="flex flex-col justify-between p-6 ">
+                         <div style={{height:"25rem"}} className="flex flex-col justify-between p-6 ">
                          
-                                <label>Nombre</label>
-                                <input className="h-12 block font-medium my-3 text-gray-900" type="text" name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
-
-                                <label>Precio</label>
-                                <input className="h-12 block font-medium my-3 text-gray-900" type="number" name="Precio" value={formData.Precio} onChange={handleInputChange} required />
-
-                                <label>Tipo de Servicio</label>
-                                <select className="h-12 block font-medium my-3 text-gray-900" name="Tipo_servicio" value={formData.Tipo_servicio} onChange={handleInputChange}>
+                                <input className="h-12 block font-medium my-3 text-gray-900" type="text" name="Nombre" placeholder='Nombre del servicio' value={formData.Nombre} onChange={handleInputChange} required />
+                                <input className="h-12 block font-medium my-3 text-gray-900" type="number" name="Precio" placeholder='Precio' value={formData.Precio} onChange={handleInputChange} required />
+                                <select className="h-12 block font-medium my-3 text-gray-900" name="Tipo_servicio" placeholder='Tipo de servicio' value={formData.Tipo_servicio} onChange={handleInputChange}>
                                     <option value="" disabled>Seleccione el tipo de servicio</option>
                                     <option value="Preventivo">Preventivo</option>
                                     <option value="Correctivo">Correctivo</option>
                                 </select>
-                                <label>Descripción</label>
-                                <textarea className="h-80 block font-medium my-3 text-gray-900" type="text" name="Descripcion" value={formData.Descripcion} onChange={handleInputChange} required />
+                                <textarea className="h-80 block font-medium my-3 text-gray-900" type="text" name="Descripcion" placeholder='Ingrese una descripcion del servicio' value={formData.Descripcion} onChange={handleInputChange} required />
                                 </div>
                                 
                             

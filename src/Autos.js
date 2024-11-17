@@ -247,10 +247,10 @@ const Autos = () => {
             </tbody>
         </table>
 
-        <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 rounded-lg max-w-2xl mx-auto my-8 "   isOpen={modalAbierto} onRequestClose={() => setModalAbierto(false)}>
+        <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 top-11 rounded-lg max-w-2xl mx-auto my-8 "   isOpen={modalAbierto} onRequestClose={() => setModalAbierto(false)}>
         <form className="flex flex-col justify-between text-center w-full h-full ">
         <h2>{isAddingMode ? 'Agregar vehiculo' : 'Detalles del vehiculo'}</h2>
-        <div style={{height:"28rem"}} className="flex flex-col justify-between p-6 ">
+        <div style={{height:"25rem"}} className="flex flex-col justify-between p-6 ">
             <input
             className="h-12 block font-medium my-3 text-gray-900"
                 type="text"
@@ -272,7 +272,7 @@ const Autos = () => {
                 value={autoSeleccionado?.Id_modelo || ''}
                 onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Id_modelo: e.target.value })}
             >
-                <option value="">Seleccione un modelo</option>
+                <option value="">Seleccione el modelo del vehiculo</option>
                 {modelos.map((modelo) => (
                     <option key={modelo.Id_modelo} value={modelo.Id_modelo}>{modelo.Nombre}</option>
                 ))}
@@ -282,7 +282,7 @@ const Autos = () => {
                 value={autoSeleccionado?.Id_tipo || ''}
                 onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Id_tipo: e.target.value })}
             >
-                <option value="">Seleccione un tipo</option>
+                <option value="">Seleccione el tipo de vehiculo</option>
                 {tipos.map((tipo) => (
                     <option key={tipo.Id_tipo} value={tipo.Id_tipo}>{tipo.Nombre}</option>
                 ))}
@@ -292,7 +292,7 @@ const Autos = () => {
                 value={autoSeleccionado?.Id_color || ''}
                 onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Id_color: e.target.value })}
             >
-                <option value="">Seleccione un color</option>
+                <option value="">Seleccione el color del vehiculo</option>
                 {colores.map((color) => (
                     <option key={color.Id_color} value={color.Id_color}>{color.Nombre}</option>
                 ))}

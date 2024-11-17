@@ -159,7 +159,7 @@ useEffect(() => {
             <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleSearch}>
             <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
             </button>
-            <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd} disabled={role !== 'Administrador' && !cliente}>
+            <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd} >
             <PlusIcon className="h-6 w-6" />
             </button>    
      </div>
@@ -201,92 +201,93 @@ useEffect(() => {
     )}
 </tbody>
 </table>
-<Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-40 p-5 rounded-lg max-w-screen-lg mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+<Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" top-11 h-auto w-screen absolute left-40 p-5 rounded-lg max-w-screen-lg mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
 
     <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
     <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
-    <div style={{height:"28rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
-    <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
-            <label>Identidad</label>
-            <input
+    <div style={{height:"26rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
+    <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
+               <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
+                placeholder='Número de DNI'
                 name="Identidad"
                 value={formData.Identidad}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
             />
 
-            <label>Primer Nombre</label>
-            <input
+                   <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
+                placeholder='Primer nombre'
                 name="P_nombre"
                 value={formData.P_nombre}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
 
-            <label>Segundo Nombre</label>
-            <input
+                    <input
+              
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
+                placeholder='Segundo nombre'
                 name="S_nombre"
                 value={formData.S_nombre}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
 
-            <label>Primer Apellido</label>
-            <input
+                     <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
+                placeholder='Primer apellido'
                 name="P_apellido"
                 value={formData.P_apellido}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
 
-            <label>Segundo Apellido</label>
-            <input
+                      <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
                 name="S_apellido"
+                placeholder='Segundo apellido'
                 value={formData.S_apellido}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
             </div>
-            <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
-             <label>Teléfono</label>
-            <input
+            <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
+               <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="text"
+                placeholder='Número telefonico'
                 name="Telefono"
                 value={formData.Telefono}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
-             <label>Correo</label>
-            <input
+             <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="email"
                 name="correo"
+                placeholder='Correo electrónico'
                 value={formData.correo}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
-             <label>Fecha de Nacimiento</label>
+             
             <input
                 className="h-12 block font-medium my-2 text-gray-900"
                 type="date"
+                placeholder='Fecha de nacimiento'
                 name="Fecha_nac"
                 value={formData.Fecha_nac}
                 onChange={handleInputChange}
                 readOnly={!isEditMode && !isAddingMode}
             />
 
-            <label>Género</label>
             <select
                 className="h-12 block font-medium my-2 text-gray-900"
                 name="Genero"
@@ -294,20 +295,20 @@ useEffect(() => {
                 onChange={handleInputChange}
                 disabled={!isEditMode && !isAddingMode}
             >
+                <option value="" disabled>Genero</option>
                 <option value="Femenino">Femenino</option>
                 <option value="Masculino">Masculino</option>
             </select>
             </div>
-            <div style={{height:"28rem"}} className="flex flex-col justify-between p-5 ">
-            <label>Departamento</label>
-            <select
+            <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
+                  <select
                 className="h-12 block font-medium my-2 text-gray-900"
                 name="Id_departamento"
                 value={formData.Id_departamento}
                 onChange={handleInputChange}
                 disabled={!isEditMode && !isAddingMode}
             >
-                <option value="">--Selecciona un departamento--</option>
+                <option value="">Seleccione su departamento de origen</option>
                 {departamentos.map((departamentos) => (
                     <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
                         {departamentos.Nombre}
@@ -315,9 +316,9 @@ useEffect(() => {
                 ))}
             </select>
 
-            <label>Dirección</label>
-            <textarea className="h-80 block font-medium my-3 text-gray-900"
+               <textarea className="h-80 block font-medium my-3 text-gray-900"
                 type="text"
+                placeholder='Ingrese su direccion'
                 name="Direccion"
                 value={formData.Direccion}
                 onChange={handleInputChange}

@@ -206,30 +206,30 @@ const Repuestos = () => {
                 </tbody>
             </table>
 
-            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 rounded-lg max-w-2xl mx-auto my-8" isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 top-11 rounded-lg max-w-2xl mx-auto my-8" isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
                 
                 <form className="flex flex-col justify-between text-center w-full h-full "onSubmit={handleSubmit}>
                     <h2>{isAddingMode ? 'Agregar Repuesto' : 'Detalles del Repuesto'}</h2>
-                    <div style={{height:"28rem"}} className="flex flex-col justify-between p-6 ">
-                    <label>Nombre</label>
-                    <input
+                    <div style={{height:"25rem"}} className="flex flex-col justify-between p-6 ">
+                     <input
                         className="h-12 block font-medium my-3 text-gray-900"
                         type="text"
                         name="Nombre"
+                        placeholder='Nombre del repuesto'
                         value={formData.Nombre}
                         onChange={handleInputChange}
                         readOnly={!isEditMode && !isAddingMode}
                     />
 
-                    <label>Marca</label>
                     <select
                         className="h-12 block font-medium my-3 text-gray-900"
                         name="Id_marca_repuesto"
+                        placeholder='Seleccione la marca'
                         value={formData.Id_marca_repuesto}
                         onChange={handleInputChange}
                         disabled={!isEditMode && !isAddingMode}
                     >
-                        <option value="">--Selecciona una marca--</option>
+                        <option value="" disabled>Seleccione la marca</option>
                         {marcas.map((marca) => (
                             <option key={marca.Id_marca_repuesto} value={marca.Id_marca_repuesto}>
                                 {marca.Nombre}
@@ -237,15 +237,15 @@ const Repuestos = () => {
                         ))}
                     </select>
 
-                    <label>Proveedor</label>
-                    <select
+                        <select
                         className="h-12 block font-medium my-3 text-gray-900"
                         name="Id_proveedor"
+                        placeholder='Seleccione el proveedor'
                         value={formData.Id_proveedor}
                         onChange={handleInputChange}
                         disabled={!isEditMode && !isAddingMode}
-                    >
-                        <option value="">--Selecciona un proveedor--</option>
+                         >
+                        <option value="" disabled>eleccione el proveedor</option>
                         {proveedores.map((proveedor) => (
                             <option key={proveedor.Id_proveedor} value={proveedor.Id_proveedor}>
                                 {proveedor.Nombre}
@@ -253,20 +253,20 @@ const Repuestos = () => {
                         ))}
                     </select>
 
-                    <label>Descripción</label>
-                    <input
+                          <input
                         className="h-12 block font-medium my-3 text-gray-900"
                         type="text"
+                        placeholder='Ingrese una descripción para el repuesto'
                         name="Descripcion"
                         value={formData.Descripcion}
                         onChange={handleInputChange}
                         readOnly={!isEditMode && !isAddingMode}
                     />
 
-                    <label>Precio</label>
-                    <input
+                     <input
                         className="h-12 block font-medium my-3 text-gray-900"
                         type="number"
+                        placeholder='Precio'
                         name="Precio"
                         value={formData.Precio}
                         onChange={handleInputChange}
