@@ -1,7 +1,7 @@
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
-import { ChartPieIcon, CursorArrowRaysIcon,FingerPrintIcon,SquaresPlusIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import {ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
@@ -10,12 +10,12 @@ import Modal from 'react-modal';
 Modal.setAppElement('#root');
 
 const Home = () => {
-
-  const role = localStorage.getItem('role') || '';
+   const role = localStorage.getItem('role') || '';
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [estadosCitas, setEstadosCitas] = useState([]);
+    const [citas, setCitas] = useState([]);
     const [placa, setPlaca] = useState("");  // Estado para almacenar el valor del input de placa
     const [formData, setFormData] = useState({
         Id_cliente: '',
@@ -24,16 +24,39 @@ const Home = () => {
         Fecha_ingreso: '',
         Descripcion: '',
         Id_estado: ''
+        
     });
 
+    const [idCitaSeleccionada, setIdCitaSeleccionada] = useState(null);
+  
+
+
     useEffect(() => {
+      obtenerCitas();
+      obtenerEstadosCitas();
         
     }, []);
 
-    
+    const obtenerCitas = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/citas/obtener'); 
+        setCitas(response.data); // Guardar los datos en el estado
+        console.log("Datos obtenidos:", response);
+        if (response.data.length > 0) {
+          setIdCitaSeleccionada(response.data[0].Id_cita);}
+
+      } catch (error) {
+        console.error("Error al obtener los autos:", error);
+        setCitas([]);
+      } 
+    };
+
+    console.log(idCitaSeleccionada);
 
 
-    useEffect(() => {
+
+
+  
       const obtenerEstadosCitas = async () => {
         try {
           const response = await axios.get('http://localhost:5000/citas/estados');
@@ -42,8 +65,7 @@ const Home = () => {
           console.error('Error al obtener estados de citas:', error);
         }
       };
-      obtenerEstadosCitas();
-    }, []);
+      
 
    
 
@@ -144,37 +166,42 @@ const Home = () => {
         setIsEditMode(false);
     };
 
+      //progressbar 
+  const [currentStep, setCurrentStep] = useState(0);
+  const steps = [
+    { label: "Pendiente" },
+    { label: "En progreso" },
+    { label: "Finalizada" },
+  ];
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  
+
+   //fin progressbar 
+
   const solutions = [
-    { name: 'Agregar Cita', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-    { name: 'Reagendar cita', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
-    { name: 'Cancelar cita', description: "Your customers' data will be safe and secure", href: '#', icon: FingerPrintIcon },
-    { name: 'Ver todas las citas', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-    { name: 'Generar factura', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
+    { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon },
+    { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon },
+    { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href: '#', icon: ArrowPathRoundedSquareIcon },
+    { name: 'Cancelar cita', description: "Anular la cita programada", href: '#', icon: NoSymbolIcon },
+    { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon },
   ]
   const callsToAction = [
     { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
     { name: 'Contact sales', href: '#', icon: PhoneIcon },
   ]
 
-  const posts = [
-    {
-      id: 1,
-      title: 'Nombre del cliente    Placa del auto',
-      href: '#',
-      description:
-        'Descripcion de la cita',
-      date: 'Mar 16, 2020',
-      datetime: '2020-03-16',
-      category: { title: 'Marketing', href: '#' },
-      author: {
-        name: 'Michael Foster',
-        role: 'Co-Founder / CTO',
-        href: '#',
-        
-      },
-    },
-    // Más publicaciones...
-  ];
 
   return (
     <div style={{ width: '100vw', overflowX: 'scroll' }} className="flex-col h-screen">
@@ -295,23 +322,18 @@ const Home = () => {
             <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-16">
               <h2 className="text-2xl font-bold text-gray-900">Citas</h2>
               <div className="mt-10 grid gap-8 border-t border-gray-200 pt-10 sm:grid-cols-2 lg:grid-cols-3">
-                {posts.map((post) => (
+                {citas.map((cita) => (
                   <article
-                    key={post.id}
+                    key={cita.Id_cita}
                     className="border p-5 border-gray-300 shadow-lg rounded-lg flex flex-col items-start justify-between"
                   >
-                    <div className="flex items-center gap-x-4 text-xs text-gray-500">
-                      <time dateTime={post.datetime}>{post.date}</time>
-                      <a
-                        href={post.category.href}
-                        className="rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                      >
-                        {post.category.title}
-                      </a>
+                    <div className="flex justify-between w-full items-center gap-x-4 text-xs text-gray-500">
+                      <time dateTime={cita.datetime}>{cita.Fecha_ingreso}</time>
+                      
                       <Popover className="relative">
                                     <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                        <span  className='flex items-center justify-start content-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
-                                        >Citas  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
+                                        <span  className='flex items-center justify-start content-center text-gray-700  px-3 py-2 rounded-md text-sm font-medium'
+                                        >Opciones  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
                                     </PopoverButton>
 
                                     <PopoverPanel
@@ -326,6 +348,7 @@ const Home = () => {
                                                 <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" />
                                                 </div>
                                                 <div>
+                                                  
                                                 <a href={item.href} className="font-semibold text-gray-900">
                                                     {item.name}
                                                     <span className="absolute inset-0" />
@@ -336,6 +359,10 @@ const Home = () => {
                                             ))}
                                         </div>
                                         <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+                                           <div>
+
+                                            
+                                           </div>
                                             {callsToAction.map((item) => (
                                             <a
                                                 key={item.name}
@@ -349,25 +376,76 @@ const Home = () => {
                                         </div>
                                     </PopoverPanel>
                                     </Popover>
-                      
-
                     </div>
                     <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                      <a href={post.href}>{post.title}</a>
+                      {cita.Nombre}
                     </h3>
-                    <p className="mt-5 line-clamp-3 text-sm text-gray-600">{post.description}</p>
-                    <div className="mt-8 flex items-center gap-x-4">
-                      <img
-                        alt={post.author.name}
-                        src={post.author.imageUrl}
-                        className="h-10 w-10 rounded-full"
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          <a href={post.author.href}>{post.author.name}</a>
-                        </p>
-                        <p className="text-gray-600">{post.author.role}</p>
-                      </div>
+                    
+                    <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                      {cita.placa}
+                    </h3>
+                    <p className="mt-5 line-clamp-3 text-sm text-gray-600">{cita.Descripcion}</p>
+                    <div className="mt-8 w-full flex flex-col items-center gap-x-4">
+                    <div className="h-12 w-full">
+                       <h2>Servicios</h2>
+                    </div>
+                    <div className="h-12 w-full" >
+                       <h2>Repuestos</h2>
+                    </div>
+                  {/*progressbar*/}
+                  <div className="w-full max-w-2xl mx-auto">
+ 
+      <div className="flex items-center justify-between">
+        {steps.map((step, index) => (
+          <React.Fragment key={index}>
+            {/* Step Circle */}
+            <div className="flex flex-col items-center">
+              <div
+                className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
+                  index <= currentStep
+                    ? "bg-amber-500 text-white"
+                    : "bg-gray-300 text-gray-500"
+                }`}
+              >
+                {index + 1}
+              </div>
+              <p className="mt-2 text-sm">{step.label}</p>
+            </div>
+            {/* Connecting Bar */}
+            {index < steps.length - 1 && (
+              <div className="flex-grow h-1 mx-2 relative">
+                <div
+                  className={`absolute left-0 top-0 h-1 transition-all ${
+                    index < currentStep ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
+                  }`}
+                ></div>
+                <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+      {/* Buttons */}
+      <div className="mt-8 flex justify-between">
+        <button
+          onClick={handlePrev}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
+          disabled={currentStep === 0}
+        >
+           <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
+        </button>
+        <button
+          onClick={handleNext}
+          className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
+          disabled={currentStep === steps.length - 1}
+        >
+         <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+
+                  {/*fin progressbar*/}
+
                     </div>
                   </article>
                 ))}

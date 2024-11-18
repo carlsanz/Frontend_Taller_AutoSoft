@@ -9,7 +9,7 @@ const Nav = () => {
 
     const navigation = [
         { name: 'Home', ruta: "/home" },
-        { name: 'Citas', ruta: "/citas", rol: ['Administrador'] },
+        { name: 'Citas', ruta: "/citas", rol: ['Administrador','Mecanico'] },
         { name: 'Servicios', ruta: "/servicios", rol: ['Administrador','Mecanico'] },
         { name: 'Inventario', ruta: "/inventario", rol: ['Administrador']},
         { name: 'Repuestos', ruta: "/repuestos", rol: ['Mecanico']},

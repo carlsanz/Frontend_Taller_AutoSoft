@@ -15,7 +15,7 @@ const Citas = () => {
 
     const fetchCitas = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/citas');
+            const response = await axios.get('http://localhost:5000/citas/obtener');
             setCitas(response.data);
         } catch (error) {
             console.error('Error al obtener citas:', error);
