@@ -12,6 +12,105 @@ Modal.setAppElement('#root');
 const Home = () => {
    const role = localStorage.getItem('role') || '';
 
+ // Estado para el modal de repuestos y los datos de los repuestos
+ const [isRepuestosModalOpen, setIsRepuestosModalOpen] = useState(false);
+ const [repuestosData, setRepuestosData] = useState([
+  { Id_inventario: '', Cantidad_usada: '', Id_cita: '' } // Asegúrate de incluir id_cita al inicio
+]);
+ const [citaData, setCitaData] = useState({ id_cita: '' });
+
+
+
+
+
+
+
+
+
+
+
+
+ const [repuestosDisponibles, setRepuestosDisponibles] = useState([]);
+ // Función para abrir el modal de repuestos y resetear el estado de los repuestos
+ const abrirRepuestosModal = () => {
+  setRepuestosData([{ id_inventario: '', cantidad: '' }]); // Reinicia el estado con un solo repuesto vacío
+  cargarRepuestos(); // Carga los repuestos antes de abrir el modal
+  setIsRepuestosModalOpen(true);
+};
+
+ const cerrarRepuestosModal = () => setIsRepuestosModalOpen(false);
+
+ // Función para manejar los cambios en los campos de los repuestos
+ const handleRepuestoChange = (index, field, value) => {
+  const newRepuestos = [...repuestosData];
+  
+  // Mantenemos el 'id_cita' intacto, usando el valor de 'idCitaSeleccionada'
+  newRepuestos[index] = { 
+    ...newRepuestos[index], 
+    [field]: value,
+    id_cita: idCitaSeleccionada // Asigna 'id_cita' con el valor de 'idCitaSeleccionada'
+  };
+
+  setRepuestosData(newRepuestos); // Actualizar el estado
+};
+ // Función para agregar un nuevo repuesto
+ // Función para manejar el envío de repuestos al backend
+ const agregarRepuesto = () => {
+  
+};
+
+ // Función para enviar los datos (renombrada a handleRepuestosFormSubmit)
+ // Enviar un solo objeto, no un array
+ const handleRepuestosFormSubmit = (e) => {
+  e.preventDefault();
+   // Crear el objeto correctamente
+   const repuestoAEnviar = repuestosData[0] || {}; // Selecciona el primer objeto o un objeto vacío
+
+   console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
+ 
+   fetch('http://localhost:5000/reputilizado/utilizados', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     body: JSON.stringify(repuestoAEnviar), // Envía solo el primer objeto
+   })
+     .then((response) => {
+       if (!response.ok) {
+         throw new Error('Error en la respuesta del servidor');
+       }
+       return response.json();
+     })
+     .then((data) => {
+       console.log('Respuesta del servidor:', data);
+     })
+     .catch((error) => {
+       console.error('Error al enviar los datos:', error);
+     });
+ };
+   
+
+ const cargarRepuestos = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/reputilizado'); // Asegúrate de que la URL sea la correcta
+    setRepuestosDisponibles(response.data); // Asume que el endpoint devuelve un array de objetos
+  } catch (error) {
+    console.error('Error al cargar los repuestos:', error);
+  }
+};
+
+const handleCitaSeleccionada = (id) => {
+  setIdCitaSeleccionada(id);
+  console.log('Cita seleccionada:', id);
+};
+
+
+
+
+
+
+
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [estadosCitas, setEstadosCitas] = useState([]);
@@ -28,8 +127,9 @@ const Home = () => {
     });
 
     const [idCitaSeleccionada, setIdCitaSeleccionada] = useState(null);
-  
 
+
+ 
 
     useEffect(() => {
       obtenerCitas();
@@ -51,7 +151,7 @@ const Home = () => {
       } 
     };
 
-    console.log(idCitaSeleccionada);
+  
 
 
 
@@ -191,8 +291,8 @@ const Home = () => {
    //fin progressbar 
 
   const solutions = [
-    { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon },
-    { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon },
+    { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  },
+    { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
     { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href: '#', icon: ArrowPathRoundedSquareIcon },
     { name: 'Cancelar cita', description: "Anular la cita programada", href: '#', icon: NoSymbolIcon },
     { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon },
@@ -315,6 +415,80 @@ const Home = () => {
   </form>
 </Modal>
 
+   {/* MODAL PARA AGREGAR UN REPUESTO*/}
+   <Modal
+        isOpen={isRepuestosModalOpen}
+        onRequestClose={cerrarRepuestosModal}
+        style={{
+          content: {
+            backgroundColor: 'white',
+            zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+          },
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.80)',
+            zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+          },
+        }}
+        contentLabel="Formulario de Repuestos"
+      >
+        <form onSubmit={handleRepuestosFormSubmit} className="flex flex-col justify-around text-center w-full h-full">
+          <h2>Agregar Repuestos</h2>
+          <div className="flex flex-col justify-between p-6 pt-0">
+            {repuestosData.map((repuesto, index) => (
+              <div key={index} className="flex flex-col my-4">
+                <div className="flex justify-between">
+                    <select
+                      className="h-12 block font-medium my-3 text-gray-900"
+                      value={repuesto.id_inventario}
+                      onChange={(e) => handleRepuestoChange(index, 'id_inventario', e.target.value)}
+                    >
+                      <option value="">Selecciona un repuesto</option>
+                      {repuestosDisponibles.map((repuestoDisponible) => (
+                      <option key={repuestoDisponible.Id_inventario} value={repuestoDisponible.Id_inventario}>
+                      {repuestoDisponible.nombre_repuesto}
+                      </option>
+                        ))}
+                    </select>
+
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Cantidad"
+                    className="h-12 block font-medium my-3 text-gray-900"
+                    value={repuesto.cantidad}
+                    onChange={(e) => handleRepuestoChange(index, 'cantidad', e.target.value)}
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={agregarRepuesto}
+              className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+            >
+              Agregar Otro Repuesto
+            </button>
+
+            <div className="flex justify-between">
+              <button
+                type="submit"
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                Agregar Repuestos
+              </button>
+              <button
+                type="button"
+                onClick={cerrarRepuestosModal}
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </form>
+      </Modal>
+  
+
 
         {/* Sección de citas */}
         <div className="bg-gray-100">
@@ -325,6 +499,7 @@ const Home = () => {
                 {citas.map((cita) => (
                   <article
                     key={cita.Id_cita}
+                    onClick={() => handleCitaSeleccionada(cita.Id_cita)}
                     className="border p-5 border-gray-300 shadow-lg rounded-lg flex flex-col items-start justify-between"
                   >
                     <div className="flex justify-between w-full items-center gap-x-4 text-xs text-gray-500">
@@ -349,9 +524,18 @@ const Home = () => {
                                                 </div>
                                                 <div>
                                                   
-                                                <a href={item.href} className="font-semibold text-gray-900">
+                                                <a href={item.href} className="font-semibold text-gray-900"
+                                                 onClick={(e) => {
+                                                  // Si el ítem tiene una función onClick, se ejecuta
+                                                  if (item.onClick) {
+                                                    e.preventDefault();  // Evitar el comportamiento por defecto de los enlaces
+                                                    item.onClick();       // Ejecutar la función onClick
+                                                  }
+                                                }}>
                                                     {item.name}
-                                                    <span className="absolute inset-0" />
+                                                    <span className="absolute inset-0"
+                                                     />
+                                                    
                                                 </a>
                                                 <p className="mt-1 text-gray-600">{item.description}</p>
                                                 </div>
