@@ -1,10 +1,8 @@
 import { TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal'; 
 Modal.setAppElement('#root'); 
-
-
 
 const AgregarUsuario = () => {
     const [empleados, setEmpleados] = useState([]);
@@ -15,7 +13,6 @@ const AgregarUsuario = () => {
     const [formData, setFormData] = useState({
         Nombre: '',
         Email: '', // Este es el único campo de correo
-        Contraseña: '',
         Rol: '',
         Identidad: '',
         Id_departamento: '',
@@ -134,7 +131,6 @@ const resetForm = () => {
     setFormData({
         Nombre: '',
         Email: '',
-        Contraseña: '',
         Rol: '',
         Primer_ingreso:'',
         Identidad: '',
@@ -190,44 +186,47 @@ useEffect(() => {
                 </button>
         </form>
 
-        <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">
-        <table className="table-row-group justify-center bg-white rounded-none m-0 p-0 mt-0 pt-0 ">
-            <thead>
-                <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
-                    <th className="text-center text-white m-12 p-2">Identidad</th>
-                    <th className="text-center text-white m-12 p-2">Nombre</th>
-                    <th className="text-center text-white m-12 p-2">Apellido</th>
-                    <th className="text-center text-white m-12 p-2">Genero</th>
-                    <th className="text-center text-white m-12 p-2">Direccion</th>
-                    <th className="text-center text-white m-12 p-2"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {empleados.length === 0 ? (
-                    <tr>
-                        <td colSpan="5">No hay empleados registrados</td>
+        <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+        <div className="overflow-y-auto bg-white max-h-96 w-full">
+            <table className="min-w-full w-full divide-y divide-gray-200">
+                <thead>
+                    <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
+                        <th className="text-center text-white m-12 px-4 py-2">Identidad</th>
+                        <th className="text-center text-white m-12 px-4 py-2">Nombre</th>
+                        <th className="text-center text-white m-12 px-4 py-2">Apellido</th>
+                        <th className="text-center text-white m-12 px-4 py-2">Genero</th>
+                        <th className="text-center text-white m-12 px-4 py-2">Direccion</th>
+                        <th className="text-center text-white m-12 px-4 py-2"></th>
                     </tr>
-                ) : (
-                    empleados.map((empleado) => (
-                        <tr key={empleado.Identidad}>
-                            <td className="border-b-2 border-zinc-600  text-left px-14" >{empleado.Identidad}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14" >{empleado.Nombre}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14" >{empleado.Apellido}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14" >{empleado.Genero}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14" >{empleado.Direccion}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">
-                                <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-                                    <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
-                                </button>
-                                <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-                                    <TrashIcon aria-hidden="true" className="h-6 w-6"  />
-                                </button>
-                            </td>
+                </thead>
+                <tbody>
+                    {empleados.length === 0 ? (
+                        <tr>
+                            <td colSpan="5">No hay empleados registrados</td>
                         </tr>
-                    ))
-                )}
-            </tbody>
-        </table>
+                    ) : (
+                        empleados.map((empleado) => (
+                            <tr key={empleado.Identidad}>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Identidad}</td>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Nombre}</td>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py.2" >{empleado.Apellido}</td>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py.2" >{empleado.Genero}</td>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Direccion}</td>
+                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2">
+                                    <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
+                                        <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                    </button>
+                                    <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
+                                        <TrashIcon aria-hidden="true" className="h-6 w-6"  />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+        </div>
 
             <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 top-11 p-5 px-10 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
              <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
@@ -285,7 +284,6 @@ useEffect(() => {
                             <h3>Datos de Usuario</h3>
                                     <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Nombre de usuario'  name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
                                     <input className="h-12 block font-medium my-2 text-gray-900" type="email" placeholder='Correo electrónico'  name="Email" value={formData.Email} onChange={handleInputChange} required />
-                                    <input className="h-12 block font-medium my-2 text-gray-900" type="password" placeholder='Contraseña'  name="Contraseña" value={formData.Contraseña} onChange={handleInputChange} required />
                                     <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Rol'  name="Rol" value={formData.Rol} onChange={handleInputChange} required />
                             <div className='flex flex-col justify-center items-center'>
                             <label> Primer inicio de sesión:</label>
@@ -329,7 +327,6 @@ useEffect(() => {
                 
                 </form>
             </Modal>
-        </div>
         </div>
     
     );

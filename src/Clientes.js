@@ -124,8 +124,6 @@ const handleSearch = async () => {
             console.error(error);
         }
     };
-
-
     
 
 // Obtener clientes al cargar el componente
@@ -147,219 +145,65 @@ useEffect(() => {
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute  p-32 bg-red-300 flex flex-col h-screen justify-center" >
-      <div className="flex h-auto justify-center min-w-full">
-      <input
-                className="w-3/5 my-5 rounded-md border-0 py-1.5  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-950 sm:text-sm/6"
+        className="-z-10 absolute p-32 bg-red-300 flex flex-col h-screen justify-center" >
+        <div className="flex h-auto justify-center min-w-full mt-5">
+            <input
+                className="w-3/5 my-5 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-950 sm:text-sm/6"
                 type="text"
                 placeholder="Buscar por número de identidad"
                 value={identidad}
                 onChange={(e) => setIdentidad(e.target.value)}
             />
-            <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleSearch}>
-            <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
+            <button className="w-11 h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleSearch}>
+                <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
             </button>
-            <button className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd} >
-            <PlusIcon className="h-6 w-6" />
+            <button className="w-11 h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd}>
+                <PlusIcon className="h-6 w-6" />
             </button>    
-     </div>
-     <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">
-     <table className="table-row-group justify-center bg-white  rounded-none m-0 p-0 mt-0 pt-0 ">
-                <thead>
-                    <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
-                        <th className="text-center text-white m-12 p-2">Identidad</th>
-                        <th className="text-center text-white m-12 p-2">Nombre</th>
-                        <th className="text-center text-white m-12 p-2">Apellido</th>
-                        <th className="text-center text-white m-12 p-2">Genero</th>
-                        <th className="text-center text-white m-12 p-2">Direccion</th>
-                        <th className="text-center text-white m-12 p-2"></th>
-                    </tr>
-                </thead>
-                <tbody>
-    {clientes.length === 0 ? (
-        <tr>
-            <td colSpan="5">No hay clientes registrados</td>
-        </tr>
-    ) : (
-        clientes.map((cliente) => (
-            <tr key={cliente.Identidad}>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">{cliente.Identidad}</td>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">{cliente.P_nombre} {cliente.S_nombre}</td>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">{cliente.P_apellido} {cliente.S_apellido}</td>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">{cliente.Genero}</td>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">{cliente.Direccion}</td>
-                <td className="border-b-2 border-zinc-600  text-left px-14 ">
-                                <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(cliente)}>
-                                    <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
-                                </button>
-                                <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(cliente.Identidad)}>
-                                    <TrashIcon aria-hidden="true" className="h-6 w-6"  />
-                                </button>
-                            </td>
-            </tr>
-        ))
-    )}
-</tbody>
-</table>
-<Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" top-11 h-auto w-screen absolute left-40 p-5 rounded-lg max-w-screen-lg mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-
-    <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
-    <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
-    <div style={{height:"26rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
-    <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
-               <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                placeholder='Número de DNI'
-                name="Identidad"
-                value={formData.Identidad}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
-            />
-
-                   <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                placeholder='Primer nombre'
-                name="P_nombre"
-                value={formData.P_nombre}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-
-                    <input
-              
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                placeholder='Segundo nombre'
-                name="S_nombre"
-                value={formData.S_nombre}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-
-                     <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                placeholder='Primer apellido'
-                name="P_apellido"
-                value={formData.P_apellido}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-
-                      <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                name="S_apellido"
-                placeholder='Segundo apellido'
-                value={formData.S_apellido}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-            </div>
-            <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
-               <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="text"
-                placeholder='Número telefonico'
-                name="Telefono"
-                value={formData.Telefono}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-             <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="email"
-                name="correo"
-                placeholder='Correo electrónico'
-                value={formData.correo}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-             
-            <input
-                className="h-12 block font-medium my-2 text-gray-900"
-                type="date"
-                placeholder='Fecha de nacimiento'
-                name="Fecha_nac"
-                value={formData.Fecha_nac}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-
-            <select
-                className="h-12 block font-medium my-2 text-gray-900"
-                name="Genero"
-                value={formData.Genero}
-                onChange={handleInputChange}
-                disabled={!isEditMode && !isAddingMode}
-            >
-                <option value="" disabled>Genero</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Masculino">Masculino</option>
-            </select>
-            </div>
-            <div style={{height:"22rem"}} className="flex flex-col justify-between p-5 ">
-                  <select
-                className="h-12 block font-medium my-2 text-gray-900"
-                name="Id_departamento"
-                value={formData.Id_departamento}
-                onChange={handleInputChange}
-                disabled={!isEditMode && !isAddingMode}
-            >
-                <option value="">Seleccione su departamento de origen</option>
-                {departamentos.map((departamentos) => (
-                    <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
-                        {departamentos.Nombre}
-                    </option>
-                ))}
-            </select>
-
-               <textarea className="h-80 block font-medium my-3 text-gray-900"
-                type="text"
-                placeholder='Ingrese su direccion'
-                name="Direccion"
-                value={formData.Direccion}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-
-             </div>
-             
         </div>
-        <div className=" flex content-end justify-around items-center  w-full h-20" >
-        {isAddingMode ? (
-                            <>
-        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={() => setIsModalOpen(false)}>
-            Cancelar
-        </button>
-        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
-                            </>
+        <div className="w-auto min-h-full flex col-start-1 justify-center text-black mt-5">
+            <div className="overflow-auto max-h-96 w-full bg-white rounded-md shadow-md scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-thumb-rounded">
+                <table className="min-w-full bg-white">
+                    <thead>
+                        <tr className="bg-zinc-600 h-8">
+                            <th className="text-center text-white px-4 py-2">Identidad</th>
+                            <th className="text-center text-white px-4 py-2">Nombre</th>
+                            <th className="text-center text-white px-4 py-2">Apellido</th>
+                            <th className="text-center text-white px-4 py-2">Genero</th>
+                            <th className="text-center text-white px-4 py-2">Direccion</th>
+                            <th className="text-center text-white px-4 py-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {clientes.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="text-center p-4">No hay clientes registrados</td>
+                            </tr>
                         ) : (
-                            <>
-        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
-        {role === 'Administrador' && (
-            <>
-                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleEdit} disabled={!cliente}>
-                    Actualizar
-                </button>
-                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleDelete} disabled={!cliente}>
-                    Eliminar
-                </button>
-                                    </>
-                                )}
-                            </>
+                            clientes.map((cliente) => (
+                                <tr key={cliente.Identidad}>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Identidad}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre} {cliente.S_nombre}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido} {cliente.S_apellido}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Genero}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Direccion}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">
+                                        <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(cliente)}>
+                                            <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                        </button>
+                                        <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(cliente.Identidad)}>
+                                            <TrashIcon aria-hidden="true" className="h-6 w-6" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
                         )}
+                    </tbody>
+                </table>
             </div>
-        
-                
-        </form>
-            </Modal>
-     </div>
-      </div>
-
-    );
+        </div>
+    </div>
+);
 };
 
 export default Clientes;
