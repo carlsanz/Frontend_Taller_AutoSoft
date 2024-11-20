@@ -7,6 +7,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 
 
+
 Modal.setAppElement('#root');
 
 const Home = () => {
@@ -20,13 +21,38 @@ const Home = () => {
  const [citaData, setCitaData] = useState({ id_cita: '' });
 
 
+//funcion para reagendar cita
+const [idCita, setIdCita] = useState(null);
+const abrirFechaModal = (id) => {
+  setIdCita(id); // Almacena el ID de la cita
+  setFecha('');  // Reinicia el estado con una fecha vacía
+  setIsFechaModalOpen(true);
+};
+
+const cerrarFechaModal = () => setIsFechaModalOpen(false);
+
+const [isFechaModalOpen, setIsFechaModalOpen] = useState(false); // Controla el estado del modal
+const [fecha, setFecha] = useState(''); // Almacena la fecha ingresada
 
 
+const actualizarFecha = async (idCita) => {
+  if (!idCita) return;  // Si no hay un ID válido, no hace nada
 
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/citas/actFecha/${idCita}`, // Usa el idCita del estado
+      { Fecha_ingreso: fecha } // Cambié el nombre de la clave a "Fecha_ingreso"
+    );
 
-
-
-
+    console.log('Respuesta del servidor:', response.data);
+    alert('Fecha actualizada con éxito');
+    cerrarFechaModal(); // Cierra el modal
+  } catch (error) {
+    console.error('Error al actualizar la fecha:', error);
+    alert('Hubo un error al actualizar la fecha. Inténtalo de nuevo.');
+  }
+  obtenerCitas();
+};
 
 
 
@@ -137,19 +163,24 @@ const handleCitaSeleccionada = (id) => {
         
     }, []);
 
-    const obtenerCitas = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/citas/obtener'); 
-        setCitas(response.data); // Guardar los datos en el estado
-        console.log("Datos obtenidos:", response);
-        if (response.data.length > 0) {
-          setIdCitaSeleccionada(response.data[0].Id_cita);}
+    const [stepsState, setStepsState] = useState({});  // Estado para los pasos de las citas
 
-      } catch (error) {
-        console.error("Error al obtener los autos:", error);
-        setCitas([]);
-      } 
-    };
+const obtenerCitas = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/citas/obtener'); 
+    setCitas(response.data); // Guardar los datos en el estado
+
+    // Establecer el estado inicial de la barra de progreso de cada cita
+    const citasConEstados = {};
+    response.data.forEach((cita) => {
+      citasConEstados[cita.Id_cita] = cita.Id_estado ? cita.Id_estado - 1 : 0;// Establecer el estado inicial de cada cita
+    });
+    setStepsState(citasConEstados); // Guardar los estados de las citas
+  } catch (error) {
+    console.error("Error al obtener las citas:", error);
+    setCitas([]);
+  }
+};
 
   
 
@@ -251,6 +282,7 @@ const handleCitaSeleccionada = (id) => {
             console.error('Error al guardar la cita:', error);
             alert('Error al guardar la cita');
         }
+        obtenerCitas();
     };
 
     
@@ -267,25 +299,68 @@ const handleCitaSeleccionada = (id) => {
     };
 
       //progressbar 
-  const [currentStep, setCurrentStep] = useState(0);
+
+      
+      
+  //const [currentStep, setCurrentStep] = useState(0);
+ // const [stepsState, setStepsState] = useState({})
   const steps = [
-    { label: "Pendiente" },
+    { label: "Pendiente",},
     { label: "En progreso" },
     { label: "Finalizada" },
   ];
 
-  const handleNext = () => {
+
+  
+  const handleNext = async (id) => {
+    const currentStep = stepsState[id] || 0;
+  
     if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
+      try {
+        const nuevoEstado = currentStep + 1; // Estado siguiente
+        const url = `http://localhost:5000/citas/actEstado/${id}`;
+        await axios.put(url, { Id_estado: nuevoEstado + 1 }); // Ajustar para que coincida con la base de datos (1, 2, 3)
+  
+        // Actualizar estado en stepsState
+        setStepsState((prevState) => ({
+          ...prevState,
+          [id]: nuevoEstado,
+        }));
+  
+        alert("Estado actualizado correctamente.");
+      } catch (error) {
+        console.error("Error al actualizar el estado:", error);
+        alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
+      }
+    } else {
+      alert("La cita ya está finalizada.");
     }
   };
-
-  const handlePrev = () => {
+  
+  const handlePrev = async (id) => {
+    const currentStep = stepsState[id] || 0;
+  
     if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
+      try {
+        const nuevoEstado = currentStep - 1; // Estado anterior
+        const url = `http://localhost:5000/citas/actEstado/${id}`;
+        await axios.put(url, { Id_estado: nuevoEstado + 1 }); // Ajustar para que coincida con la base de datos (1, 2, 3)
+  
+        // Actualizar estado en stepsState
+        setStepsState((prevState) => ({
+          ...prevState,
+          [id]: nuevoEstado,
+        }));
+  
+        alert("Estado actualizado correctamente.");
+      } catch (error) {
+        console.error("Error al actualizar el estado:", error);
+        alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
+      }
+    } else {
+      alert("Ya estás en el primer paso.");
     }
   };
-
   
 
    //fin progressbar 
@@ -293,7 +368,7 @@ const handleCitaSeleccionada = (id) => {
   const solutions = [
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  },
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
-    { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href: '#', icon: ArrowPathRoundedSquareIcon },
+    { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href:'#', icon: ArrowPathRoundedSquareIcon, onClick: () => abrirFechaModal(citas.Id_cita) },
     { name: 'Cancelar cita', description: "Anular la cita programada", href: '#', icon: NoSymbolIcon },
     { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon },
   ]
@@ -489,6 +564,68 @@ const handleCitaSeleccionada = (id) => {
       </Modal>
   
 
+{/*seccion de cambio de fecha */}
+
+{/* MODAL PARA REAGENDAR CITA */}
+<Modal
+  isOpen={isFechaModalOpen}
+  onRequestClose={cerrarFechaModal}
+  style={{
+    content: {
+      backgroundColor: 'white',
+      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.80)',
+      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+    },
+  }}
+  contentLabel="Formulario de Reagendar Cita"
+>
+  <form 
+    onSubmit={(e) => {
+      e.preventDefault();
+      console.log('Fecha seleccionada:', fecha);
+      cerrarFechaModal();
+    }} 
+    className="flex flex-col justify-around text-center w-full h-full"
+  >
+    <h2>Reagendar Cita</h2>
+    <div className="flex flex-col justify-between p-6 pt-0">
+      <div className="my-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Selecciona una nueva fecha
+        </label>
+        <input
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          className="h-12 block font-medium my-3 text-gray-900 w-full border border-gray-300 rounded-md p-2"
+          required
+        />
+      </div>
+      <div className="flex justify-between">
+      <button
+  type="button" // Cambiado de "submit" a "button"
+  onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
+  className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+>
+  Guardar Fecha
+</button>
+        <button
+          type="button"
+          onClick={cerrarFechaModal}
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+</Modal>
+
+
+
 
         {/* Sección de citas */}
         <div className="bg-gray-100">
@@ -586,7 +723,7 @@ const handleCitaSeleccionada = (id) => {
             <div className="flex flex-col items-center">
               <div
                 className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                  index <= currentStep
+                  index <= (stepsState[cita.Id_cita] || 0) 
                     ? "bg-amber-500 text-white"
                     : "bg-gray-300 text-gray-500"
                 }`}
@@ -600,7 +737,7 @@ const handleCitaSeleccionada = (id) => {
               <div className="flex-grow h-1 mx-2 relative">
                 <div
                   className={`absolute left-0 top-0 h-1 transition-all ${
-                    index < currentStep ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
+                    index < (stepsState[cita.Id_cita] || 0) ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
                   }`}
                 ></div>
                 <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
@@ -612,16 +749,16 @@ const handleCitaSeleccionada = (id) => {
       {/* Buttons */}
       <div className="mt-8 flex justify-between">
         <button
-          onClick={handlePrev}
+          onClick={()=> handlePrev(cita.Id_cita)}
           className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
-          disabled={currentStep === 0}
+          disabled={(stepsState[cita.Id_cita] || 0) === 0}
         >
            <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
         </button>
         <button
-          onClick={handleNext}
+          onClick={() => handleNext(cita.Id_cita)}
           className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
-          disabled={currentStep === steps.length - 1}
+          disabled={(stepsState[cita.Id_cita] || 0) === steps.length - 1}
         >
          <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
         </button>
