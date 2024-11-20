@@ -55,6 +55,84 @@ const actualizarFecha = async (idCita) => {
 };
 
 
+ //SERVICIOS CITAS
+ const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
+ const [serviciosData, setServiciosData] = useState([{ id_servicio: '' }]);
+ const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
+// Reemplaza esto con tu lógica para obtener el ID de la cita
+
+ const abrirServiciosModal = () => {
+   obtenerServiciosDisponibles(); // Carga los servicios al abrir el modal
+   setIsServiciosModalOpen(true);
+ };
+
+ const cerrarServiciosModal = () => {
+   setServiciosData([{ id_servicio: '' }]); // Limpia los datos al cerrar
+   setIsServiciosModalOpen(false);
+ };
+
+ const obtenerServiciosDisponibles = () => {
+   fetch('http://localhost:5000/api/servicios/servxcita')
+     .then((response) => response.json())
+     .then((data) => setServiciosDisponibles(data))
+     .catch((error) => console.error('Error al obtener servicios:', error));
+ };
+
+ const handleServicioChange = (index, field, value) => {
+   const newServicios = [...serviciosData];
+   newServicios[index] = { ...newServicios[index], [field]: value };
+   setServiciosData(newServicios);
+ };
+
+ const agregarServicio = () => {
+   setServiciosData([...serviciosData, { id_servicio: '' }]);
+ };
+
+ const handleServiciosFormSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    for (const servicio of serviciosData) {
+      const payload = {
+        id_cita: idCitaSeleccionada,
+        id_servicio: servicio.id_servicio,
+      };
+
+      // Mostrar el JSON enviado en la consola
+      console.log('JSON enviado:', JSON.stringify(payload, null, 2));
+
+      // Enviar cada servicio por separado
+      const response = await fetch('http://localhost:5000/api/servicios/citas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Respuesta del servidor:', data);
+      } else {
+        // Si el servidor responde con un error, mostramos la alerta
+        alert(data.message || 'Hubo un problema al asociar el servicio.');
+      }
+    }
+
+    // Cerrar el modal después de enviar todos los servicios
+    cerrarServiciosModal();
+  } catch (error) {
+    console.error('Error al enviar servicios:', error);
+    alert('Hubo un error en la solicitud.');
+  }
+};
+
+
+
+
+
+
 
  const [repuestosDisponibles, setRepuestosDisponibles] = useState([]);
  // Función para abrir el modal de repuestos y resetear el estado de los repuestos
@@ -366,7 +444,7 @@ const obtenerCitas = async () => {
    //fin progressbar 
 
   const solutions = [
-    { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  },
+    { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
     { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href:'#', icon: ArrowPathRoundedSquareIcon, onClick: () => abrirFechaModal(citas.Id_cita) },
     { name: 'Cancelar cita', description: "Anular la cita programada", href: '#', icon: NoSymbolIcon },
@@ -625,6 +703,137 @@ const obtenerCitas = async () => {
 </Modal>
 
 
+
+{/*seccion de cambio de fecha */}
+
+{/* MODAL PARA REAGENDAR CITA */}
+<Modal
+  isOpen={isFechaModalOpen}
+  onRequestClose={cerrarFechaModal}
+  style={{
+    content: {
+      backgroundColor: 'white',
+      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.80)',
+      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+    },
+  }}
+  contentLabel="Formulario de Reagendar Cita"
+>
+  <form 
+    onSubmit={(e) => {
+      e.preventDefault();
+      console.log('Fecha seleccionada:', fecha);
+      cerrarFechaModal();
+    }} 
+    className="flex flex-col justify-around text-center w-full h-full"
+  >
+    <h2>Reagendar Cita</h2>
+    <div className="flex flex-col justify-between p-6 pt-0">
+      <div className="my-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Selecciona una nueva fecha
+        </label>
+        <input
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          className="h-12 block font-medium my-3 text-gray-900 w-full border border-gray-300 rounded-md p-2"
+          required
+        />
+      </div>
+      <div className="flex justify-between">
+      <button
+  type="button" // Cambiado de "submit" a "button"
+  onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
+  className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+>
+  Guardar Fecha
+</button>
+        <button
+          type="button"
+          onClick={cerrarFechaModal}
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+</Modal>
+
+
+
+
+            {/* MODAL PARA AGREGAR SERVICIOS*/}
+            <Modal
+  isOpen={isServiciosModalOpen}
+  onRequestClose={cerrarServiciosModal}
+  style={{
+    content: {
+      backgroundColor: 'white',
+      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.80)',
+      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+    },
+  }}
+  contentLabel="Formulario de Servicios"
+>
+  <form
+    onSubmit={handleServiciosFormSubmit}
+    className="flex flex-col justify-around text-center w-full h-full"
+  >
+    <h2>Agregar Servicios</h2>
+    <div className="flex flex-col justify-between p-6 pt-0">
+      {serviciosData.map((servicio, index) => (
+        <div key={index} className="flex flex-col my-4">
+          <select
+            className="h-12 block font-medium my-3 text-gray-900"
+            value={servicio.id_servicio || ''}
+            onChange={(e) => handleServicioChange(index, 'id_servicio', e.target.value)}
+          >
+            <option value="">Selecciona un servicio</option>
+            {serviciosDisponibles.map((servicioDisponible) => (
+              <option
+                key={servicioDisponible.Id_servicio}
+                value={servicioDisponible.Id_servicio}
+              >
+                {servicioDisponible.Nombre} - {servicioDisponible.Precio} Lps.
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={agregarServicio}
+        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+      >
+        Agregar Otro Servicio
+      </button>
+
+      <div className="flex justify-between">
+        <button
+          type="submit"
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          Agregar Servicios
+        </button>
+        <button
+          type="button"
+          onClick={cerrarServiciosModal}
+          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+</Modal>
 
 
         {/* Sección de citas */}
