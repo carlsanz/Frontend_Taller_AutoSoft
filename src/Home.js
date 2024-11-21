@@ -17,28 +17,29 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-    // Obtener repuestos al cargar el componente
-    const obtenerRepuestos = async (idCita) => {
-      if (!idCita) {
-        setError('No se encontró el ID de la cita.');
-        setLoading(false);
-        return;
-      }
+  const obtenerRepuestos = async (idCita) => {
+    if (!idCita) {
+      setError('No se encontró el ID de la cita.');
+      setLoading(false);
+      return;
+    }
   
-      try {
-        setLoading(true);
-        const response = await axios.get(`http://localhost:5000/reputilizado/${idCita}`);
-        setRepuestos(response.data); // Almacena los repuestos obtenidos
-      } catch (error) {
-        console.error('Error al obtener los repuestos:', error);
-        setError('Error al obtener los repuestos.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    try {
+      setLoading(true);
+      console.log(`Obteniendo repuestos para la cita con ID: ${idCita}`);
+      const response = await axios.get(`http://localhost:5000/reputilizado/${idCita}`);
+      console.log('Datos recibidos:', response.data); // Verifica los datos
+      setRepuestos(response.data); // Almacena los repuestos
+    } catch (error) {
+      console.error('Error al obtener los repuestos:', error);
+      setError('Error al obtener los repuestos.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
     useEffect(() => {
-      obtenerRepuestos();
+      
         
     }, []);
 
@@ -222,9 +223,19 @@ const actualizarFecha = async (idCita) => {
     }
   };
 
-  const handleCitaSeleccionada = (id) => {
-    setIdCitaSeleccionada(id);
-    console.log('Cita seleccionada:', id);
+  const handleCitaSeleccionada = async (id) => {
+    if (!id) {
+      console.error('ID de cita no válido');
+      return;
+    }
+  
+    try {
+      console.log('Cita seleccionada:', id);
+      setIdCitaSeleccionada(id);
+      await obtenerRepuestos(id); // Llama a la función para obtener los repuestos
+    } catch (error) {
+      console.error('Error al manejar la cita seleccionada:', error);
+    }
   };
 
   const [idCitaSeleccionada, setIdCitaSeleccionada] = useState(null);
@@ -852,7 +863,7 @@ const actualizarFecha = async (idCita) => {
       {/* Boton para mostrar los repuestos*/}
       <button
         onClick={() => {setMostrarRepuestos(!mostrarRepuestos);
-          handleCitaSeleccionada(cita.id_cita)
+          handleCitaSeleccionada(cita.id_cita); // Pasar el ID seleccionado
          }}
         className="mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
       >
@@ -878,7 +889,7 @@ const actualizarFecha = async (idCita) => {
             <tbody>
               {repuestos.map((repuesto) => (
                 <tr key={repuesto.id_cita}>
-                  <td>{repuesto.Nombre}</td>
+                  <td>{repuesto.nombre_repuesto}</td>
                   <td>{repuesto.Cantidad_usada}</td>
                 </tr>
               ))}
