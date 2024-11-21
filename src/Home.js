@@ -1,11 +1,11 @@
-import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
 import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { Button } from 'bootstrap';
+
 
 
 
@@ -14,8 +14,15 @@ Modal.setAppElement('#root');
 const Home = () => {
   const role = localStorage.getItem('role') || '';
   const [repuestos, setRepuestos] = useState([]);
+  const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const IdUsuario = localStorage.getItem('idEmpleados') || '';
+
+
+  const [citaRepuestosSeleccionada, setCitaRepuestosSeleccionada] = useState(null); // Cita seleccionada para repuestos
+const   [citaServiciosSeleccionada, setCitaServiciosSeleccionada] = useState(null); // Cita seleccionada para servicios
+
 
   const obtenerRepuestos = async (idCita) => {
     if (!idCita) {
@@ -23,12 +30,11 @@ const Home = () => {
       setLoading(false);
       return;
     }
-  
     try {
       setLoading(true);
       console.log(`Obteniendo repuestos para la cita con ID: ${idCita}`);
       const response = await axios.get(`http://localhost:5000/reputilizado/${idCita}`);
-      console.log('Datos recibidos:', response.data); // Verifica los datos
+      console.log('Datos recibidos:', response.data);
       setRepuestos(response.data); // Almacena los repuestos
     } catch (error) {
       console.error('Error al obtener los repuestos:', error);
@@ -38,10 +44,51 @@ const Home = () => {
     }
   };
   
-    useEffect(() => {
+  const handleMostrarRepuestos = (idCita) => {
+    if (citaRepuestosSeleccionada === idCita) {
+      setCitaRepuestosSeleccionada(null); // Oculta los repuestos si ya estaban seleccionados
+    } else {
+      setCitaRepuestosSeleccionada(idCita); // Selecciona la nueva cita
+      obtenerRepuestos(idCita);
+    }
+  };
+  
+  // Obtener servicios
+  const obtenerServicios = async (idCita) => {
+    if (!idCita) {
+      setError('No se encontró el ID de la cita.');
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      console.log(`Obteniendo servicios para la cita con ID: ${idCita}`);
+      const response = await axios.get(`http://localhost:5000/api/servicios/citas/disponibles/${idCita}`);
+      console.log('Datos recibidos:', response.data);
+  
+      if (response.data.length === 0) {
+        setError('No hay servicios asociados a esta cita.'); // Opcional, para notificar al usuario
+      } else {
+        setError(null); // Limpia errores anteriores si hay datos
+      }
       
-        
-    }, []);
+      setServicios(response.data); // Almacena los servicios
+    } catch (error) {
+      console.error('Error al obtener los servicios:', error);
+      setError('Error al obtener los servicios.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleMostrarServicios = (idCita) => {
+    if (citaServiciosSeleccionada === idCita) {
+      setCitaServiciosSeleccionada(null); // Oculta los servicios si ya estaban seleccionados
+    } else {
+      setCitaServiciosSeleccionada(idCita); // Selecciona la nueva cita
+      obtenerServicios(idCita);
+    }
+  };
 
 
 
@@ -50,7 +97,7 @@ const Home = () => {
   const [repuestosData, setRepuestosData] = useState([
     { Id_inventario: '', Cantidad_usada: '', Id_cita: '' } // Asegúrate de incluir id_cita al inicio
   ]);
-  const [citaData, setCitaData] = useState({ id_cita: '' });
+
 
   
 
@@ -92,8 +139,6 @@ const actualizarFecha = async (idCita) => {
   const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
   const [serviciosData, setServiciosData] = useState([{ id_servicio: '' }]);
   const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
-  const [mostrarServicios, setMostrarServicios] = useState(false); //Mostrar el div que ocntiene los servicios de cada cita
-  const [mostrarRepuestos, setMostrarRepuestos] = useState(false); //Mostrar el div que ocntiene los servicios de cada cita
 
 
   const abrirServiciosModal = () => {
@@ -119,10 +164,7 @@ const actualizarFecha = async (idCita) => {
     setServiciosData(newServicios);
   };
 
-  const agregarServicio = () => {
-    setServiciosData([...serviciosData, { id_servicio: '' }]);
-  };
-
+ 
   const handleServiciosFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -183,9 +225,6 @@ const actualizarFecha = async (idCita) => {
 };
  // Función para agregar un nuevo repuesto
  // Función para manejar el envío de repuestos al backend
-  const agregarRepuesto = () => {
-  
-};
 
  // Función para enviar los datos (renombrada a handleRepuestosFormSubmit)
  // Enviar un solo objeto, no un array
@@ -228,7 +267,6 @@ const actualizarFecha = async (idCita) => {
       console.error('ID de cita no válido');
       return;
     }
-  
     try {
       console.log('Cita seleccionada:', id);
       setIdCitaSeleccionada(id);
@@ -298,8 +336,7 @@ const actualizarFecha = async (idCita) => {
     if (value.length >= 4) { // Solo busca si hay al menos 4 caracteres
       searchTimeout = setTimeout(() => {
         // Endpoint del backend para buscar autos por placa
-        fetch(`http://localhost:5000/citas/placa/${value}`).
-          then((response) => {
+        fetch(`http://localhost:5000/citas/placa/${value}`).then((response) => {
           if (!response.ok) throw new Error("Automóvil no encontrado"); // Si no encuentra el auto, lanza un error
           return response.json();
         })
@@ -445,6 +482,46 @@ const actualizarFecha = async (idCita) => {
     { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
     { name: 'Contact sales', href: '#', icon: PhoneIcon },
   ]
+
+  {/* Todo para eliminar servicios de la cita */}
+  const eliminarServicio = async (idCita, idServicio) => {
+    console.log(`Intentando eliminar el servicio con ID: ${idServicio} de la cita con ID: ${idCita}`);
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/servicios/eliminar/${idCita}/${idServicio}`);
+      console.log('Respuesta del servidor:', response.data);
+  
+      // Si la eliminación fue exitosa, actualizamos el estado
+      setServicios((prevServicios) =>
+        prevServicios.filter((servicio) => servicio.id_servicio !== idServicio)
+      );
+  
+      alert('Servicio eliminado correctamente.');
+    } catch (error) {
+      console.error('Error al eliminar el servicio:', error.response?.data || error.message);
+      alert('Hubo un error al eliminar el servicio.');
+    }
+  };
+
+  {/* Todo para eliminar repuestos de la cita */}
+  const eliminarRepuesto = async (idCita, idInventario) => {
+    console.log(`Datos enviados al backend: ID Cita - ${idCita}, ID Inventario - ${idInventario}`);
+  
+    try {
+      const response = await axios.delete(`http://localhost:5000/reputilizado/${idCita}/${idInventario}`);
+      console.log('Respuesta del servidor:', response.data);
+  
+      // Actualizar la lista de repuestos
+      setRepuestos((prevRepuestos) =>
+        prevRepuestos.filter((repuesto) => repuesto.id_inventario !== idInventario)
+      );
+  
+      alert('Repuesto eliminado correctamente y cantidad devuelta al inventario.');
+    } catch (error) {
+      console.error('Error al eliminar el repuesto:', error.response?.data || error.message);
+      alert('Hubo un error al eliminar el repuesto.');
+    }
+  };
+  
 
 
   return (
@@ -600,13 +677,7 @@ const actualizarFecha = async (idCita) => {
                   </div>
                 </div>
               ))}
-              <button
-              type="button"
-              onClick={agregarRepuesto}
-              className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                Agregar Otro Repuesto
-              </button>
+              
               <div className="flex justify-between">
                 <button
                 type="submit"
@@ -688,71 +759,64 @@ const actualizarFecha = async (idCita) => {
 
             {/* MODAL PARA AGREGAR SERVICIOS*/}
             <Modal
-  isOpen={isServiciosModalOpen}
-  onRequestClose={cerrarServiciosModal}
-  style={{
-    content: {
-      backgroundColor: 'white',
-      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-    },
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.80)',
-      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-    },
-  }}
-  contentLabel="Formulario de Servicios"
->
-  <form
-    onSubmit={handleServiciosFormSubmit}
-    className="flex flex-col justify-around text-center w-full h-full"
-  >
-    <h2>Agregar Servicios</h2>
-    <div className="flex flex-col justify-between p-6 pt-0">
-      {serviciosData.map((servicio, index) => (
-        <div key={index} className="flex flex-col my-4">
-          <select
-            className="h-12 block font-medium my-3 text-gray-900"
-            value={servicio.id_servicio || ''}
-            onChange={(e) => handleServicioChange(index, 'id_servicio', e.target.value)}
-          >
-            <option value="">Selecciona un servicio</option>
-            {serviciosDisponibles.map((servicioDisponible) => (
-              <option
-                key={servicioDisponible.Id_servicio}
-                value={servicioDisponible.Id_servicio}
+            isOpen={isServiciosModalOpen}
+            onRequestClose={cerrarServiciosModal}
+            style={{
+              content: {
+                backgroundColor: 'white',
+                zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+              },
+              overlay: {
+                backgroundColor: 'rgba(0, 0, 0, 0.80)',
+                zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+              },}}
+                contentLabel="Formulario de Servicios"
+                className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
               >
-                {servicioDisponible.Nombre} - {servicioDisponible.Precio} Lps.
-              </option>
-            ))}
-          </select>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={agregarServicio}
-        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-      >
-        Agregar Otro Servicio
-      </button>
-
-      <div className="flex justify-between">
-        <button
-          type="submit"
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-        >
-          Agregar Servicios
-        </button>
-        <button
-          type="button"
-          onClick={cerrarServiciosModal}
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </form>
-</Modal>
+                <form
+                  onSubmit={handleServiciosFormSubmit}
+                  className="flex flex-col justify-around text-center w-full h-full"
+                >
+                  <h2>Agregar Servicios</h2>
+                  <div className="flex flex-col justify-between p-6 pt-0">
+                    {serviciosData.map((servicio, index) => (
+                      <div key={index} className="flex flex-col my-4">
+                        <select
+                          className="h-12 block font-medium my-3 text-gray-900"
+                          value={servicio.id_servicio || ''}
+                          onChange={(e) => handleServicioChange(index, 'id_servicio', e.target.value)}
+                        >
+                          <option value="">Selecciona un servicio</option>
+                          {serviciosDisponibles.map((servicioDisponible) => (
+                            <option
+                              key={servicioDisponible.Id_servicio}
+                              value={servicioDisponible.Id_servicio}
+                            >
+                              {servicioDisponible.Nombre} - {servicioDisponible.Precio} Lps.
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  
+                    <div className="flex justify-between">
+                      <button
+                        type="submit"
+                        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      >
+                        Agregar Servicios
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cerrarServiciosModal}
+                        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </Modal>
 
 
         {/* Sección de citas */}
@@ -825,146 +889,177 @@ const actualizarFecha = async (idCita) => {
                                         </div>
                                     </PopoverPanel>
                                     </Popover>
+                                        </div>
+                                        <div className="h-auto flex items-center content-centerw-full" >
+                                        <h3 className="mt-3 mr-2  text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                                          Cliente: </h3>
+                                        <h4 className="mt-3 ">{cita.Nombre} {cita.Apellido}  </h4>
+                                        </div>
+                                        <div className="h-auto flex items-center content-centerw-full" >
+                                        <h3 className="mt-3 mr-2 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                                          Placa del auto:
+                                        </h3>
+                                        <h4 className="mt-3 ">{cita.placa}</h4>
+                                        </div>
+                                        <p className="mt-5 line-clamp-3 text-sm text-gray-600">{cita.Descripcion}</p>
+                                        <div className="mt-8 w-full flex flex-col items-center gap-x-4">
+                                        <div className="h-auto w-full"> {/* Mostrar los servicios */}
+                                        <div className="p-2">
+                        {/* Boton para mostrar los serviciod*/}
+                          <button
+                            onClick={() => {handleMostrarServicios(cita.Id_cita);
+                            
+                            }}
+                            className=" mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
+                          >
+                            {citaServiciosSeleccionada === cita.Id_cita ?  (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Servicios
+                          </button>
+                          {citaServiciosSeleccionada === cita.Id_cita && (
+                            <div className="mt-4 overflow-hidden transition-all duration-300 max-h-40">  
+                            <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
+                            {servicios.length > 0 ? (
+                            <table className="table-row-group text-xs">
+                                <thead>
+                                  <tr>
+                                    <th className="text-center m-2 p-2">Servicio</th>
+                                    <th className="text-center m-2 p-2">Precio</th>
+                                    <th className="text-center m-2 p-2"></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {servicios.map((servicio) => (
+                                    <tr key={servicio.id_cliente}>
+                                      <td className="text-center m-2 p-2">{servicio.nombre_servicio}</td>
+                                      <td className="text-center m-2 p-2">{servicio.precio_servicio}</td>
+                                      <td className="text-center m-2 p-2">
+                                      <button className="w-5 h-5 text-xs m-2 flex items-center justify-center rounded-md  p-1 text-black hover:text-red-600 "
+                                      onClick={() => {
+                                        console.log(`Botón presionado para eliminar servicio. ID Cita: ${idCitaSeleccionada}, ID Servicio: ${servicio.id_servicio}`);
+                                        eliminarServicio(idCitaSeleccionada, servicio.id_servicio);
+                                      }} >
+                                            <TrashIcon aria-hidden="true" className="h-6 w-6" />
+                                        </button>
+                                        </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                              ) : (
+                                <p className="text-gray-500">No hay servicios disponibles para esta cita.</p>
+                              )}
+                      
+                            </div>
+                          </div>)}
+
+                          {/* Boton para mostrar los repuestos*/}
+                          <button
+                          onClick={() => handleMostrarRepuestos(cita.Id_cita)}
+                          className="mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
+                          >
+                            {citaRepuestosSeleccionada === cita.Id_cita ?  (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Repuestos
+                          </button>
+
+                          {/* Tabla de repuestos */}
+                          
+                          {citaRepuestosSeleccionada === cita.Id_cita && (
+                            <div className="mt-4 overflow-hidden transition-all duration-300 max-h-40">
+                            <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
+                            <table className="table-row-group text-xs">
+                                <thead>
+                                  <tr>
+                                    <th className="text-center m-2 p-2">Repuesto</th>
+                                    <th className="text-center m-2 p-2">Cantidad</th>
+                                    <th className="text-center m-2 p-2"></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {repuestos.map((repuesto) => (
+                                    <tr key={repuesto.id_cliente}>
+                                      <td className="text-center m-2 p-2">{repuesto.nombre_repuesto}</td>
+                                      <td className="text-center m-2 p-2">{repuesto.Cantidad_usada}</td>
+                                      <td className="text-center m-2 p-2">
+                                      <button className="w-5 h-5 text-xs m-2 flex items-center justify-center rounded-md  p-1 text-black hover:text-red-600 " 
+                                      onClick={() => {
+                                        console.log(`Intentando eliminar repuesto. ID Cita: ${idCitaSeleccionada}, ID Inventario: ${repuesto.id_inventario}`);
+                                        eliminarRepuesto(idCitaSeleccionada, repuesto.id_inventario);
+                                      }}>
+                                            <TrashIcon aria-hidden="true" className="h-6 w-6" />
+                                        </button>
+                                        </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>)}
+
+                        
+                    {/*progressbar*/}
+                    <div className="w-full max-w-2xl mx-auto">
+                    
+                    <div className="flex items-center justify-between">
+                      {steps.map((step, index) => (
+                        <React.Fragment key={index}>
+                          {/* Step Circle */}
+                          <div className="flex flex-col items-center">
+                            <div
+                              className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
+                                index <= (stepsState[cita.Id_cita] || 0) 
+                                  ? "bg-amber-500 text-white"
+                                  : "bg-gray-300 text-gray-500"
+                              }`}
+                            >
+                              {index + 1}
+                            </div>
+                            <p className="mt-2 text-sm">{step.label}</p>
+                          </div>
+                          {/* Connecting Bar */}
+                          {index < steps.length - 1 && (
+                            <div className="flex-grow h-1 mx-2 relative">
+                              <div
+                                className={`absolute left-0 top-0 h-1 transition-all ${
+                                  index < (stepsState[cita.Id_cita] || 0) ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
+                                }`}
+                              ></div>
+                              <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
+                            </div>
+                          )}
+                        </React.Fragment>
+                      ))}
                     </div>
-                    <div className="h-auto flex items-center content-centerw-full" >
-                    <h3 className="mt-3 mr-2  text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                      Cliente: </h3>
-                    <h4 className="mt-3 ">{cita.Nombre} {cita.Apellido}  </h4>
+                    {/* Buttons */}
+                    <div className="mt-8 flex justify-between">
+                      <button
+                        onClick={()=> handlePrev(cita.Id_cita)}
+                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
+                        disabled={(stepsState[cita.Id_cita] || 0) === 0}
+                      >
+                          <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
+                      </button>
+                      <button
+                        onClick={() => handleNext(cita.Id_cita)}
+                        className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
+                        disabled={(stepsState[cita.Id_cita] || 0) === steps.length - 1}
+                      >
+                        <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
+                      </button>
                     </div>
-                    <div className="h-auto flex items-center content-centerw-full" >
-                    <h3 className="mt-3 mr-2 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                      Placa del auto:
-                    </h3>
-                    <h4 className="mt-3 ">{cita.placa}</h4>
                     </div>
-                    <p className="mt-5 line-clamp-3 text-sm text-gray-600">{cita.Descripcion}</p>
-                    <div className="mt-8 w-full flex flex-col items-center gap-x-4">
-                    <div className="h-auto w-full"> {/* Mostrar los servicios */}
-                    <div className="p-2">
-     {/* Boton para mostrar los serviciod*/}
-      <button
-        onClick={() => {setMostrarServicios(!mostrarServicios);
-         
-        }}
-        className=" mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
-      >
-        {mostrarServicios ? (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Servicios
-      </button>
-      <div
-        className={`mt-4 overflow-hidden transition-all duration-300 ${
-          mostrarServicios ? "max-h-40" : "max-h-0"
-        }`}
-      >
-        <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
-   
-        </div>
-      </div>
 
-      {/* Boton para mostrar los repuestos*/}
-      <button
-        onClick={() => {setMostrarRepuestos(!mostrarRepuestos);
-          handleCitaSeleccionada(cita.id_cita); // Pasar el ID seleccionado
-         }}
-        className="mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
-      >
-        {mostrarRepuestos ? (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Repuestos
-      </button>
-
-      {/* Tabla de repuestos */}
-      
-
-      <div
-        className={`mt-4 overflow-hidden transition-all duration-300 ${
-          mostrarRepuestos ? "max-h-40" : "max-h-0"
-        }`}
-      >
-        <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
-        <table>
-            <thead>
-              <tr>
-                <th>Nombre del Repuesto</th>
-                <th>Cantidad Usada</th>
-              </tr>
-            </thead>
-            <tbody>
-              {repuestos.map((repuesto) => (
-                <tr key={repuesto.id_cita}>
-                  <td>{repuesto.nombre_repuesto}</td>
-                  <td>{repuesto.Cantidad_usada}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-     
-{/*progressbar*/}
-<div className="w-full max-w-2xl mx-auto">
- 
- <div className="flex items-center justify-between">
-   {steps.map((step, index) => (
-     <React.Fragment key={index}>
-       {/* Step Circle */}
-       <div className="flex flex-col items-center">
-         <div
-           className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-             index <= (stepsState[cita.Id_cita] || 0) 
-               ? "bg-amber-500 text-white"
-               : "bg-gray-300 text-gray-500"
-           }`}
-         >
-           {index + 1}
-         </div>
-         <p className="mt-2 text-sm">{step.label}</p>
-       </div>
-       {/* Connecting Bar */}
-       {index < steps.length - 1 && (
-         <div className="flex-grow h-1 mx-2 relative">
-           <div
-             className={`absolute left-0 top-0 h-1 transition-all ${
-               index < (stepsState[cita.Id_cita] || 0) ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
-             }`}
-           ></div>
-           <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
-         </div>
-       )}
-     </React.Fragment>
-   ))}
- </div>
- {/* Buttons */}
- <div className="mt-8 flex justify-between">
-   <button
-     onClick={()=> handlePrev(cita.Id_cita)}
-     className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
-     disabled={(stepsState[cita.Id_cita] || 0) === 0}
-   >
-      <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
-   </button>
-   <button
-     onClick={() => handleNext(cita.Id_cita)}
-     className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
-     disabled={(stepsState[cita.Id_cita] || 0) === steps.length - 1}
-   >
-    <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
-   </button>
- </div>
-</div>
-
-             {/*fin progressbar*/}
-    </div>
+                    {/*fin progressbar*/}
+                      </div>
        
                     </div>
                   
 
-                    </div>
-                  </article>
-                ))}
+                  </div>
+            </article>
+            ))}
+              </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>)}
+        </div>)}
 
       {role === 'Administrador' && (
       <div id='Vista_administrdor'>
