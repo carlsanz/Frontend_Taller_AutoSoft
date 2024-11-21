@@ -376,6 +376,31 @@ const actualizarFecha = async (idCita) => {
       setIsEditMode(false);
   };
 
+  const cancelarCita = async () => {
+      if (!idCitaSeleccionada) {
+        alert('Intente de nuevo para confirmar cancelación.');
+        return;
+      }
+    
+      //console.log('ID de cita recibido para cancelar:', idCitaSeleccionada);
+      
+      const url = `http://localhost:5000/citas/${idCitaSeleccionada}`;
+      
+      try {
+        const response = await fetch(url, { method: 'DELETE' });
+    
+        if (response.ok) {
+          alert('Cita cancelada con éxito.');
+          obtenerCitas(); // Actualiza las citas
+        } else {
+          throw new Error('Error al cancelar la cita');
+        }
+      } catch (error) {
+        console.error('Error al cancelar la cita:', error);
+        alert('Hubo un problema al cancelar la cita.');
+      }
+    };
+
       //progressbar 
       
   const steps = [
@@ -438,7 +463,7 @@ const actualizarFecha = async (idCita) => {
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
     { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href:'#', icon: ArrowPathRoundedSquareIcon, onClick: () => abrirFechaModal(citas.Id_cita) },
-    { name: 'Cancelar cita', description: "Anular la cita programada", href: '#', icon: NoSymbolIcon },
+    { name: 'Cancelar cita', description: 'Anular la cita programada', href: '#', icon: NoSymbolIcon, onClick: () => cancelarCita(citas.Id_cita)},
     { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon },
   ]
   const callsToAction = [
