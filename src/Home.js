@@ -1,43 +1,75 @@
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
-import {ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import { Button } from 'bootstrap';
 
 
 
 Modal.setAppElement('#root');
 
 const Home = () => {
-   const role = localStorage.getItem('role') || '';
+  const role = localStorage.getItem('role') || '';
+  const [repuestos, setRepuestos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
- // Estado para el modal de repuestos y los datos de los repuestos
- const [isRepuestosModalOpen, setIsRepuestosModalOpen] = useState(false);
- const [repuestosData, setRepuestosData] = useState([
-  { Id_inventario: '', Cantidad_usada: '', Id_cita: '' } // Asegúrate de incluir id_cita al inicio
-]);
- const [citaData, setCitaData] = useState({ id_cita: '' });
+    // Obtener repuestos al cargar el componente
+    const obtenerRepuestos = async (idCita) => {
+      if (!idCita) {
+        setError('No se encontró el ID de la cita.');
+        setLoading(false);
+        return;
+      }
+  
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:5000/reputilizado/${idCita}`);
+        setRepuestos(response.data); // Almacena los repuestos obtenidos
+      } catch (error) {
+        console.error('Error al obtener los repuestos:', error);
+        setError('Error al obtener los repuestos.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    useEffect(() => {
+      obtenerRepuestos();
+        
+    }, []);
+
+
+
+  // Estado para el modal de repuestos y los datos de los repuestos
+  const [isRepuestosModalOpen, setIsRepuestosModalOpen] = useState(false);
+  const [repuestosData, setRepuestosData] = useState([
+    { Id_inventario: '', Cantidad_usada: '', Id_cita: '' } // Asegúrate de incluir id_cita al inicio
+  ]);
+  const [citaData, setCitaData] = useState({ id_cita: '' });
+
+  
+
 
 
 //funcion para reagendar cita
-const [idCita, setIdCita] = useState(null);
-const abrirFechaModal = (id) => {
-  setIdCita(id); // Almacena el ID de la cita
-  setFecha('');  // Reinicia el estado con una fecha vacía
-  setIsFechaModalOpen(true);
-};
+  const [idCita, setIdCita] = useState(null);
+  const abrirFechaModal = (id) => {
+    setIdCita(id); // Almacena el ID de la cita
+    setFecha('');  // Reinicia el estado con una fecha vacía
+    setIsFechaModalOpen(true);
+  };
 
-const cerrarFechaModal = () => setIsFechaModalOpen(false);
-
+const cerrarFechaModal = () => setIsFechaModalOpen(false); 
 const [isFechaModalOpen, setIsFechaModalOpen] = useState(false); // Controla el estado del modal
 const [fecha, setFecha] = useState(''); // Almacena la fecha ingresada
 
 
 const actualizarFecha = async (idCita) => {
   if (!idCita) return;  // Si no hay un ID válido, no hace nada
-
   try {
     const response = await axios.put(
       `http://localhost:5000/citas/actFecha/${idCita}`, // Usa el idCita del estado
@@ -56,98 +88,89 @@ const actualizarFecha = async (idCita) => {
 
 
  //SERVICIOS CITAS
- const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
- const [serviciosData, setServiciosData] = useState([{ id_servicio: '' }]);
- const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
-// Reemplaza esto con tu lógica para obtener el ID de la cita
+  const [isServiciosModalOpen, setIsServiciosModalOpen] = useState(false);
+  const [serviciosData, setServiciosData] = useState([{ id_servicio: '' }]);
+  const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
+  const [mostrarServicios, setMostrarServicios] = useState(false); //Mostrar el div que ocntiene los servicios de cada cita
+  const [mostrarRepuestos, setMostrarRepuestos] = useState(false); //Mostrar el div que ocntiene los servicios de cada cita
 
- const abrirServiciosModal = () => {
-   obtenerServiciosDisponibles(); // Carga los servicios al abrir el modal
-   setIsServiciosModalOpen(true);
- };
 
- const cerrarServiciosModal = () => {
-   setServiciosData([{ id_servicio: '' }]); // Limpia los datos al cerrar
-   setIsServiciosModalOpen(false);
- };
+  const abrirServiciosModal = () => {
+    obtenerServiciosDisponibles(); // Carga los servicios al abrir el modal
+    setIsServiciosModalOpen(true);
+  };
 
- const obtenerServiciosDisponibles = () => {
-   fetch('http://localhost:5000/api/servicios/servxcita')
-     .then((response) => response.json())
-     .then((data) => setServiciosDisponibles(data))
-     .catch((error) => console.error('Error al obtener servicios:', error));
- };
+  const cerrarServiciosModal = () => {
+    setServiciosData([{ id_servicio: '' }]); // Limpia los datos al cerrar
+    setIsServiciosModalOpen(false);
+  };
 
- const handleServicioChange = (index, field, value) => {
-   const newServicios = [...serviciosData];
-   newServicios[index] = { ...newServicios[index], [field]: value };
-   setServiciosData(newServicios);
- };
+  const obtenerServiciosDisponibles = () => {
+    fetch('http://localhost:5000/api/servicios/servxcita')
+      .then((response) => response.json())
+      .then((data) => setServiciosDisponibles(data))
+      .catch((error) => console.error('Error al obtener servicios:', error));
+  };
 
- const agregarServicio = () => {
-   setServiciosData([...serviciosData, { id_servicio: '' }]);
- };
+  const handleServicioChange = (index, field, value) => {
+    const newServicios = [...serviciosData];
+    newServicios[index] = { ...newServicios[index], [field]: value };
+    setServiciosData(newServicios);
+  };
 
- const handleServiciosFormSubmit = async (e) => {
-  e.preventDefault();
+  const agregarServicio = () => {
+    setServiciosData([...serviciosData, { id_servicio: '' }]);
+  };
 
-  try {
-    for (const servicio of serviciosData) {
-      const payload = {
+  const handleServiciosFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      for (const servicio of serviciosData) {
+        const payload = {
         id_cita: idCitaSeleccionada,
         id_servicio: servicio.id_servicio,
-      };
-
-      // Mostrar el JSON enviado en la consola
-      console.log('JSON enviado:', JSON.stringify(payload, null, 2));
-
-      // Enviar cada servicio por separado
-      const response = await fetch('http://localhost:5000/api/servicios/citas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Respuesta del servidor:', data);
-      } else {
-        // Si el servidor responde con un error, mostramos la alerta
-        alert(data.message || 'Hubo un problema al asociar el servicio.');
-      }
-    }
-
-    // Cerrar el modal después de enviar todos los servicios
-    cerrarServiciosModal();
-  } catch (error) {
-    console.error('Error al enviar servicios:', error);
-    alert('Hubo un error en la solicitud.');
-  }
-};
+        };
+        // Mostrar el JSON enviado en la consola
+        console.log('JSON enviado:', JSON.stringify(payload, null, 2));
+        // Enviar cada servicio por separado
+        const response = await fetch('http://localhost:5000/api/servicios/citas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+          if (response.ok) {
+            console.log('Respuesta del servidor:', data);
+          } else {
+            // Si el servidor responde con un error, mostramos la alerta
+            alert(data.message || 'Hubo un problema al asociar el servicio.');
+          }
+        }
+        cerrarServiciosModal(); // Cerrar el modal después de enviar todos los servicios
+        } catch (error) {
+          console.error('Error al enviar servicios:', error);
+          alert('Hubo un error en la solicitud.');
+        }
+    };
 
 
 
+  const [repuestosDisponibles, setRepuestosDisponibles] = useState([]);
+  // Función para abrir el modal de repuestos y resetear el estado de los repuestos
+  const abrirRepuestosModal = () => {
+    setRepuestosData([{ id_inventario: '', cantidad: '' }]); // Reinicia el estado con un solo repuesto vacío
+    cargarRepuestos(); // Carga los repuestos antes de abrir el modal
+    setIsRepuestosModalOpen(true);
+  };
 
+  const cerrarRepuestosModal = () => setIsRepuestosModalOpen(false);
 
-
-
- const [repuestosDisponibles, setRepuestosDisponibles] = useState([]);
- // Función para abrir el modal de repuestos y resetear el estado de los repuestos
- const abrirRepuestosModal = () => {
-  setRepuestosData([{ id_inventario: '', cantidad: '' }]); // Reinicia el estado con un solo repuesto vacío
-  cargarRepuestos(); // Carga los repuestos antes de abrir el modal
-  setIsRepuestosModalOpen(true);
-};
-
- const cerrarRepuestosModal = () => setIsRepuestosModalOpen(false);
-
- // Función para manejar los cambios en los campos de los repuestos
- const handleRepuestoChange = (index, field, value) => {
-  const newRepuestos = [...repuestosData];
-  
+  // Función para manejar los cambios en los campos de los repuestos
+  const handleRepuestoChange = (index, field, value) => {
+    const newRepuestos = [...repuestosData];
+    
   // Mantenemos el 'id_cita' intacto, usando el valor de 'idCitaSeleccionada'
   newRepuestos[index] = { 
     ...newRepuestos[index], 
@@ -159,237 +182,197 @@ const actualizarFecha = async (idCita) => {
 };
  // Función para agregar un nuevo repuesto
  // Función para manejar el envío de repuestos al backend
- const agregarRepuesto = () => {
+  const agregarRepuesto = () => {
   
 };
 
  // Función para enviar los datos (renombrada a handleRepuestosFormSubmit)
  // Enviar un solo objeto, no un array
- const handleRepuestosFormSubmit = (e) => {
-  e.preventDefault();
-   // Crear el objeto correctamente
-   const repuestoAEnviar = repuestosData[0] || {}; // Selecciona el primer objeto o un objeto vacío
+  const handleRepuestosFormSubmit = (e) => {
+    e.preventDefault();
+    // Crear el objeto correctamente
+    const repuestoAEnviar = repuestosData[0] || {}; // Selecciona el primer objeto o un objeto vacío
+    console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
 
-   console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
- 
-   fetch('http://localhost:5000/reputilizado/utilizados', {
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json',
-     },
-     body: JSON.stringify(repuestoAEnviar), // Envía solo el primer objeto
-   })
-     .then((response) => {
-       if (!response.ok) {
-         throw new Error('Error en la respuesta del servidor');
-       }
-       return response.json();
-     })
-     .then((data) => {
-       console.log('Respuesta del servidor:', data);
-     })
-     .catch((error) => {
-       console.error('Error al enviar los datos:', error);
-     });
- };
-   
-
- const cargarRepuestos = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/reputilizado'); // Asegúrate de que la URL sea la correcta
-    setRepuestosDisponibles(response.data); // Asume que el endpoint devuelve un array de objetos
-  } catch (error) {
-    console.error('Error al cargar los repuestos:', error);
-  }
-};
-
-const handleCitaSeleccionada = (id) => {
-  setIdCitaSeleccionada(id);
-  console.log('Cita seleccionada:', id);
-};
-
-
-
-
-
-
-
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [estadosCitas, setEstadosCitas] = useState([]);
-    const [citas, setCitas] = useState([]);
-    const [placa, setPlaca] = useState("");  // Estado para almacenar el valor del input de placa
-    const [formData, setFormData] = useState({
-        Id_cliente: '',
-        Id_empleados: '',
-        Id_auto: '',
-        Fecha_ingreso: '',
-        Descripcion: '',
-        Id_estado: ''
-        
-    });
-
-    const [idCitaSeleccionada, setIdCitaSeleccionada] = useState(null);
-
-
- 
-
-    useEffect(() => {
-      obtenerCitas();
-      obtenerEstadosCitas();
-        
-    }, []);
-
-    const [stepsState, setStepsState] = useState({});  // Estado para los pasos de las citas
-
-const obtenerCitas = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/citas/obtener'); 
-    setCitas(response.data); // Guardar los datos en el estado
-
-    // Establecer el estado inicial de la barra de progreso de cada cita
-    const citasConEstados = {};
-    response.data.forEach((cita) => {
-      citasConEstados[cita.Id_cita] = cita.Id_estado ? cita.Id_estado - 1 : 0;// Establecer el estado inicial de cada cita
-    });
-    setStepsState(citasConEstados); // Guardar los estados de las citas
-  } catch (error) {
-    console.error("Error al obtener las citas:", error);
-    setCitas([]);
-  }
-};
-
-  
-
-
-
-
-  
-      const obtenerEstadosCitas = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/citas/estados');
-          setEstadosCitas(response.data); // Almacenar los estados de citas en el estado
-        } catch (error) {
-          console.error('Error al obtener estados de citas:', error);
+    fetch('http://localhost:5000/reputilizado/utilizados', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(repuestoAEnviar), // Envía solo el primer objeto
+    }).then((response) => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
         }
-      };
-      
-
-   
-
-
-    
-    let searchTimeout = null; // Temporizador global para evitar múltiples solicitudes innecesarias
-
-    const handleAutoSearch = (value) => {
-      clearTimeout(searchTimeout); // Cancela cualquier temporizador previo
-    
-      if (value.length >= 4) { // Solo busca si hay al menos 4 caracteres
-        searchTimeout = setTimeout(() => {
-          // Endpoint del backend para buscar autos por placa
-          fetch(`http://localhost:5000/citas/placa/${value}`)
-            .then((response) => {
-              if (!response.ok) throw new Error("Automóvil no encontrado"); // Si no encuentra el auto, lanza un error
-              return response.json();
-            })
-            .then((data) => {
-              if (data) {
-                console.log("Automóvil encontrado:", data);
-    
-                // Solo actualiza el estado internamente (sin modificar el valor del input)
-                setFormData((prevData) => ({
-                  ...prevData,
-                  Id_auto: data.Id_auto, // Guardamos el ID del auto internamente
-                  Id_cliente: data.Id_cliente, // Guardamos el ID del cliente internamente
-                }));
-    
-                // Alerta de éxito al encontrar el automóvil y cliente
-                alert(`Auto encontrado: ID Auto = ${data.Id_auto}, ID Cliente = ${data.Id_cliente}`);
-              }
-            })
-            .catch((error) => {
-              console.error("Error al buscar el automóvil:", error.message);
-              // Solo muestra la alerta si realmente no se encuentra el automóvil
-              if (error.message !== "Automóvil no encontrado") {
-                alert("Hubo un error al realizar la búsqueda.");
-              }
-            });
-        }, 500); // Espera 500ms después de que el usuario deje de escribir
-      }
-    };
-
- 
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const idEmpleado = localStorage.getItem('idEmpleados');
-
-        // Asegurarse de que el formData tenga siempre el id_empleado
-        const finalFormData = {
-            ...formData,
-            Id_empleados: idEmpleado || "", // Si no existe id_empleado, enviar vacío
-        };
-
-        console.log('Datos enviados al backend:', finalFormData); // Verifica los datos
-
-
-        try {
-            const method = isEditMode ? 'PUT' : 'POST';
-            const url = isEditMode 
-                ? `http://localhost:5000/citas/${formData.Id_cita}`
-                : 'http://localhost:5000/citas';
-
-            await axios({
-                method,
-                url,
-                data: finalFormData
-            });
-
-            alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
-            setIsModalOpen(false);
-            resetForm();
-        } catch (error) {
-            console.error('Error al guardar la cita:', error);
-            alert('Error al guardar la cita');
-        }
-        obtenerCitas();
-    };
-
-    
-    const resetForm = () => {
-        setFormData({
-            Id_cliente: '',
-            Id_empleados: '',
-            Id_auto: '',
-            Fecha_ingreso: '',
-            Descripcion: '',
-            Id_estado: ''
+        return response.json();
+        }).then((data) => {
+          console.log('Respuesta del servidor:', data);
+        }).catch((error) => {
+          console.error('Error al enviar los datos:', error);
         });
-        setIsEditMode(false);
-    };
+  };
+
+
+  const cargarRepuestos = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/reputilizado'); // Asegúrate de que la URL sea la correcta
+      setRepuestosDisponibles(response.data); // Asume que el endpoint devuelve un array de objetos
+    } catch (error) {
+      console.error('Error al cargar los repuestos:', error);
+    }
+  };
+
+  const handleCitaSeleccionada = (id) => {
+    setIdCitaSeleccionada(id);
+    console.log('Cita seleccionada:', id);
+  };
+
+  const [idCitaSeleccionada, setIdCitaSeleccionada] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [estadosCitas, setEstadosCitas] = useState([]);
+  const [citas, setCitas] = useState([]);
+  const [placa, setPlaca] = useState("");  // Estado para almacenar el valor del input de placa
+  const [formData, setFormData] = useState({
+      Id_cliente: '',
+      Id_empleados: '',
+      Id_auto: '',
+      Fecha_ingreso: '',
+      Descripcion: '',
+      Id_estado: ''
+      
+  });
+
+
+  useEffect(() => {
+    obtenerCitas();
+    obtenerEstadosCitas();
+      
+  }, []);
+
+  const [stepsState, setStepsState] = useState({});  // Estado para los pasos de las citas
+
+  const obtenerCitas = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/citas/obtener'); 
+      setCitas(response.data); // Guardar los datos en el estado
+      // Establecer el estado inicial de la barra de progreso de cada cita
+      const citasConEstados = {};
+      response.data.forEach((cita) => {
+        citasConEstados[cita.Id_cita] = cita.Id_estado ? cita.Id_estado - 1 : 0;// Establecer el estado inicial de cada cita
+      });
+      setStepsState(citasConEstados); // Guardar los estados de las citas
+    } catch (error) {
+      console.error("Error al obtener las citas:", error);
+      setCitas([]);
+    }
+  };
+
+
+
+  const obtenerEstadosCitas = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/citas/estados');
+      setEstadosCitas(response.data); // Almacenar los estados de citas en el estado
+    } catch (error) {
+      console.error('Error al obtener estados de citas:', error);
+    }
+  };
+
+  let searchTimeout = null; // Temporizador global para evitar múltiples solicitudes innecesarias
+
+  const handleAutoSearch = (value) => {
+    clearTimeout(searchTimeout); // Cancela cualquier temporizador previo
+  
+    if (value.length >= 4) { // Solo busca si hay al menos 4 caracteres
+      searchTimeout = setTimeout(() => {
+        // Endpoint del backend para buscar autos por placa
+        fetch(`http://localhost:5000/citas/placa/${value}`).
+          then((response) => {
+          if (!response.ok) throw new Error("Automóvil no encontrado"); // Si no encuentra el auto, lanza un error
+          return response.json();
+        })
+          .then((data) => {
+          if (data) {
+            console.log("Automóvil encontrado:", data);
+            // Solo actualiza el estado internamente (sin modificar el valor del input)
+            setFormData((prevData) => ({
+              ...prevData,
+              Id_auto: data.Id_auto, // Guardamos el ID del auto internamente
+              Id_cliente: data.Id_cliente, // Guardamos el ID del cliente internamente
+            }));
+  
+              // Alerta de éxito al encontrar el automóvil y cliente
+            alert(`Auto encontrado: ID Auto = ${data.Id_auto}, ID Cliente = ${data.Id_cliente}`);
+          }
+        })
+          .catch((error) => {
+            console.error("Error al buscar el automóvil:", error.message);
+            // Solo muestra la alerta si realmente no se encuentra el automóvil
+            if (error.message !== "Automóvil no encontrado") {
+              alert("Hubo un error al realizar la búsqueda.");
+            }
+          });
+      }, 500); // Espera 500ms después de que el usuario deje de escribir
+    }
+  };
+
+
+  const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      const idEmpleado = localStorage.getItem('idEmpleados');
+      // Asegurarse de que el formData tenga siempre el id_empleado
+      const finalFormData = {
+          ...formData,
+          Id_empleados: idEmpleado || "", // Si no existe id_empleado, enviar vacío
+      };
+      console.log('Datos enviados al backend:', finalFormData); // Verifica los datos
+      try {
+          const method = isEditMode ? 'PUT' : 'POST';
+          const url = isEditMode 
+              ? `http://localhost:5000/citas/${formData.Id_cita}`
+              : 'http://localhost:5000/citas';
+          await axios({
+              method,
+              url,
+              data: finalFormData
+          });
+          alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
+          setIsModalOpen(false);
+          resetForm();
+      } catch (error) {
+          console.error('Error al guardar la cita:', error);
+          alert('Error al guardar la cita');
+        }
+    obtenerCitas();
+  };
+
+    
+  const resetForm = () => {
+      setFormData({
+          Id_cliente: '',
+          Id_empleados: '',
+          Id_auto: '',
+          Fecha_ingreso: '',
+          Descripcion: '',
+          Id_estado: ''
+      });
+      setIsEditMode(false);
+  };
 
       //progressbar 
-
       
-      
-  //const [currentStep, setCurrentStep] = useState(0);
- // const [stepsState, setStepsState] = useState({})
   const steps = [
     { label: "Pendiente",},
     { label: "En progreso" },
     { label: "Finalizada" },
   ];
 
-
-  
   const handleNext = async (id) => {
     const currentStep = stepsState[id] || 0;
   
@@ -403,9 +386,8 @@ const obtenerCitas = async () => {
         setStepsState((prevState) => ({
           ...prevState,
           [id]: nuevoEstado,
-        }));
-  
-        alert("Estado actualizado correctamente.");
+      }));
+      alert("Estado actualizado correctamente.");
       } catch (error) {
         console.error("Error al actualizar el estado:", error);
         alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
@@ -423,7 +405,6 @@ const obtenerCitas = async () => {
         const nuevoEstado = currentStep - 1; // Estado anterior
         const url = `http://localhost:5000/citas/actEstado/${id}`;
         await axios.put(url, { Id_estado: nuevoEstado + 1 }); // Ajustar para que coincida con la base de datos (1, 2, 3)
-  
         // Actualizar estado en stepsState
         setStepsState((prevState) => ({
           ...prevState,
@@ -439,10 +420,9 @@ const obtenerCitas = async () => {
       alert("Ya estás en el primer paso.");
     }
   };
-  
-
    //fin progressbar 
 
+  //Opciones de las citas()
   const solutions = [
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
@@ -463,113 +443,109 @@ const obtenerCitas = async () => {
         <img className="relative h-96 w-full m-0 p-0" src="image/vehiculo.jpg" alt="vehículo" />
         {role === 'Mecanico' && (
         <div id='Vista_Mecanico'>
-
+        
         {/* Barra de búsqueda */}
         <div className="flex items-center justify-center w-full mt-5">
           <input
-            id="buscar-home"
-            name="Buscar-cliente"
-            type="text"
-            placeholder="Busca un cliente"
-            className="w-4/5 lg:w-2/3 ml-4 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-950"
+          id="buscar-home"
+          name="Buscar-cliente"
+          type="text"
+          placeholder="Busca un cliente"
+          className="w-4/5 lg:w-2/3 ml-4 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-950"
           />
           <button
-            type="button"
-            
-            className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+          type="button"
+          className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
           </button>
           <button
-           onClick={() => { setIsModalOpen(true); resetForm(); }}
-            className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+          onClick={() => { setIsModalOpen(true); resetForm(); }}
+          className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
 
         <Modal
-  style={{
-    content: { backgroundColor: "white" },
-    overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },
-  }}
-  className="h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"
-  isOpen={isModalOpen}
-  onRequestClose={() => setIsModalOpen(false)}
-  contentLabel="Formulario de Cita"
->
-  <form className="flex flex-col justify-around text-center w-full h-full" onSubmit={handleSubmit}>
-    <h2>{isEditMode ? "Editar Cita" : "Agregar Cita"}</h2>
-    <div style={{ height: "30rem" }} className="flex flex-col justify-between p-6 pt-0">
-
-    <input
-  className="h-12 block font-medium my-3 text-gray-900"
-  name="placa"  // Nombre cambiado a "placa" para evitar confusión
-  value={placa}  // Usa el estado 'placa' para controlar el valor del input
-  onChange={(e) => {
-    setPlaca(e.target.value);  // Actualiza el valor de la placa
-    handleAutoSearch(e.target.value); // Realiza la búsqueda al escribir
-  }}
-  placeholder="Ingrese la placa del automóvil"
-/>
-
-      <input
-        className="h-12 block font-medium my-3 text-gray-900"
-        name="Fecha_ingreso"
-        value={formData.Fecha_ingreso}
-        onChange={handleInputChange}
-        type="date"
-        required
-      />
-      <textarea
-        style={{ height: "6rem" }}
-        className="h-80 block font-medium my-3 text-gray-900"
-        name="Descripcion"
-        value={formData.Descripcion}
-        onChange={handleInputChange}
-        placeholder="Descripción"
-        required
-      />
-     <div>
-          <label>Estado de Cita</label>
-          <select
-            className="h-12 block font-medium my-3 text-gray-900"
-            name="Id_estado"
-            value={formData.Id_estado}
-            onChange={handleInputChange}
-          >
-            <option value="">Selecciona un estado</option>
-            {estadosCitas.map((estado) => (
-              <option key={estado.Id_estado} value={estado.Id_estado}>
-                {estado.Nombre}
-              </option>
-            ))}
-          </select>
-        </div>
-
-
-
-      <div className="flex content-end justify-around items-center w-full h-15">
-        <button
-          type="submit"
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        style={{
+          content: { backgroundColor: "white" },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },
+        }}
+        className="h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Formulario de Cita"
         >
-          {isEditMode ? "Actualizar" : "Agregar"}
-        </button>
-        <button
-          type="button"
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-          onClick={() => setIsModalOpen(false)}
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </form>
-</Modal>
+          <form className="flex flex-col justify-around text-center w-full h-full" onSubmit={handleSubmit}>
+            <h2>{isEditMode ? "Editar Cita" : "Agregar Cita"}</h2>
+            <div style={{ height: "30rem" }} className="flex flex-col justify-between p-6 pt-0">
+                <input
+                className="h-12 block font-medium my-3 text-gray-900"
+                name="placa"  // Nombre cambiado a "placa" para evitar confusión
+                value={placa}  // Usa el estado 'placa' para controlar el valor del input
+                onChange={(e) => {
+                  setPlaca(e.target.value);  // Actualiza el valor de la placa
+                  handleAutoSearch(e.target.value); // Realiza la búsqueda al escribir
+                }}
+                placeholder="Ingrese la placa del automóvil"
+                />
+                <input
+                className="h-12 block font-medium my-3 text-gray-900"
+                name="Fecha_ingreso"
+                value={formData.Fecha_ingreso}
+                onChange={handleInputChange}
+                type="date"
+                required
+                />
+                <textarea
+                style={{ height: "6rem" }}
+                className="h-80 block font-medium my-3 text-gray-900"
+                name="Descripcion"
+                value={formData.Descripcion}
+                onChange={handleInputChange}
+                placeholder="Descripción"
+                required
+                />
+              <div>
+                <label>Estado de Cita</label>
+                <select
+                  className="h-12 block font-medium my-3 text-gray-900"
+                  name="Id_estado"
+                  value={formData.Id_estado}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecciona un estado</option>
+                  {estadosCitas.map((estado) => (
+                    <option key={estado.Id_estado} value={estado.Id_estado}>
+                      {estado.Nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex content-end justify-around items-center w-full h-15">
+                <button
+                type="submit"
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  {isEditMode ? "Actualizar" : "Agregar"}
+                </button>
+                <button
+                type="button"
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                onClick={() => setIsModalOpen(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div> 
+          </form>
+        </Modal>
 
-   {/* MODAL PARA AGREGAR UN REPUESTO*/}
-   <Modal
+
+        {/* Seccion PARA AGREGAR UN REPUESTO*/}
+        {/* MODAL PARA AGREGAR UN REPUESTO*/}
+        <Modal
         isOpen={isRepuestosModalOpen}
         onRequestClose={cerrarRepuestosModal}
         style={{
@@ -583,188 +559,120 @@ const obtenerCitas = async () => {
           },
         }}
         contentLabel="Formulario de Repuestos"
-      >
-        <form onSubmit={handleRepuestosFormSubmit} className="flex flex-col justify-around text-center w-full h-full">
-          <h2>Agregar Repuestos</h2>
-          <div className="flex flex-col justify-between p-6 pt-0">
-            {repuestosData.map((repuesto, index) => (
-              <div key={index} className="flex flex-col my-4">
-                <div className="flex justify-between">
+        >
+          <form onSubmit={handleRepuestosFormSubmit} className="flex flex-col justify-around text-center w-full h-full">
+            <h2>Agregar Repuestos</h2>
+            <div className="flex flex-col justify-between p-6 pt-0">
+              {repuestosData.map((repuesto, index) => (
+                <div key={index} className="flex flex-col my-4">
+                  <div className="flex justify-between">
                     <select
-                      className="h-12 block font-medium my-3 text-gray-900"
-                      value={repuesto.id_inventario}
-                      onChange={(e) => handleRepuestoChange(index, 'id_inventario', e.target.value)}
+                    className="h-12 block font-medium my-3 text-gray-900"
+                    value={repuesto.id_inventario}
+                    onChange={(e) => handleRepuestoChange(index, 'id_inventario', e.target.value)}
                     >
                       <option value="">Selecciona un repuesto</option>
                       {repuestosDisponibles.map((repuestoDisponible) => (
                       <option key={repuestoDisponible.Id_inventario} value={repuestoDisponible.Id_inventario}>
                       {repuestoDisponible.nombre_repuesto}
                       </option>
-                        ))}
+                      ))}
                     </select>
-
-                  <input
+                    <input
                     type="number"
                     min="1"
                     placeholder="Cantidad"
                     className="h-12 block font-medium my-3 text-gray-900"
                     value={repuesto.cantidad}
                     onChange={(e) => handleRepuestoChange(index, 'cantidad', e.target.value)}
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-            <button
+              ))}
+              <button
               type="button"
               onClick={agregarRepuesto}
               className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-            >
-              Agregar Otro Repuesto
-            </button>
-
-            <div className="flex justify-between">
-              <button
+              >
+                Agregar Otro Repuesto
+              </button>
+              <div className="flex justify-between">
+                <button
                 type="submit"
                 className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                Agregar Repuestos
-              </button>
-              <button
+                >
+                  Agregar Repuestos
+                </button>
+                <button
                 type="button"
                 onClick={cerrarRepuestosModal}
                 className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                Cancelar
-              </button>
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-      </Modal>
-  
+          </form>
+        </Modal>
 
-{/*seccion de cambio de fecha */}
-
-{/* MODAL PARA REAGENDAR CITA */}
-<Modal
-  isOpen={isFechaModalOpen}
-  onRequestClose={cerrarFechaModal}
-  style={{
-    content: {
-      backgroundColor: 'white',
-      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-    },
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.80)',
-      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-    },
-  }}
-  contentLabel="Formulario de Reagendar Cita"
->
-  <form 
-    onSubmit={(e) => {
-      e.preventDefault();
-      console.log('Fecha seleccionada:', fecha);
-      cerrarFechaModal();
-    }} 
-    className="flex flex-col justify-around text-center w-full h-full"
-  >
-    <h2>Reagendar Cita</h2>
-    <div className="flex flex-col justify-between p-6 pt-0">
-      <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Selecciona una nueva fecha
-        </label>
-        <input
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="h-12 block font-medium my-3 text-gray-900 w-full border border-gray-300 rounded-md p-2"
-          required
-        />
-      </div>
-      <div className="flex justify-between">
-      <button
-  type="button" // Cambiado de "submit" a "button"
-  onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
-  className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
->
-  Guardar Fecha
-</button>
-        <button
-          type="button"
-          onClick={cerrarFechaModal}
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        {/*seccion de cambio de fecha */}
+        {/* MODAL PARA REAGENDAR CITA */}
+        <Modal
+        isOpen={isFechaModalOpen}
+        onRequestClose={cerrarFechaModal}
+        style={{
+          content: {
+          backgroundColor: 'white',
+          zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+          },
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.80)',
+            zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
+          },
+        }}
+        contentLabel="Formulario de Reagendar Cita"
         >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </form>
-</Modal>
-
-
-
-{/*seccion de cambio de fecha */}
-
-{/* MODAL PARA REAGENDAR CITA */}
-<Modal
-  isOpen={isFechaModalOpen}
-  onRequestClose={cerrarFechaModal}
-  style={{
-    content: {
-      backgroundColor: 'white',
-      zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-    },
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.80)',
-      zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-    },
-  }}
-  contentLabel="Formulario de Reagendar Cita"
->
-  <form 
-    onSubmit={(e) => {
-      e.preventDefault();
-      console.log('Fecha seleccionada:', fecha);
-      cerrarFechaModal();
-    }} 
-    className="flex flex-col justify-around text-center w-full h-full"
-  >
-    <h2>Reagendar Cita</h2>
-    <div className="flex flex-col justify-between p-6 pt-0">
-      <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Selecciona una nueva fecha
-        </label>
-        <input
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="h-12 block font-medium my-3 text-gray-900 w-full border border-gray-300 rounded-md p-2"
-          required
-        />
-      </div>
-      <div className="flex justify-between">
-      <button
-  type="button" // Cambiado de "submit" a "button"
-  onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
-  className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
->
-  Guardar Fecha
-</button>
-        <button
-          type="button"
-          onClick={cerrarFechaModal}
-          className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </form>
-</Modal>
-
-
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log('Fecha seleccionada:', fecha);
+              cerrarFechaModal();
+            }} 
+            className="flex flex-col justify-around text-center w-full h-full"
+          >
+            <h2>Reagendar Cita</h2>
+            <div className="flex flex-col justify-between p-6 pt-0">
+              <div className="my-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Selecciona una nueva fecha
+                </label>
+                <input
+                  type="date"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                  className="h-12 block font-medium my-3 text-gray-900 w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              </div>
+              <div className="flex justify-between">
+                <button
+                type="button" // Cambiado de "submit" a "button"
+                onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  Guardar Fecha
+                </button>
+                <button
+                type="button"
+                onClick={cerrarFechaModal}
+                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </form>
+        </Modal>
 
 
             {/* MODAL PARA AGREGAR SERVICIOS*/}
@@ -907,74 +815,136 @@ const obtenerCitas = async () => {
                                     </PopoverPanel>
                                     </Popover>
                     </div>
-                    <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                      {cita.Nombre}
+                    <div className="h-auto flex items-center content-centerw-full" >
+                    <h3 className="mt-3 mr-2  text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                      Cliente: </h3>
+                    <h4 className="mt-3 ">{cita.Nombre} {cita.Apellido}  </h4>
+                    </div>
+                    <div className="h-auto flex items-center content-centerw-full" >
+                    <h3 className="mt-3 mr-2 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
+                      Placa del auto:
                     </h3>
-                    
-                    <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                      {cita.placa}
-                    </h3>
+                    <h4 className="mt-3 ">{cita.placa}</h4>
+                    </div>
                     <p className="mt-5 line-clamp-3 text-sm text-gray-600">{cita.Descripcion}</p>
                     <div className="mt-8 w-full flex flex-col items-center gap-x-4">
-                    <div className="h-12 w-full">
-                       <h2>Servicios</h2>
-                    </div>
-                    <div className="h-12 w-full" >
-                       <h2>Repuestos</h2>
-                    </div>
-                  {/*progressbar*/}
-                  <div className="w-full max-w-2xl mx-auto">
- 
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <React.Fragment key={index}>
-            {/* Step Circle */}
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                  index <= (stepsState[cita.Id_cita] || 0) 
-                    ? "bg-amber-500 text-white"
-                    : "bg-gray-300 text-gray-500"
-                }`}
-              >
-                {index + 1}
-              </div>
-              <p className="mt-2 text-sm">{step.label}</p>
-            </div>
-            {/* Connecting Bar */}
-            {index < steps.length - 1 && (
-              <div className="flex-grow h-1 mx-2 relative">
-                <div
-                  className={`absolute left-0 top-0 h-1 transition-all ${
-                    index < (stepsState[cita.Id_cita] || 0) ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
-                  }`}
-                ></div>
-                <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
-              </div>
-            )}
-          </React.Fragment>
-        ))}
+                    <div className="h-auto w-full"> {/* Mostrar los servicios */}
+                    <div className="p-2">
+     {/* Boton para mostrar los serviciod*/}
+      <button
+        onClick={() => {setMostrarServicios(!mostrarServicios);
+         
+        }}
+        className=" mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
+      >
+        {mostrarServicios ? (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Servicios
+      </button>
+      <div
+        className={`mt-4 overflow-hidden transition-all duration-300 ${
+          mostrarServicios ? "max-h-40" : "max-h-0"
+        }`}
+      >
+        <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
+   
+        </div>
       </div>
-      {/* Buttons */}
-      <div className="mt-8 flex justify-between">
-        <button
-          onClick={()=> handlePrev(cita.Id_cita)}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
-          disabled={(stepsState[cita.Id_cita] || 0) === 0}
-        >
-           <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
-        </button>
-        <button
-          onClick={() => handleNext(cita.Id_cita)}
-          className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
-          disabled={(stepsState[cita.Id_cita] || 0) === steps.length - 1}
-        >
-         <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
-        </button>
-      </div>
-    </div>
 
-                  {/*fin progressbar*/}
+      {/* Boton para mostrar los repuestos*/}
+      <button
+        onClick={() => {setMostrarRepuestos(!mostrarRepuestos);
+          handleCitaSeleccionada(cita.id_cita)
+         }}
+        className="mb-1 flex px-4 w-full py-1 bg-gray-400 text-white rounded-md"
+      >
+        {mostrarRepuestos ? (<><ChevronUpIcon aria-hidden="true" className="h-6 w-6" />  Ocultar</>) : (<><ChevronDownIcon aria-hidden="true" className="h-6 w-6" />  Ver</>)} Repuestos
+      </button>
+
+      {/* Tabla de repuestos */}
+      
+
+      <div
+        className={`mt-4 overflow-hidden transition-all duration-300 ${
+          mostrarRepuestos ? "max-h-40" : "max-h-0"
+        }`}
+      >
+        <div className="p-4 bg-gray-100 border border-gray-300 rounded-md">
+        <table>
+            <thead>
+              <tr>
+                <th>Nombre del Repuesto</th>
+                <th>Cantidad Usada</th>
+              </tr>
+            </thead>
+            <tbody>
+              {repuestos.map((repuesto) => (
+                <tr key={repuesto.id_cita}>
+                  <td>{repuesto.Nombre}</td>
+                  <td>{repuesto.Cantidad_usada}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+     
+{/*progressbar*/}
+<div className="w-full max-w-2xl mx-auto">
+ 
+ <div className="flex items-center justify-between">
+   {steps.map((step, index) => (
+     <React.Fragment key={index}>
+       {/* Step Circle */}
+       <div className="flex flex-col items-center">
+         <div
+           className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
+             index <= (stepsState[cita.Id_cita] || 0) 
+               ? "bg-amber-500 text-white"
+               : "bg-gray-300 text-gray-500"
+           }`}
+         >
+           {index + 1}
+         </div>
+         <p className="mt-2 text-sm">{step.label}</p>
+       </div>
+       {/* Connecting Bar */}
+       {index < steps.length - 1 && (
+         <div className="flex-grow h-1 mx-2 relative">
+           <div
+             className={`absolute left-0 top-0 h-1 transition-all ${
+               index < (stepsState[cita.Id_cita] || 0) ? "bg-blue-500 w-full" : "bg-gray-300 w-0"
+             }`}
+           ></div>
+           <div className="absolute left-0 top-0 h-1 w-full bg-gray-300"></div>
+         </div>
+       )}
+     </React.Fragment>
+   ))}
+ </div>
+ {/* Buttons */}
+ <div className="mt-8 flex justify-between">
+   <button
+     onClick={()=> handlePrev(cita.Id_cita)}
+     className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
+     disabled={(stepsState[cita.Id_cita] || 0) === 0}
+   >
+      <ChevronLeftIcon aria-hidden="true" className="h-6 w-6" />
+   </button>
+   <button
+     onClick={() => handleNext(cita.Id_cita)}
+     className="px-4 py-2 bg-slate-900 text-white rounded-md disabled:opacity-50"
+     disabled={(stepsState[cita.Id_cita] || 0) === steps.length - 1}
+   >
+    <ChevronRightIcon aria-hidden="true" className="h-6 w-6" />
+   </button>
+ </div>
+</div>
+
+             {/*fin progressbar*/}
+    </div>
+       
+                    </div>
+                  
 
                     </div>
                   </article>
