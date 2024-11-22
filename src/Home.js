@@ -228,29 +228,38 @@ const actualizarFecha = async (idCita) => {
 
  // Función para enviar los datos (renombrada a handleRepuestosFormSubmit)
  // Enviar un solo objeto, no un array
-  const handleRepuestosFormSubmit = (e) => {
-    e.preventDefault();
-    // Crear el objeto correctamente
-    const repuestoAEnviar = repuestosData[0] || {}; // Selecciona el primer objeto o un objeto vacío
-    console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
+ const handleRepuestosFormSubmit = (e) => {
+  e.preventDefault();
 
-    fetch('http://localhost:5000/reputilizado/utilizados', {
+  const repuestoAEnviar = repuestosData[0] || {};
+  console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
+
+  fetch('http://localhost:5000/reputilizado/utilizados', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
       },
-      body: JSON.stringify(repuestoAEnviar), // Envía solo el primer objeto
-    }).then((response) => {
-        if (!response.ok) {
-          throw new Error('Error en la respuesta del servidor');
-        }
-        return response.json();
-        }).then((data) => {
-          console.log('Respuesta del servidor:', data);
-        }).catch((error) => {
-          console.error('Error al enviar los datos:', error);
-        });
-  };
+      body: JSON.stringify(repuestoAEnviar),
+  })
+      .then((response) => {
+          if (!response.ok) {
+              return response.json().then((errorData) => {
+                  throw new Error(errorData.message || 'Error en la solicitud');
+              });
+          }
+          return response.json(); // Procesa la respuesta en caso de éxito (200)
+      })
+      .then((data) => {
+          if (data.repetido) {
+              alert('El repuesto ya fue agregado para esta cita.');
+          } else {
+              alert('Repuesto agregado correctamente.');
+          }
+      })
+      .catch((error) => {
+          alert(error.message || 'Ocurrió un error inesperado.');
+      });
+};
 
 
   const cargarRepuestos = async () => {
