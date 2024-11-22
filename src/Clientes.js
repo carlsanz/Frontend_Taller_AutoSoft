@@ -77,6 +77,7 @@ const handleSearch = async () => {
             correo: '',
             Genero: 'Femenino',
         }); // Limpiar el formulario
+        console.log('Estado del modal: ',isModalOpen);
     };
     // para manejo de la actualizacion de los clientes
     const handleEdit = () => {
@@ -200,9 +201,165 @@ useEffect(() => {
                         )}
                     </tbody>
                 </table>
+
+                <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+<h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
+    <form className='form-container' onSubmit={handleSubmit}>
+    <div className='cont-externo'>
+    <div className='cont-cliente'>
+        <div className='cont-cliente-interno'>
+            <label>Identidad</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Identidad"
+                value={formData.Identidad}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
+            />
+
+            <label>Departamento</label>
+            <select
+                className='form-input'
+                name="Id_departamento"
+                value={formData.Id_departamento}
+                onChange={handleInputChange}
+                disabled={!isEditMode && !isAddingMode}
+            >
+                <option value="">--Selecciona un departamento--</option>
+                {departamentos.map((departamentos) => (
+                    <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
+                        {departamentos.Nombre}
+                    </option>
+                ))}
+            </select>
+
+            <label>Primer Nombre</label>
+            <input
+                className='form-input'
+                type="text"
+                name="P_nombre"
+                value={formData.P_nombre}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Segundo Nombre</label>
+            <input
+                className='form-input'
+                type="text"
+                name="S_nombre"
+                value={formData.S_nombre}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Primer Apellido</label>
+            <input
+                className='form-input'
+                type="text"
+                name="P_apellido"
+                value={formData.P_apellido}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Segundo Apellido</label>
+            <input
+                className='form-input'
+                type="text"
+                name="S_apellido"
+                value={formData.S_apellido}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+            </div>
+            <div className='cont-cliente-interno'>
+            <label>Dirección</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Direccion"
+                value={formData.Direccion}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Teléfono</label>
+            <input
+                className='form-input'
+                type="text"
+                name="Telefono"
+                value={formData.Telefono}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Fecha de Nacimiento</label>
+            <input
+                className='form-input'
+                type="date"
+                name="Fecha_nac"
+                value={formData.Fecha_nac}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Correo</label>
+            <input
+                className='form-input'
+                type="email"
+                name="correo"
+                value={formData.correo}
+                onChange={handleInputChange}
+                readOnly={!isEditMode && !isAddingMode}
+            />
+
+            <label>Género</label>
+            <select
+                className='form-input'
+                name="Genero"
+                value={formData.Genero}
+                onChange={handleInputChange}
+                disabled={!isEditMode && !isAddingMode}
+            >
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+            </select>
+            </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+        {isAddingMode ? (
+                            <>
+        <button className='submit-button' type="button" onClick={() => setIsModalOpen(false)}>
+            Cancelar
+        </button>
+        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
+                            </>
+                        ) : (
+                            <>
+        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
+        {role === 'Administrador' && (
+            <>
+                <button className='submit-button' type="button" onClick={handleEdit} disabled={!cliente}>
+                    Actualizar
+                </button>
+                <button className='submit-button' type="button" onClick={handleDelete} disabled={!cliente}>
+                    Eliminar
+                </button>
+                                    </>
+                                )}
+                            </>
+                        )}
+            </div>
+            </div>
+                </form>
+            </Modal>
             </div>
         </div>
     </div>
+
+    
 );
 };
 
