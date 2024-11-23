@@ -24,7 +24,7 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://169.254.5.241:5000/api/password/mecanico', {
+      const response = await axios.post('http://localhost:5000/api/password/mecanico', {
         email,
         oldPassword,
         newPassword

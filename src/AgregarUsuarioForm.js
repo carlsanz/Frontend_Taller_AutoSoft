@@ -34,7 +34,7 @@ const AgregarUsuario = () => {
     useEffect(()=>{
         const fetchDepartamentos = async ()=> {
             try {
-                const response = await axios.get('http://169.254.5.241:5000/api/departamentos');
+                const response = await axios.get('http://localhost:5000/api/departamentos');
                 setDepartamentos(response.data);
                 } catch (error) {
                     console.error('Error al obtener los departamentos', error);
@@ -63,7 +63,7 @@ const formatDate = (dateString) => {
 const handleBuscarUsuario = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.get(`http://169.254.5.241:5000/usuarios-completo/empleados/${identidadABuscar}`);
+        const response = await axios.get(`http://localhost:5000/usuarios-completo/empleados/${identidadABuscar}`);
         
         // Aplicamos el formato a las fechas antes de actualizar el estado
         const usuario = response.data;
@@ -83,7 +83,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     try {
         const method = isEditMode ? 'PUT' : 'POST';
-        const url = isEditMode ? `http://169.254.5.241:5000/usuarios-completo/${formData.Identidad}` : 'http://169.254.5.241:5000/usuarios-completo';
+        const url = isEditMode ? `http://localhost:5000/usuarios-completo/${formData.Identidad}` : 'http://localhost:5000/usuarios-completo';
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -113,7 +113,7 @@ const handleEliminarUsuario = async () => {
         return;
     }
     try {
-        const response = await axios.delete(`http://169.254.5.241:5000/usuarios-completo/${formData.Identidad }/${formData.Email}`);
+        const response = await axios.delete(`http://localhost:5000/usuarios-completo/${formData.Identidad }/${formData.Email}`);
         if (response.status === 200) {
             alert('Usuario eliminado exitosamente');
             setIsModalOpen(false);
@@ -152,7 +152,7 @@ const resetForm = () => {
 
 useEffect(() => {
     // Llamada al backend para obtener los datos de los empleados
-    fetch('http://169.254.5.241:5000/usuarios-completo/empleados')  // Cambia el puerto y la ruta si es necesario
+    fetch('http://localhost:5000/usuarios-completo/empleados')  // Cambia el puerto y la ruta si es necesario
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Error en la respuesta del servidor');

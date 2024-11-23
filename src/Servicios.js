@@ -23,7 +23,7 @@ Modal.setAppElement("#root");
       const obtenerServicios = async () => {
         try {
           const response = await fetch(
-            "http://169.254.5.241:5000/api/servicios/obtener"
+            "http://localhost:5000/api/servicios/obtener"
           );
           if (!response.ok) {
             throw new Error("Error al obtener los servicios");
@@ -45,7 +45,7 @@ Modal.setAppElement("#root");
       }
       try {
         const response = await fetch(
-          `http://169.254.5.241:5000/api/servicios/borrar/${id}`,
+          `http://localhost:5000/api/servicios/borrar/${id}`,
           {
             method: "DELETE",
           }
@@ -86,7 +86,7 @@ Modal.setAppElement("#root");
       if (isEditing) {
         try {
           const response = await fetch(
-            `http://169.254.5.241:5000/api/servicios/actualizar/${selectedServiceId}`,
+            `http://localhost:5000/api/servicios/actualizar/${selectedServiceId}`,
             {
               method: "PUT",
               headers: {
@@ -117,7 +117,7 @@ Modal.setAppElement("#root");
       } else {
         try {
           const response = await fetch(
-            "http://169.254.5.241:5000/api/servicios/agregar",
+            "http://localhost:5000/api/servicios/agregar",
             {
               method: "POST",
               headers: {
