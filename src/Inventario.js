@@ -27,7 +27,7 @@ const Inventario = ({ rolUsuario }) => {
 
     const obtenerInventario = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/inventarios/inventario');
+            const response = await axios.get('http://169.254.5.241:5000/inventarios/inventario');
             setInventario(response.data);
         } catch (error) {
             console.error('Error al obtener el inventario', error);
@@ -37,7 +37,7 @@ const Inventario = ({ rolUsuario }) => {
 
     const obtenerRepuestos = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/inventarios/repuestos');
+            const response = await axios.get('http://169.254.5.241:5000/inventarios/repuestos');
             setRepuestos(response.data);
         } catch (error) {
             console.error('Error al obtener repuestos:', error);
@@ -62,13 +62,13 @@ const Inventario = ({ rolUsuario }) => {
         try {
             if (editMode) {
                 // Modo de edición
-                await axios.put(`http://localhost:5000/inventarios/inventario/${inventarioData.Id_inventario}`, {
+                await axios.put(`http://169.254.5.241:5000/inventarios/inventario/${inventarioData.Id_inventario}`, {
                     Id_repuesto: repuestoSeleccionado,
                     ...inventarioData
                 });
             } else {
                 // Modo de agregar
-                await axios.post('http://localhost:5000/inventarios/inventarios', {
+                await axios.post('http://169.254.5.241:5000/inventarios/inventarios', {
                     Id_repuesto: repuestoSeleccionado,
                     ...inventarioData
                 });
@@ -97,7 +97,7 @@ const Inventario = ({ rolUsuario }) => {
     const handleEliminar = async (id) => {
         if (window.confirm('¿Está seguro de que desea eliminar este registro?')) {
             try {
-                await axios.delete(`http://localhost:5000/inventarios/inventario/${id}`);
+                await axios.delete(`http://169.254.5.241:5000/inventarios/inventario/${id}`);
                 obtenerInventario();
             } catch (error) {
                 console.error('Error al eliminar el inventario:', error);

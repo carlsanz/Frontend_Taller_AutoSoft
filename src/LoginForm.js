@@ -21,7 +21,7 @@ const LoginForm = () => {
     if (emailError) return;
 
     try {
-      const response = await axios.post('http://localhost:5000/auth/login', { email, password });
+      const response = await axios.post('http://169.254.5.241:5000/auth/login', { email, password });
 
       console.log('Respuesta del backend:', response.data);
       alert(response.data.message);
@@ -34,9 +34,13 @@ const LoginForm = () => {
       localStorage.setItem('email', email);
       localStorage.setItem('primerIngreso', JSON.stringify(primerIngreso));
       localStorage.setItem('nombre', nombre);
-      localStorage.setItem('idEmpleados', idEmpleados); // 
-
-      navigate('/home');
+      localStorage.setItem('idEmpleados', idEmpleados); //
+      
+      if (response.data.primerIngreso == true){
+        navigate('/cambiar-contraseña?alert=true')
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
       setLoginError(error.response?.data?.message || 'Error desconocido');
     }

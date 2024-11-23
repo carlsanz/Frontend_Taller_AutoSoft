@@ -23,7 +23,7 @@ const Autos = () => {
     // Función para buscar un auto por placa y abrir el modal en modo edición
     const handleBuscar = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/autos/placa/${placa}`);
+            const response = await axios.get(`http://169.254.5.241:5000/autos/placa/${placa}`);
             setAutoSeleccionado(response.data);
             setIdentidad(response.data.Identidad);
             setModalAbierto(true);
@@ -40,7 +40,7 @@ const Autos = () => {
     useEffect(()=>{
     const fetchModelos = async ()=> {
     try{
-        const response = await axios.get('http://localhost:5000/autos/modelos');
+        const response = await axios.get('http://169.254.5.241:5000/autos/modelos');
         setModelos(response.data);
        }
        catch(error){
@@ -55,7 +55,7 @@ const Autos = () => {
     useEffect(()=>{
         const fetchTipos = async ()=> {
         try{
-            const response = await axios.get('http://localhost:5000/autos/tipos');
+            const response = await axios.get('http://169.254.5.241:5000/autos/tipos');
             setTipos (response.data);
            }
            catch(error){
@@ -70,7 +70,7 @@ const Autos = () => {
      useEffect(()=>{
             const fetchColores = async ()=> {
             try{
-                const response = await axios.get('http://localhost:5000/autos/colores');
+                const response = await axios.get('http://169.254.5.241:5000/autos/colores');
                 setColores (response.data);
                }
                catch(error){
@@ -120,11 +120,11 @@ const Autos = () => {
 
             if (autoSeleccionado.Id && isEditMode) {
                 // Actualización
-                await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
+                await axios.put(`http://169.254.5.241:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
                 alert('Auto actualizado exitosamente');
             } else if (isAddingMode) {
                 // Nuevo registro
-                await axios.post('http://localhost:5000/autos', autoParaGuardar);
+                await axios.post('http://169.254.5.241:5000/autos', autoParaGuardar);
                 alert('Auto guardado exitosamente');
             }
             setModalAbierto(false);
@@ -138,7 +138,7 @@ const Autos = () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
                 if (autoSeleccionado && autoSeleccionado.Id) {
-                    await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
+                    await axios.delete(`http://169.254.5.241:5000/autos/${autoSeleccionado.Placa}`);
                     alert('Auto eliminado exitosamente');
                 }
                 setModalAbierto(false);
@@ -155,7 +155,7 @@ const Autos = () => {
 
         if (nuevaIdentidad.length === 13) {
             try {
-                const response = await axios.get(`http://localhost:5000/autos/identidad/${nuevaIdentidad}`);
+                const response = await axios.get(`http://169.254.5.241:5000/autos/identidad/${nuevaIdentidad}`);
                 if (response.data) {
                     alert(`Cliente encontrado: ${response.data.Nombre}`);
                 } else {
@@ -173,7 +173,7 @@ const Autos = () => {
     useEffect(() => {
         const fetchAutos = async () => {
             try{
-                const response = await axios.get('http://localhost:5000/autos/todos') 
+                const response = await axios.get('http://169.254.5.241:5000/autos/todos') 
                 setAutos(response.data);
             }
             catch(error) {

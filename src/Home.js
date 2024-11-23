@@ -170,7 +170,7 @@ const actualizarFecha = async (idCita) => {
     try {
       for (const servicio of serviciosData) {
         const payload = {
-        id_cita: idCitaSeleccionada,
+        id_cita: idCita,
         id_servicio: servicio.id_servicio,
         };
         // Mostrar el JSON enviado en la consola
@@ -423,29 +423,29 @@ const actualizarFecha = async (idCita) => {
   };
 
   const cancelarCita = async () => {
-      if (!idCitaSeleccionada) {
-        alert('Intente de nuevo para confirmar cancelación.');
-        return;
-      }
+    if (!idCitaSeleccionada) {
+      alert('Intente de nuevo para confirmar cancelación.');
+      return;
+    }
+  
+    console.log('ID de cita recibido para cancelar:', idCitaSeleccionada);
     
-      //console.log('ID de cita recibido para cancelar:', idCitaSeleccionada);
-      
-      const url = `http://localhost:5000/citas/${idCitaSeleccionada}`;
-      
-      try {
-        const response = await fetch(url, { method: 'DELETE' });
+    const url = `http://localhost:5000/citas/${idCitaSeleccionada}`;
     
-        if (response.ok) {
-          alert('Cita cancelada con éxito.');
-          obtenerCitas(); // Actualiza las citas
-        } else {
-          throw new Error('Error al cancelar la cita');
-        }
-      } catch (error) {
-        console.error('Error al cancelar la cita:', error);
-        alert('Hubo un problema al cancelar la cita.');
+    try {
+      const response = await fetch(url, { method: 'DELETE' });
+  
+      if (response.ok) {
+        alert('Cita cancelada con éxito.');
+        obtenerCitas(); // Actualiza las citas
+      } else {
+        throw new Error('Error al cancelar la cita');
       }
-    };
+    } catch (error) {
+      console.error('Error al cancelar la cita:', error);
+      alert('Hubo un problema al cancelar la cita.');
+    }
+  };
 
       //progressbar 
       

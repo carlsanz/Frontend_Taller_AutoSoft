@@ -15,7 +15,7 @@ const Citas = () => {
 
     const fetchCitas = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/citas/obtener');
+            const response = await axios.get('http://169.254.5.241:5000/citas/obtener');
             setCitas(response.data);
         } catch (error) {
             console.error('Error al obtener citas:', error);
@@ -35,7 +35,7 @@ const Citas = () => {
     const handleBuscarCita = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get(`http://localhost:5000/citas/${idBuscar}`);
+            const response = await axios.get(`http://169.254.5.241:5000/citas/${idBuscar}`);
             const cita = response.data;
             cita.Fecha_ingreso = formatDate(cita.Fecha_ingreso);
         } catch (error) {

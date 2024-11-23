@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import logo2 from './styles/pictures/logo2-removebg-preview.png';
@@ -9,11 +9,22 @@ const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const navigate = useNavigate();
+  let alertParam = false;
+
+  // Recibe query parameter alert
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    alertParam = urlParams.get('alert');
+
+    if (alertParam === 'true') {
+      alert('Debes cambiar tu contraseña para continuar');
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/password/mecanico', {
+      const response = await axios.post('http://169.254.5.241:5000/api/password/mecanico', {
         email,
         oldPassword,
         newPassword
