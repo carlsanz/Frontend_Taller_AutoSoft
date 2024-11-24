@@ -17,11 +17,46 @@ const Home = () => {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const IdUsuario = localStorage.getItem('idEmpleados') || '';
 
 
+  //Obtener cita por id_empleado 
+  const [citas, setCitas] = useState([]);
+
+
+   // Función para obtener el ID del usuario desde el Local Storage
+    const obtenerIdUsuario = () => {
+    const usuario = localStorage.getItem('idEmpleados'); // Obtiene el valor
+    return usuario ? parseInt(usuario, 10) : null; // Lo convierte en número o devuelve null si no existe
+  };
+
+  // Función para obtener las citas por empleado
+  const obtenerCitas = async (idEmpleado) => {
+    try {
+      setLoading(true); // Muestra cargando
+      setError(null); // Limpia errores previos
+      const response = await axios.get(`http://localhost:5000/citas/obtener/cita/${idEmpleado}`);
+      setCitas(response.data); // Guarda las citas en el estado
+    } catch (err) {
+      console.error('Error al obtener las citas:', err);
+      setError('No se pudieron cargar las citas. Intenta de nuevo más tarde.');
+    } finally {
+      setLoading(false); // Oculta cargando
+    }
+  };
+
+  useEffect(() => {
+    const idEmpleados = obtenerIdUsuario(); // Obtiene el ID del Local Storage
+    if (idEmpleados) {
+      obtenerCitas(idEmpleados); // Llama al backend con el ID
+    } else {
+      setError('No se encontró el ID del empleado en el Local Storage.');
+    }
+  }, []);
+
+
+//Obtener Repuestos por citas
   const [citaRepuestosSeleccionada, setCitaRepuestosSeleccionada] = useState(null); // Cita seleccionada para repuestos
-const   [citaServiciosSeleccionada, setCitaServiciosSeleccionada] = useState(null); // Cita seleccionada para servicios
+  const   [citaServiciosSeleccionada, setCitaServiciosSeleccionada] = useState(null); // Cita seleccionada para servicios
 
 
   const obtenerRepuestos = async (idCita) => {
@@ -289,7 +324,6 @@ const actualizarFecha = async (idCita) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [estadosCitas, setEstadosCitas] = useState([]);
-  const [citas, setCitas] = useState([]);
   const [placa, setPlaca] = useState("");  // Estado para almacenar el valor del input de placa
   const [formData, setFormData] = useState({
       Id_cliente: '',
@@ -303,29 +337,11 @@ const actualizarFecha = async (idCita) => {
 
 
   useEffect(() => {
-    obtenerCitas();
     obtenerEstadosCitas();
       
   }, []);
 
   const [stepsState, setStepsState] = useState({});  // Estado para los pasos de las citas
-
-  const obtenerCitas = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/citas/obtener'); 
-      setCitas(response.data); // Guardar los datos en el estado
-      // Establecer el estado inicial de la barra de progreso de cada cita
-      const citasConEstados = {};
-      response.data.forEach((cita) => {
-        citasConEstados[cita.Id_cita] = cita.Id_estado ? cita.Id_estado - 1 : 0;// Establecer el estado inicial de cada cita
-      });
-      setStepsState(citasConEstados); // Guardar los estados de las citas
-    } catch (error) {
-      console.error("Error al obtener las citas:", error);
-      setCitas([]);
-    }
-  };
-
 
 
   const obtenerEstadosCitas = async () => {
@@ -517,7 +533,7 @@ const actualizarFecha = async (idCita) => {
     { name: 'Contact sales', href: '#', icon: PhoneIcon },
   ]
 
-  {/* Todo para eliminar servicios de la cita */}
+  //Eliminar servicios de la cita
   const eliminarServicio = async (idCita, idServicio) => {
     console.log(`Intentando eliminar el servicio con ID: ${idServicio} de la cita con ID: ${idCita}`);
     try {
@@ -536,7 +552,7 @@ const actualizarFecha = async (idCita) => {
     }
   };
 
-  {/* Todo para eliminar repuestos de la cita */}
+    //Eliminar repuesto
   const eliminarRepuesto = async (idCita, idInventario) => {
     console.log(`Datos enviados al backend: ID Cita - ${idCita}, ID Inventario - ${idInventario}`);
   
@@ -858,6 +874,10 @@ const actualizarFecha = async (idCita) => {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-16">
               <h2 className="text-2xl font-bold text-gray-900">Citas</h2>
+              {error && <p className="text-red-600">{error}</p>}
+              {loading && <p>Cargando citas...</p>}
+              {!loading && citas.length === 0 && !error && <p>No tienes citas asignadas.</p>}
+              {!loading && citas.length > 0 && (
               <div className="mt-10 grid gap-8 border-t border-gray-200 pt-10 sm:grid-cols-2 lg:grid-cols-3">
                 {citas.map((cita) => (
                   <article
@@ -888,7 +908,7 @@ const actualizarFecha = async (idCita) => {
                                                 <div>
                                                   
                                                 <a href={item.href} className="font-semibold text-gray-900"
-                                                 onClick={(e) => {
+                                                onClick={(e) => {
                                                   // Si el ítem tiene una función onClick, se ejecuta
                                                   if (item.onClick) {
                                                     e.preventDefault();  // Evitar el comportamiento por defecto de los enlaces
@@ -897,7 +917,7 @@ const actualizarFecha = async (idCita) => {
                                                 }}>
                                                     {item.name}
                                                     <span className="absolute inset-0"
-                                                     />
+                                                    />
                                                     
                                                 </a>
                                                 <p className="mt-1 text-gray-600">{item.description}</p>
@@ -906,10 +926,10 @@ const actualizarFecha = async (idCita) => {
                                             ))}
                                         </div>
                                         <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                                           <div>
+                                        <div>
 
                                             
-                                           </div>
+                                          </div>
                                             {callsToAction.map((item) => (
                                             <a
                                                 key={item.name}
@@ -1089,7 +1109,7 @@ const actualizarFecha = async (idCita) => {
                   </div>
             </article>
             ))}
-              </div>
+              </div>)}
               </div>
             </div>
           </div>

@@ -36,7 +36,7 @@ const LoginForm = () => {
       localStorage.setItem('nombre', nombre);
       localStorage.setItem('idEmpleados', idEmpleados); //
       
-      if (response.data.primerIngreso == true){
+      if (response.data.primerIngreso === true){
         navigate('/cambiar-contraseña?alert=true')
       } else {
         navigate('/home');

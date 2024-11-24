@@ -208,8 +208,9 @@ const Autos = () => {
                <PlusIcon aria-hidden="true" className="h-6 w-6" />
             </button>
       </div>
-      <div className="w-auto min-h-full flex col-start-1 justify-center text-black">
-      <table className="table-row-group justify-center  bg-white rounded-none m-0 p-0 mt-0 pt-0 ">
+      <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+        <div className="overflow-y-auto bg-white max-h-96 w-full">
+            <table className="min-w-full w-full divide-y divide-gray-200">
             <thead>
                 <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
                     <th className="text-center text-white m-12 p-2">Placa</th>
@@ -340,6 +341,7 @@ const Autos = () => {
        </form>
      </Modal>
 
+    </div>
     </div>
 </div>
 

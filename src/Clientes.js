@@ -162,9 +162,9 @@ useEffect(() => {
                 <PlusIcon className="h-6 w-6" />
             </button>    
         </div>
-        <div className="w-auto min-h-full flex col-start-1 justify-center text-black mt-5">
-            <div className="overflow-auto max-h-96 w-full bg-white rounded-md shadow-md scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-thumb-rounded">
-                <table className="min-w-full bg-white">
+        <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+        <div className="overflow-y-auto bg-white max-h-96 w-full">
+            <table className="min-w-full w-full divide-y divide-gray-200">
                     <thead>
                         <tr className="bg-zinc-600 h-8">
                             <th className="text-center text-white px-4 py-2">Identidad</th>
@@ -202,159 +202,159 @@ useEffect(() => {
                     </tbody>
                 </table>
 
-                <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-<h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
-    <form className='form-container' onSubmit={handleSubmit}>
-    <div className='cont-externo'>
-    <div className='cont-cliente'>
-        <div className='cont-cliente-interno'>
-            <label>Identidad</label>
-            <input
-                className='form-input'
-                type="text"
-                name="Identidad"
-                value={formData.Identidad}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
-            />
+                <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 top-11 p-5 px-10 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+                    <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
+                        <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
+                        <div style={{height:"25rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
+                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
+                                
+                                <input
+                                placeholder='DNI'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="Identidad"
+                                value={formData.Identidad}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
+                                />
 
-            <label>Departamento</label>
-            <select
-                className='form-input'
-                name="Id_departamento"
-                value={formData.Id_departamento}
-                onChange={handleInputChange}
-                disabled={!isEditMode && !isAddingMode}
-            >
-                <option value="">--Selecciona un departamento--</option>
-                {departamentos.map((departamentos) => (
-                    <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
-                        {departamentos.Nombre}
-                    </option>
-                ))}
-            </select>
 
-            <label>Primer Nombre</label>
-            <input
-                className='form-input'
-                type="text"
-                name="P_nombre"
-                value={formData.P_nombre}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <input
+                                placeholder='Primer nombre'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="P_nombre"
+                                value={formData.P_nombre}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Segundo Nombre</label>
-            <input
-                className='form-input'
-                type="text"
-                name="S_nombre"
-                value={formData.S_nombre}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <input
+                                placeholder='Segundo nombre'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="S_nombre"
+                                value={formData.S_nombre}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Primer Apellido</label>
-            <input
-                className='form-input'
-                type="text"
-                name="P_apellido"
-                value={formData.P_apellido}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <input
+                                placeholder='Primer apellido'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="P_apellido"
+                                value={formData.P_apellido}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Segundo Apellido</label>
-            <input
-                className='form-input'
-                type="text"
-                name="S_apellido"
-                value={formData.S_apellido}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
-            </div>
-            <div className='cont-cliente-interno'>
-            <label>Dirección</label>
-            <input
-                className='form-input'
-                type="text"
-                name="Direccion"
-                value={formData.Direccion}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <input
+                                placeholder='Segundo apellido'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="S_apellido"
+                                value={formData.S_apellido}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
+                            </div>
+                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
+                            <input
+                                className='form-input'
+                                type="date"
+                                name="Fecha_nac"
+                                value={formData.Fecha_nac}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Teléfono</label>
-            <input
-                className='form-input'
-                type="text"
-                name="Telefono"
-                value={formData.Telefono}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <select
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                name="Id_departamento"
+                                value={formData.Id_departamento}
+                                onChange={handleInputChange}
+                                disabled={!isEditMode && !isAddingMode}
+                                >
+                                    <option value="">Selecciona un departamento</option>
+                                    {departamentos.map((departamentos) => (
+                                        <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
+                                            {departamentos.Nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                                <textarea
+                                placeholder='Ingrese su direccion'
+                                className="h-36 block font-medium my-2 text-gray-900"
+                                type="text"
+                                name="Direccion"
+                                value={formData.Direccion}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
+                            </div>
+                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
+                                <input
+                                placeholder='Telefono'
+                                className="h-12 block font-medium my-2 text-gray-900" 
+                                type="text"
+                                name="Telefono"
+                                value={formData.Telefono}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Fecha de Nacimiento</label>
-            <input
-                className='form-input'
-                type="date"
-                name="Fecha_nac"
-                value={formData.Fecha_nac}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
 
-            <label>Correo</label>
-            <input
-                className='form-input'
-                type="email"
-                name="correo"
-                value={formData.correo}
-                onChange={handleInputChange}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+                                <input
+                                placeholder='Correo eléctronico'
+                                className='form-input'
+                                type="email"
+                                name="correo"
+                                value={formData.correo}
+                                onChange={handleInputChange}
+                                readOnly={!isEditMode && !isAddingMode}
+                                />
 
-            <label>Género</label>
-            <select
-                className='form-input'
-                name="Genero"
-                value={formData.Genero}
-                onChange={handleInputChange}
-                disabled={!isEditMode && !isAddingMode}
-            >
-                <option value="Femenino">Femenino</option>
-                <option value="Masculino">Masculino</option>
-            </select>
-            </div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-        {isAddingMode ? (
+                                <select
+                                placeholder='Genero'
+                                className='form-input'
+                                name="Genero"
+                                value={formData.Genero}
+                                onChange={handleInputChange}
+                                disabled={!isEditMode && !isAddingMode}
+                                >
+                                        
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Masculino">Masculino</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className=" flex content-end justify-evenly items-center  pt-8 w-full h-20">
+                        {isAddingMode ? (
+                                            <>
+                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={() => setIsModalOpen(false)}>
+                            Cancelar
+                        </button>
+                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
+                                            </>
+                                        ) : (
+                                            <>
+                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
+                        {role === 'Administrador' && (
                             <>
-        <button className='submit-button' type="button" onClick={() => setIsModalOpen(false)}>
-            Cancelar
-        </button>
-        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
-                            </>
-                        ) : (
-                            <>
-        <button className='submit-button' type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
-        {role === 'Administrador' && (
-            <>
-                <button className='submit-button' type="button" onClick={handleEdit} disabled={!cliente}>
-                    Actualizar
-                </button>
-                <button className='submit-button' type="button" onClick={handleDelete} disabled={!cliente}>
-                    Eliminar
-                </button>
-                                    </>
-                                )}
-                            </>
-                        )}
-            </div>
-            </div>
-                </form>
-            </Modal>
+                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleEdit} disabled={!cliente}>
+                                    Actualizar
+                                </button>
+                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleDelete} disabled={!cliente}>
+                                    Eliminar
+                                </button>
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                            </div>        
+            </form>
+        </Modal>
             </div>
         </div>
     </div>

@@ -22,6 +22,8 @@ const Citas = () => {
         }
     };
 
+    
+
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -30,6 +32,7 @@ const Citas = () => {
         const year = date.getUTCFullYear();
         return `${year}-${month}-${day}`;
     };
+
 
 
     const handleBuscarCita = async (e) => {
@@ -66,28 +69,28 @@ const Citas = () => {
                 </button>
             </form>
 
-            <div className="w-auto min-h-full flex col-start-1 justify-center  text-black">
-            <table className=" table-row-group h-auto bg-white justify-center rounded-none m-0 p-0 mt-0 pt-0 ">
+            <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+        <div className="overflow-y-auto bg-white max-h-96 w-full">
+            <table className="min-w-full w-full divide-y divide-gray-200">
                 <thead>
-                    <tr className="bg-gray-800 text-white">
-                        <th className="p-3">ID Cliente</th>
-                        <th className="p-3">ID Empleado</th>
-                        <th className="p-3">ID Auto</th>
-                        <th className="p-3">Fecha Ingreso</th>
-                        <th className="p-3">Descripción</th>
-                        <th className="p-3">ID Estado</th>
-                        <th className="p-3">Acciones</th>
+                <tr  className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
+                        <th className="text-center text-white m-12 p-2">ID Cliente</th>
+                        <th className="text-center text-white m-12 p-2">ID Empleado</th>
+                        <th className="text-center text-white m-12 p-2">ID Auto</th>
+                        <th className="text-center text-white m-12 p-2">Fecha Ingreso</th>
+                        <th className="text-center text-white m-12 p-2">Descripción</th>
+                        <th className="text-center text-white m-12 p-2">ID Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     {citas.map((cita) => (
                         <tr key={cita.Id_cita} className="border-b">
-                            <td className="p-3 text-center">{cita.Id_cliente}</td>
-                            <td className="p-3 text-center">{cita.Id_empleados}</td>
-                            <td className="p-3 text-center">{cita.Id_auto}</td>
-                            <td className="p-3 text-center">{formatDate(cita.Fecha_ingreso)}</td>
-                            <td className="p-3 text-center">{cita.Descripcion}</td>
-                            <td className="p-3 text-center">{cita.Id_estado}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{cita.Id_cliente}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{cita.Id_empleados}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{cita.Id_auto}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{formatDate(cita.Fecha_ingreso)}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{cita.Descripcion}</td>
+                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{cita.Id_estado}</td>
                             
                         </tr>
                     ))}
@@ -95,6 +98,7 @@ const Citas = () => {
             </table>
 
            
+        </div>
         </div>
         </div>
     );
