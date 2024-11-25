@@ -226,7 +226,7 @@ const actualizarFecha = async (idCita) => {
     try {
       for (const servicio of serviciosData) {
         const payload = {
-        id_cita: idCita,
+        id_cita: idCitaSeleccionada,
         id_servicio: servicio.id_servicio,
         };
         // Mostrar el JSON enviado en la consola

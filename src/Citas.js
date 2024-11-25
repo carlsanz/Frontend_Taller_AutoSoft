@@ -38,7 +38,7 @@ const Citas = () => {
     const handleBuscarCita = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get(`http://localhost:5000/citas/${idBuscar}`);
+            const response = await axios.get(`http://localhost:5000/citas/obtener/${idBuscar}`);
             const cita = response.data;
             cita.Fecha_ingreso = formatDate(cita.Fecha_ingreso);
         } catch (error) {
