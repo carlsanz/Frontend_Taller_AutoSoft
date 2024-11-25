@@ -65,7 +65,10 @@ const Nav = () => {
                                                     key={item.name}
                                                     onClick={() => navigate(item.ruta)}
                                                     className={classNames(
-                                                        'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+                                                        location.pathname === item.ruta
+                                                                ? 'text-white bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'
+                                                                : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+                                                        
                                                     )}
                                                 >
                                                     {item.name}

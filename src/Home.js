@@ -19,6 +19,39 @@ const Home = () => {
   const [error, setError] = useState(null);
 
 
+  //buscar citas por fecha
+
+ 
+    const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
+
+    const handleSearch = async () => {
+      if (!searchDate) {
+          alert("Por favor, selecciona una fecha.");
+          return;
+      }
+  
+      try {
+          const response = await fetch(`http://localhost:5000/citas/fecha/${searchDate}`);
+  
+          if (!response.ok) {
+              const errorText = await response.text(); // Obtiene el mensaje en caso de error
+              throw new Error(`Error: ${response.status} - ${errorText}`);
+          }
+  
+          const data = await response.json(); // Analiza la respuesta solo si es válida
+  
+          if (data.length > 0) {
+              setCitas(data); // Actualizar el estado con las citas encontradas
+          } else {
+              alert("No se encontraron citas para la fecha seleccionada.");
+              setCitas([]); // Limpiar el estado si no hay citas
+          }
+      } catch (error) {
+          console.error("Error al buscar citas:", error);
+          alert("Ocurrió un error al buscar las citas. Verifica la consola para más detalles.");
+      }
+  };
+
   //Obtener cita por id_empleado 
   const [citas, setCitas] = useState([]);
 
@@ -66,7 +99,7 @@ const Home = () => {
       return;
     }
     try {
-      setLoading(true);
+      
       console.log(`Obteniendo repuestos para la cita con ID: ${idCita}`);
       const response = await axios.get(`http://localhost:5000/reputilizado/${idCita}`);
       console.log('Datos recibidos:', response.data);
@@ -96,7 +129,6 @@ const Home = () => {
       return;
     }
     try {
-      setLoading(true);
       console.log(`Obteniendo servicios para la cita con ID: ${idCita}`);
       const response = await axios.get(`http://localhost:5000/api/servicios/citas/disponibles/${idCita}`);
       console.log('Datos recibidos:', response.data);
@@ -587,13 +619,16 @@ const actualizarFecha = async (idCita) => {
           <input
           id="buscar-home"
           name="Buscar-cliente"
-          type="text"
-          placeholder="Busca un cliente"
+          type="date"
+          placeholder="Busca un cita"
           className="w-4/5 lg:w-2/3 ml-4 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-950"
+          value={searchDate}
+          onChange={(e) => setSearchDate(e.target.value)}
           />
           <button
           type="button"
           className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+          onClick={handleSearch}
           >
             <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
           </button>

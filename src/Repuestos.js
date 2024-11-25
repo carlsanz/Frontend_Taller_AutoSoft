@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 Modal.setAppElement('#root'); 
 
 
-const Repuestos = () => {
+const Repuestos = ({ rolUsuario }) => {
         const [nombreBusqueda, setNombreBusqueda] = useState('');
         const [repuestos, setRepuestos] = useState([]);
         const [repuestosOriginales, setRepuestosOriginales] = useState([])
@@ -168,10 +168,11 @@ const Repuestos = () => {
                  className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"onClick={handleSearch}>
                     <MagnifyingGlassIcon  className="h-6 w-6" />
                 </button>
+                {rolUsuario === "Administrador" && (
                 <button  type="button"
               className=" w-11 h-11 my-5 mx-2 flex items-center justify-center  rounded-md bg-yellow-500  p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd}>
                 <PlusIcon className="h-6 w-6" />
-                </button>
+                </button>)}
       </div>
       <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
         <div className="overflow-y-auto bg-white max-h-96 w-full">
@@ -183,7 +184,7 @@ const Repuestos = () => {
                         <th className="text-center text-white m-12 p-2">Proveedor</th>
                         <th className="text-center text-white m-12 p-2">Descripción</th>
                         <th className="text-center text-white m-12 p-2">Precio</th>
-                        <th className="text-center text-white m-12 p-2"></th>
+                        {rolUsuario === "Administrador" && <th className="text-center text-white m-12 p-2"></th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -194,14 +195,14 @@ const Repuestos = () => {
                             <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.NombreProveedor}</td>
                             <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.Descripcion}</td>
                             <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.Precio}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">
+                            {rolUsuario === "Administrador" && (<td className="border-b-2 border-zinc-600  text-left px-14 ">
                                 <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(repuesto)}>
                                     <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
                                 </button>
                                 <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(repuesto.Id_repuesto)}>
                                     <TrashIcon aria-hidden="true" className="h-6 w-6"  />
                                 </button>
-                            </td>
+                            </td> )}
                         </tr>
                     ))}
                 </tbody>

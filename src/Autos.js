@@ -213,12 +213,12 @@ const Autos = () => {
             <table className="min-w-full w-full divide-y divide-gray-200">
             <thead>
                 <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
-                    <th className="text-center text-white m-12 p-2">Placa</th>
-                    <th className="text-center text-white m-12 p-2">Modelo</th>
-                    <th className="text-center text-white m-12 p-2">Tipo</th>
-                    <th className="text-center text-white m-12 p-2">Color</th>
-                    <th className="text-center text-white m-12 p-2">Número VIN</th>
-                    <th className="text-center text-white m-12 p-2"></th>
+                    <th className="text-center text-white   m-12 px-4 py-2">Placa</th>
+                    <th className="text-center text-white   m-12 px-4 py-2">Modelo</th>
+                    <th className="text-center text-white   m-12 px-4 py-2">Tipo</th>
+                    <th className="text-center text-white   m-12 px-4 py-2">Color</th>
+                    <th className="text-center text-white   m-12 px-4 py-2">Número VIN</th>
+                    <th className="text-center text-white   m-12 px-4 py-2"></th>
                 </tr>
             </thead>
             <tbody>
@@ -229,12 +229,12 @@ const Autos = () => {
            ) : (
                 autos.map((auto) => (
                     <tr key={auto.Id_auto}>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Placa}</td>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Modelo}</td>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Tipo}</td>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Color}</td>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">{auto.Numero_vin}</td>
-                        <td className="border-b-2 border-zinc-600  text-left px-14 ">
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Placa}</td>
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Modelo}</td>
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Tipo}</td>
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Color}</td>
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Numero_vin}</td>
+                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">
                                 <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(autoSeleccionado)}>
                                     <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
                                 </button>
