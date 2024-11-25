@@ -89,7 +89,7 @@ const Home = () => {
 
 //Obtener Repuestos por citas
   const [citaRepuestosSeleccionada, setCitaRepuestosSeleccionada] = useState(null); // Cita seleccionada para repuestos
-  const   [citaServiciosSeleccionada, setCitaServiciosSeleccionada] = useState(null); // Cita seleccionada para servicios
+  const [citaServiciosSeleccionada, setCitaServiciosSeleccionada] = useState(null); // Cita seleccionada para servicios
 
 
   const obtenerRepuestos = async (idCita) => {
@@ -131,14 +131,7 @@ const Home = () => {
     try {
       console.log(`Obteniendo servicios para la cita con ID: ${idCita}`);
       const response = await axios.get(`http://localhost:5000/api/servicios/citas/disponibles/${idCita}`);
-      console.log('Datos recibidos:', response.data);
-  
-      if (response.data.length === 0) {
-        setError('No hay servicios asociados a esta cita.'); // Opcional, para notificar al usuario
-      } else {
-        setError(null); // Limpia errores anteriores si hay datos
-      }
-      
+      console.log('Datos recibidos:', response.data); 
       setServicios(response.data); // Almacena los servicios
     } catch (error) {
       console.error('Error al obtener los servicios:', error);
@@ -164,10 +157,6 @@ const Home = () => {
   const [repuestosData, setRepuestosData] = useState([
     { Id_inventario: '', Cantidad_usada: '', Id_cita: '' } // Asegúrate de incluir id_cita al inicio
   ]);
-
-
-  
-
 
 
 //funcion para reagendar cita
@@ -729,9 +718,9 @@ const actualizarFecha = async (idCita) => {
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.80)',
             zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-          },
-        }}
+          },}}
         contentLabel="Formulario de Repuestos"
+        className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
         >
           <form onSubmit={handleRepuestosFormSubmit} className="flex flex-col justify-around text-center w-full h-full">
             <h2>Agregar Repuestos</h2>
@@ -789,15 +778,15 @@ const actualizarFecha = async (idCita) => {
         onRequestClose={cerrarFechaModal}
         style={{
           content: {
-          backgroundColor: 'white',
-          zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
+            backgroundColor: 'white',
+            zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
           },
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.80)',
             zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-          },
-        }}
+          },}}
         contentLabel="Formulario de Reagendar Cita"
+        className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
         >
           <form 
             onSubmit={(e) => {
@@ -825,7 +814,7 @@ const actualizarFecha = async (idCita) => {
                 <button
                 type="button" // Cambiado de "submit" a "button"
                 onClick={()=> actualizarFecha(idCitaSeleccionada)} // Llama a la función `actualizarFecha`
-                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-blue-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+               className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   Guardar Fecha
                 </button>
@@ -921,7 +910,15 @@ const actualizarFecha = async (idCita) => {
                     className="border p-5 border-gray-300 shadow-lg rounded-lg flex flex-col items-start justify-between"
                   >
                     <div className="flex justify-between w-full items-center gap-x-4 text-xs text-gray-500">
-                      <time dateTime={cita.datetime}>{cita.Fecha_ingreso}</time>
+                    <time dateTime={cita.Fecha_ingreso}>
+                    {new Intl.DateTimeFormat('es-ES', { 
+                      weekday: 'long', // Día de la semana
+                      year: 'numeric', 
+                      month: 'long',  // Mes en texto completo
+                      day: 'numeric' 
+                    }).format(new Date(cita.Fecha_ingreso))}
+                  </time>
+
                       
                       <Popover className="relative">
                                     <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
