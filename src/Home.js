@@ -541,13 +541,42 @@ const actualizarFecha = async (idCita) => {
   };
    //fin progressbar 
 
+   
+  // TODO PARA GENERAR FACTURAS.
+  const [showModal, setShowModal] = useState(false);
+  const [factura, setFactura] = useState(null);
+  const [facturaError, setFacturaError] = useState('');
+  
+  // useEffect para verificar el estado de 'showModal'
+  useEffect(() => {
+      console.log('Modal abierto:', showModal);  // Esto se ejecutará cuando `showModal` cambie
+  }, [showModal]);
+  
+  // Función para generar la factura
+  const generarFactura = async () => {
+      try {
+          
+          const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
+          console.log('Respuesta de la API:', response.data);
+          
+          // Ahora accedemos a datosFactura en lugar de factura
+          setFactura(response.data.datosFactura);
+          setFacturaError('');
+          setShowModal(true);  // Cambia el estado de showModal a true para mostrar el modal
+      } catch (err) {
+          console.error('Error:', err);
+          setFacturaError(err.response?.data?.message || 'Error al generar la factura');
+      }
+  };
+  
+
   //Opciones de las citas()
   const solutions = [
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
     { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href:'#', icon: ArrowPathRoundedSquareIcon, onClick: () => abrirFechaModal(citas.Id_cita) },
     { name: 'Cancelar cita', description: 'Anular la cita programada', href: '#', icon: NoSymbolIcon, onClick: () => cancelarCita(citas.Id_cita)},
-    { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon },
+    { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon, onClick:generarFactura},
   ]
   const callsToAction = [
     { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
@@ -592,7 +621,7 @@ const actualizarFecha = async (idCita) => {
       alert('Hubo un error al eliminar el repuesto.');
     }
   };
-  
+
 
 
   return (
@@ -703,6 +732,55 @@ const actualizarFecha = async (idCita) => {
             </div> 
           </form>
         </Modal>
+
+
+        {/*MODAL PARA FACTURAS */}
+                    {/* FACTURAS*/}
+                    <div>
+        {/* Mostrar errores si hay */}
+        {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
+
+        {/* Mostrar el modal solo si showModal es true y factura está disponible */}
+        {showModal && factura && (
+            <div 
+                className="modal"
+                style={{
+                    background: 'rgba(0, 0, 0, 0.5)', 
+                    position: 'fixed', 
+                    top: '0', 
+                    left: '0', 
+                    width: '100%', 
+                    height: '100%', 
+                    zIndex: '9999',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                <div 
+                    className="modal-content"
+                    style={{
+                        backgroundColor: 'white', 
+                        padding: '20px', 
+                        borderRadius: '8px', 
+                        maxWidth: '500px', 
+                        margin: 'auto'
+                    }}
+                >
+                    <h2>Factura Generada</h2>
+                    <p><strong>ID Factura:</strong> {factura.Id_factura}</p>
+                    <p><strong>ID Cita:</strong> {factura.Id_cita}</p>
+                    <p><strong>Fecha:</strong> {factura.Fecha}</p>
+                    <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
+                    <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
+                    <p><strong>Total:</strong> {factura.Total}</p>
+                    <button onClick={() => setShowModal(false)} className="btn btn-secondary">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        )}
+    </div>
 
 
         {/* Seccion PARA AGREGAR UN REPUESTO*/}
@@ -891,6 +969,10 @@ const actualizarFecha = async (idCita) => {
                   </div>
                 </form>
               </Modal>
+
+
+
+               
 
 
         {/* Sección de citas */}
