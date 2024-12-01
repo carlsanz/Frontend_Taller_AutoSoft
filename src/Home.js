@@ -484,7 +484,7 @@ const actualizarFecha = async (idCita) => {
     }
   };
 
-      //progressbar 
+       //progressbar 
       
   const steps = [
     { label: "Pendiente",},
@@ -492,21 +492,43 @@ const actualizarFecha = async (idCita) => {
     { label: "Finalizada" },
   ];
 
+  // Función para cargar el estado inicial de todas las citas
+const fetchInitialStates = async () => {
+  try {
+    const url = `http://localhost:5000/citas/citasEstados`;
+    const response = await axios.get(url);
+    const citasEstados = response.data; // Suponiendo que devuelve un array con { Id_cita, Id_estado }
+
+    // Convertir los estados a un objeto para manejar el estado local
+    const estadosIniciales = {};
+    citasEstados.forEach(({ Id_cita, Id_estado }) => {
+      estadosIniciales[Id_cita] = Id_estado - 1; // Ajuste para índices (1, 2, 3 -> 0, 1, 2)
+    });
+
+    setStepsState(estadosIniciales);
+  } catch (error) {
+    console.error("Error al obtener los estados iniciales:", error);
+    alert("No se pudieron obtener los estados iniciales. Inténtalo nuevamente.");
+  }
+};
+
+// Llama a esta función cuando el componente se monte
+useEffect(() => {
+  fetchInitialStates();
+}, []);
+  // Función para manejar el siguiente estado
   const handleNext = async (id) => {
     const currentStep = stepsState[id] || 0;
-  
     if (currentStep < steps.length - 1) {
       try {
-        const nuevoEstado = currentStep + 1; // Estado siguiente
+        const nuevoEstado = currentStep + 1;
         const url = `http://localhost:5000/citas/actEstado/${id}`;
-        await axios.put(url, { Id_estado: nuevoEstado + 1 }); // Ajustar para que coincida con la base de datos (1, 2, 3)
-  
-        // Actualizar estado en stepsState
+        await axios.put(url, { Id_estado: nuevoEstado + 1 });
         setStepsState((prevState) => ({
           ...prevState,
           [id]: nuevoEstado,
-      }));
-      alert("Estado actualizado correctamente.");
+        }));
+        alert("Estado actualizado correctamente.");
       } catch (error) {
         console.error("Error al actualizar el estado:", error);
         alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
@@ -515,21 +537,19 @@ const actualizarFecha = async (idCita) => {
       alert("La cita ya está finalizada.");
     }
   };
-  
+
+  // Función para manejar el estado anterior
   const handlePrev = async (id) => {
     const currentStep = stepsState[id] || 0;
-  
     if (currentStep > 0) {
       try {
-        const nuevoEstado = currentStep - 1; // Estado anterior
+        const nuevoEstado = currentStep - 1;
         const url = `http://localhost:5000/citas/actEstado/${id}`;
-        await axios.put(url, { Id_estado: nuevoEstado + 1 }); // Ajustar para que coincida con la base de datos (1, 2, 3)
-        // Actualizar estado en stepsState
+        await axios.put(url, { Id_estado: nuevoEstado + 1 });
         setStepsState((prevState) => ({
           ...prevState,
           [id]: nuevoEstado,
         }));
-  
         alert("Estado actualizado correctamente.");
       } catch (error) {
         console.error("Error al actualizar el estado:", error);
