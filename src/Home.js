@@ -594,41 +594,21 @@ useEffect(() => {
   }, [showModal]);
   
   // Función para generar la factura
-<<<<<<< HEAD
- const generarFactura = async () => {
-  try {
-    const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
-    console.log('Respuesta de la API:', response.data);
-    
-    // Extraemos los datos de la factura, servicios y repuestos
-    const { datosFactura } = response.data;
-    setFactura(datosFactura);
-    setFacturaError('');
-    setShowModal(true);  // Abre el modal
-  } catch (err) {
-    console.error('Error:', err);
-    setFacturaError(err.response?.data?.message || 'Error al generar la factura');
-  }
-};
-=======
   const generarFactura = async () => {
-      try {
-          
-          const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
-          console.log('Respuesta de la API:', response.data);
-          console.log('Respuesta de la API completa:', response); // Para ver toda la respuesta
-          console.log('Datos de factura:', response.data.datosFactura);
-          
-          // Ahora accedemos a datosFactura en lugar de factura
-          setFactura(response.data.datosFactura);
-          setFacturaError('');
-          setShowModal(true);  // Cambia el estado de showModal a true para mostrar el modal
-      } catch (err) {
-          console.error('Error:', err);
-          setFacturaError(err.response?.data?.message || 'Error al generar la factura');
-      }
+    try {
+      const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
+      console.log('Respuesta de la API:', response.data);
+      
+      // Extraemos los datos de la factura, servicios y repuestos
+      const { datosFactura } = response.data;
+      setFactura(datosFactura);
+      setFacturaError('');
+      setShowModal(true);  // Abre el modal
+    } catch (err) {
+      console.error('Error:', err);
+      setFacturaError(err.response?.data?.message || 'Error al generar la factura');
+    }
   };
->>>>>>> 7c2dab1eb787f457c0cc32434b0045805c05732d
   
 
   //Opciones de las citas()
@@ -804,7 +784,6 @@ useEffect(() => {
   {/* Mostrar errores si hay */}
   {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
 
-<<<<<<< HEAD
   {/* Mostrar el modal solo si showModal es true y factura está disponible */}
   {showModal && factura && (
     <div
@@ -915,68 +894,10 @@ useEffect(() => {
           Cerrar
         </button>
       </div>
-=======
-        {/* Mostrar el modal solo si showModal es true y factura está disponible */}
-        {showModal && factura && (
-            <div 
-                className="modal"
-                style={{
-                    background: 'rgba(0, 0, 0, 0.5)', 
-                    position: 'fixed', 
-                    top: '0', 
-                    left: '0', 
-                    width: '100%', 
-                    height: '100%', 
-                    zIndex: '9999',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                <div 
-                    className="modal-content, flex, flex-col, justify-center h-full w-full items-center"
-                    style={{
-                        backgroundColor: 'white', 
-                        padding: '20px', 
-                        borderRadius: '8px', 
-                        maxWidth: '500px', 
-                        margin: 'auto'
-                    }}
-                >
-                  <div id='encabezado'
-                  className="h-auto">
-
-                    <h2>Factura </h2>
-
-                    <p><strong>ID Factura:</strong> {factura.Id_Factura}</p>
-                    <p><strong>Nombre cliemte:{factura.Nombre} </strong></p>
-                    <p><strong>Fecha: </strong></p>
-                    <p><strong>N° Cita:</strong> {factura.Id_cita}</p>
-
-                  </div>
-                  <div id='repuestos y servicios'
-                  className="h-5 bg-gray-700"></div>
-                  <div id='totales'>
-                  
-                    
-                    <p><strong>Fecha:</strong> {factura.Fecha}</p>
-                    <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
-                    <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
-                    <p><strong>Total:</strong> {factura.Total}</p>
-                  </div>
-
-                    
-                    
-                    <button onClick={() => setShowModal(false)} className="btn btn-secondary">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        )}
->>>>>>> 7c2dab1eb787f457c0cc32434b0045805c05732d
     </div>
   )}
 </div>
+
 
 
 
