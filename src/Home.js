@@ -20,7 +20,6 @@ const Home = () => {
 
 
   //buscar citas por fecha
-
  
     const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
 
@@ -51,6 +50,11 @@ const Home = () => {
           alert("Ocurrió un error al buscar las citas. Verifica la consola para más detalles.");
       }
   };
+
+  const handleVerTodas = () => {
+    setSearchDate(''); // Limpia el input
+    obtenerCitas(obtenerIdUsuario());
+   };
 
   //Obtener cita por id_empleado 
   const [citas, setCitas] = useState([]);
@@ -418,33 +422,46 @@ const actualizarFecha = async (idCita) => {
   };
 
   const handleSubmit = async (e) => {
-      e.preventDefault();
-      const idEmpleado = localStorage.getItem('idEmpleados');
-      // Asegurarse de que el formData tenga siempre el id_empleado
-      const finalFormData = {
-          ...formData,
-          Id_empleados: idEmpleado || "", // Si no existe id_empleado, enviar vacío
-      };
-      console.log('Datos enviados al backend:', finalFormData); // Verifica los datos
-      try {
-          const method = isEditMode ? 'PUT' : 'POST';
-          const url = isEditMode 
-              ? `http://localhost:5000/citas/${formData.Id_cita}`
-              : 'http://localhost:5000/citas';
-          await axios({
-              method,
-              url,
-              data: finalFormData
-          });
-          alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
-          setIsModalOpen(false);
-          resetForm();
-      } catch (error) {
-          console.error('Error al guardar la cita:', error);
-          alert('Error al guardar la cita');
+    e.preventDefault();
+    const idEmpleado = localStorage.getItem('idEmpleados');
+    // Asegurarse de que el formData tenga siempre el id_empleado
+    const finalFormData = {
+        ...formData,
+        Id_empleados: idEmpleado || "", // Si no existe id_empleado, enviar vacío
+    };
+    console.log('Datos enviados al backend:', finalFormData); // Verifica los datos
+    try {
+        const method = isEditMode ? 'PUT' : 'POST';
+        const url = isEditMode 
+            ? `http://localhost:5000/citas/${formData.Id_cita}`
+            : 'http://localhost:5000/citas';
+        const response = await axios({
+            method,
+            url,
+            data: finalFormData,
+        });
+
+        // Actualizar el estado de citas directamente
+        if (isEditMode) {
+            // Si es edición, actualizar la cita en el estado
+            setCitas((prevCitas) =>
+                prevCitas.map((cita) =>
+                    cita.Id_cita === formData.Id_cita ? response.data : cita
+                )
+            );
+        } else {
+            // Si es una nueva cita, agregarla al estado
+            setCitas((prevCitas) => [...prevCitas, response.data]);
         }
-    obtenerCitas();
-  };
+
+        alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
+        setIsModalOpen(false);
+        resetForm();
+    } catch (error) {
+        console.error('Error al guardar la cita:', error);
+        alert('Error al guardar la cita');
+    }
+};
 
     
   const resetForm = () => {
@@ -459,30 +476,34 @@ const actualizarFecha = async (idCita) => {
       setIsEditMode(false);
   };
 
-  const cancelarCita = async () => {
-    if (!idCitaSeleccionada) {
-      alert('Intente de nuevo para confirmar cancelación.');
-      return;
-    }
-  
-    console.log('ID de cita recibido para cancelar:', idCitaSeleccionada);
-    
-    const url = `http://localhost:5000/citas/${idCitaSeleccionada}`;
-    
+ 
+  const cancelarCita = async (idCita) => {
+    handleCitaSeleccionada(idCita);
+    console.log('ID de la cita a eliminar:', idCita); // Log del ID
+    const url = `http://localhost:5000/citas/eliminar/${idCita}`;
+    console.log('URL de la solicitud DELETE:', url); // Log de la URL
+
+    const confirmar = window.confirm('¿Está seguro de que desea cancelar esta cita?');
+    if (!confirmar) return;
+
     try {
-      const response = await fetch(url, { method: 'DELETE' });
-  
-      if (response.ok) {
-        alert('Cita cancelada con éxito.');
-        obtenerCitas(); // Actualiza las citas
-      } else {
-        throw new Error('Error al cancelar la cita');
-      }
+        const response = await fetch(url, { method: 'DELETE' });
+        console.log('Respuesta del servidor:', response); // Log de la respuesta
+        
+        if (response.ok) {
+            alert('Cita cancelada con éxito.');
+            obtenerCitas(); // Refresca la lista de citas
+        } else {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Error al cancelar la cita');
+        }
     } catch (error) {
-      console.error('Error al cancelar la cita:', error);
-      alert('Hubo un problema al cancelar la cita.');
+        console.error('Error al cancelar la cita:', error.message);
+        alert('Hubo un problema al cancelar la cita. Intente de nuevo.');
     }
-  };
+};
+
+
 
        //progressbar 
       
@@ -578,6 +599,8 @@ useEffect(() => {
           
           const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
           console.log('Respuesta de la API:', response.data);
+          console.log('Respuesta de la API completa:', response); // Para ver toda la respuesta
+          console.log('Datos de factura:', response.data.datosFactura);
           
           // Ahora accedemos a datosFactura en lugar de factura
           setFactura(response.data.datosFactura);
@@ -595,13 +618,10 @@ useEffect(() => {
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
     { name: 'Agregar Repuestos', description: 'Incluye los repuestos necesarios para la reparacion', href: '#', icon: Cog8ToothIcon, onClick: abrirRepuestosModal  },
     { name: 'Reagendar cita', description: 'Modificar Hora y fecha de la cita', href:'#', icon: ArrowPathRoundedSquareIcon, onClick: () => abrirFechaModal(citas.Id_cita) },
-    { name: 'Cancelar cita', description: 'Anular la cita programada', href: '#', icon: NoSymbolIcon, onClick: () => cancelarCita(citas.Id_cita)},
+    { name: 'Cancelar cita', description: 'Anular la cita programada', href: '#', icon: NoSymbolIcon, onClick: () => cancelarCita(citas.Id_cita) },
     { name: 'Generar factura', description: 'Cita finalizada, lista para facturar', href: '#', icon: ArrowDownTrayIcon, onClick:generarFactura},
   ]
-  const callsToAction = [
-    { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-    { name: 'Contact sales', href: '#', icon: PhoneIcon },
-  ]
+
 
   //Eliminar servicios de la cita
   const eliminarServicio = async (idCita, idServicio) => {
@@ -676,6 +696,13 @@ useEffect(() => {
           >
             <PlusIcon aria-hidden="true" className="h-6 w-6" />
           </button>
+          <button
+                    type="button"
+                    className="w-auto h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-blue-500 px-4 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    onClick={handleVerTodas}
+                >
+                    Ver todas las citas
+            </button>
         </div>
 
         <Modal
@@ -778,7 +805,7 @@ useEffect(() => {
                 }}
             >
                 <div 
-                    className="modal-content"
+                    className="modal-content, flex, flex-col, justify-center h-full w-full items-center"
                     style={{
                         backgroundColor: 'white', 
                         padding: '20px', 
@@ -787,13 +814,30 @@ useEffect(() => {
                         margin: 'auto'
                     }}
                 >
-                    <h2>Factura Generada</h2>
-                    <p><strong>ID Factura:</strong> {factura.Id_factura}</p>
-                    <p><strong>ID Cita:</strong> {factura.Id_cita}</p>
+                  <div id='encabezado'
+                  className="h-auto">
+
+                    <h2>Factura </h2>
+
+                    <p><strong>ID Factura:</strong> {factura.Id_Factura}</p>
+                    <p><strong>Nombre cliemte:{factura.Nombre} </strong></p>
+                    <p><strong>Fecha: </strong></p>
+                    <p><strong>N° Cita:</strong> {factura.Id_cita}</p>
+
+                  </div>
+                  <div id='repuestos y servicios'
+                  className="h-5 bg-gray-700"></div>
+                  <div id='totales'>
+                  
+                    
                     <p><strong>Fecha:</strong> {factura.Fecha}</p>
                     <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
                     <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
                     <p><strong>Total:</strong> {factura.Total}</p>
+                  </div>
+
+                    
+                    
                     <button onClick={() => setShowModal(false)} className="btn btn-secondary">
                         Cerrar
                     </button>
@@ -1013,18 +1057,26 @@ useEffect(() => {
                   >
                     <div className="flex justify-between w-full items-center gap-x-4 text-xs text-gray-500">
                     <time dateTime={cita.Fecha_ingreso}>
-                    {new Intl.DateTimeFormat('es-ES', { 
-                      weekday: 'long', // Día de la semana
-                      year: 'numeric', 
-                      month: 'long',  // Mes en texto completo
-                      day: 'numeric' 
-                    }).format(new Date(cita.Fecha_ingreso))}
+                    {(() => {
+                      // Validar la fecha antes de formatearla
+                      const fecha = new Date(cita.Fecha_ingreso);
+                      if (isNaN(fecha)) {
+                        return "Fecha no válida"; // Mensaje en caso de que la fecha sea inválida
+                      }
+                      return new Intl.DateTimeFormat("es-ES", {
+                        weekday: "long", // Día de la semana
+                        year: "numeric",
+                        month: "long",  // Mes en texto completo
+                        day: "numeric",
+                      }).format(fecha);
+                    })()}
                   </time>
 
                       
                       <Popover className="relative">
                                     <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                        <span  className='flex items-center justify-start content-center text-gray-700  px-3 py-2 rounded-md text-sm font-medium'
+                                        <span  
+                                        className='flex items-center justify-start content-center text-gray-700  px-3 py-2 rounded-md text-sm font-medium'
                                         >Opciones  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
                                     </PopoverButton>
 
@@ -1064,15 +1116,7 @@ useEffect(() => {
 
                                             
                                           </div>
-                                            {callsToAction.map((item) => (
-                                            <a
-                                                key={item.name}
-                                                href={item.href}
-                                                className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
-                                            >
-                                                
-                                            </a>
-                                            ))}
+                                           
                                         </div>
                                         </div>
                                     </PopoverPanel>
