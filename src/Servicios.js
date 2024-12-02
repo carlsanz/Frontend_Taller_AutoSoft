@@ -39,13 +39,13 @@ Modal.setAppElement("#root");
       obtenerServicios();
     }, []);
   
-    const handleDelete = async (id) => {
+    const handleDelete = async (Id_servicio) => {
       if (!window.confirm("¿Estás seguro de que quieres borrar este servicio?")) {
         return;
       }
       try {
         const response = await fetch(
-          `http://localhost:5000/api/servicios/borrar/${id}`,
+          `http://localhost:5000/api/servicios/eliminar/${Id_servicio}`,
           {
             method: "DELETE",
           }
@@ -55,7 +55,7 @@ Modal.setAppElement("#root");
           throw new Error("Error al borrar el servicio");
         }
   
-        setServicios(servicios.filter((servicio) => servicio.Id_servicio !== id));
+        setServicios(servicios.filter((servicio) => servicio.Id_servicio !== Id_servicio));
         alert("Servicio borrado exitosamente");
       } catch (error) {
         console.error("Error al borrar el servicio:", error);
@@ -179,7 +179,7 @@ Modal.setAppElement("#root");
             <MagnifyingGlassIcon className="h-6 w-6" />
           </button>
   
-          {rolUsuario === "Administrador" && (
+        
             <button
               onClick={() => {
                 setIsEditing(false);
@@ -190,7 +190,7 @@ Modal.setAppElement("#root");
             >
               <PlusIcon className="h-6 w-6" />
             </button>
-          )}
+        
         </div>
   
         <div className="w-full h-96 overflow-x-auto bg-white shadow-md rounded-md">
@@ -226,7 +226,7 @@ Modal.setAppElement("#root");
                     <td className="border-b-2 border-zinc-600 text-center px-8">
                       {servicio.Tipo_servicio}
                     </td>
-                    {rolUsuario === "Administrador" && (
+                  
                       <td className="border-b-2 border-zinc-600 px-8">
                         <button
                           type="button"
@@ -243,7 +243,7 @@ Modal.setAppElement("#root");
                           <TrashIcon aria-hidden="true" className="h-6 w-6" />
                         </button>
                       </td>
-                    )}
+                    
                   </tr>
                 ))
               )}
