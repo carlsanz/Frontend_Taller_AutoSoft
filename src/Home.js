@@ -553,21 +553,21 @@ const actualizarFecha = async (idCita) => {
   }, [showModal]);
   
   // Función para generar la factura
-  const generarFactura = async () => {
-      try {
-          
-          const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
-          console.log('Respuesta de la API:', response.data);
-          
-          // Ahora accedemos a datosFactura en lugar de factura
-          setFactura(response.data.datosFactura);
-          setFacturaError('');
-          setShowModal(true);  // Cambia el estado de showModal a true para mostrar el modal
-      } catch (err) {
-          console.error('Error:', err);
-          setFacturaError(err.response?.data?.message || 'Error al generar la factura');
-      }
-  };
+ const generarFactura = async () => {
+  try {
+    const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
+    console.log('Respuesta de la API:', response.data);
+    
+    // Extraemos los datos de la factura, servicios y repuestos
+    const { datosFactura } = response.data;
+    setFactura(datosFactura);
+    setFacturaError('');
+    setShowModal(true);  // Abre el modal
+  } catch (err) {
+    console.error('Error:', err);
+    setFacturaError(err.response?.data?.message || 'Error al generar la factura');
+  }
+};
   
 
   //Opciones de las citas()
@@ -734,53 +734,127 @@ const actualizarFecha = async (idCita) => {
         </Modal>
 
 
-        {/*MODAL PARA FACTURAS */}
-                    {/* FACTURAS*/}
-                    <div>
-        {/* Mostrar errores si hay */}
-        {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
+ {/* Modal para Factura */}
+<div>
+  {/* Mostrar errores si hay */}
+  {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
 
-        {/* Mostrar el modal solo si showModal es true y factura está disponible */}
-        {showModal && factura && (
-            <div 
-                className="modal"
-                style={{
-                    background: 'rgba(0, 0, 0, 0.5)', 
-                    position: 'fixed', 
-                    top: '0', 
-                    left: '0', 
-                    width: '100%', 
-                    height: '100%', 
-                    zIndex: '9999',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                <div 
-                    className="modal-content"
-                    style={{
-                        backgroundColor: 'white', 
-                        padding: '20px', 
-                        borderRadius: '8px', 
-                        maxWidth: '500px', 
-                        margin: 'auto'
-                    }}
-                >
-                    <h2>Factura Generada</h2>
-                    <p><strong>ID Factura:</strong> {factura.Id_factura}</p>
-                    <p><strong>ID Cita:</strong> {factura.Id_cita}</p>
-                    <p><strong>Fecha:</strong> {factura.Fecha}</p>
-                    <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
-                    <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
-                    <p><strong>Total:</strong> {factura.Total}</p>
-                    <button onClick={() => setShowModal(false)} className="btn btn-secondary">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        )}
+  {/* Mostrar el modal solo si showModal es true y factura está disponible */}
+  {showModal && factura && (
+    <div
+      className="modal"
+      style={{
+        background: 'rgba(0, 0, 0, 0.5)',
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100%',
+        height: '100%',
+        zIndex: '9999',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div
+        className="modal-content"
+        style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          maxWidth: '600px',
+          margin: 'auto',
+        }}
+      >
+        <h2>Factura Generada</h2>
+        <p><strong>ID Factura:</strong> {factura.Id_cita}</p>
+        <p><strong>Fecha:</strong> {new Date(factura.Fecha).toLocaleString()}</p>
+        <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
+        <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
+        <p><strong>Total:</strong> {factura.Total}</p>
+
+        {/* Cliente */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Cliente</h3>
+          <p><strong>Nombre:</strong> {factura.cliente.NombreCliente} {factura.cliente.ApellidoCliente}</p>
+          <p><strong>Identidad:</strong> {factura.cliente.IdentidadCliente}</p>
+        </div>
+
+        {/* Empleado */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Empleado</h3>
+          <p><strong>Nombre:</strong> {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}</p>
+          <p><strong>Identidad:</strong> {factura.empleado.IdentidadEmpleado}</p>
+        </div>
+
+        {/* Tabla de servicios */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Servicios</h3>
+          {factura.servicios && factura.servicios.length > 0 ? (
+            <table className="table-auto w-full text-xs">
+              <thead>
+                <tr>
+                  <th className="text-center p-2">Servicio</th>
+                  <th className="text-center p-2">Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {factura.servicios.map((servicio, index) => (
+                  <tr key={index}>
+                    <td className="text-center p-2">{servicio.NombreServicio}</td>
+                    <td className="text-center p-2">{servicio.PrecioServicio}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-gray-500">No hay servicios disponibles para esta cita.</p>
+          )}
+        </div>
+
+        {/* Tabla de repuestos */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Repuestos</h3>
+          {factura.repuestos && factura.repuestos.length > 0 ? (
+            <table className="table-auto w-full text-xs">
+              <thead>
+                <tr>
+                  <th className="text-center p-2">Repuesto</th>
+                  <th className="text-center p-2">Cantidad</th>
+                  <th className="text-center p-2">Precio Unitario</th>
+                  <th className="text-center p-2">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {factura.repuestos.map((repuesto, index) => (
+                  <tr key={index}>
+                    <td className="text-center p-2">{repuesto.NombreRepuesto}</td>
+                    <td className="text-center p-2">{repuesto.Cantidad}</td>
+                    <td className="text-center p-2">{repuesto.PrecioUnidad}</td>
+                    <td className="text-center p-2">{repuesto.TotalRepuesto}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-gray-500">No hay repuestos disponibles para esta cita.</p>
+          )}
+        </div>
+
+        {/* Botón para cerrar el modal */}
+        <button
+          onClick={() => setShowModal(false)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md mt-4"
+        >
+          Cerrar
+        </button>
+      </div>
     </div>
+  )}
+</div>
+
+
+
 
 
         {/* Seccion PARA AGREGAR UN REPUESTO*/}
