@@ -80,14 +80,17 @@ const handleSearch = async () => {
         console.log('Estado del modal: ',isModalOpen);
     };
     // para manejo de la actualizacion de los clientes
-    const handleEdit = () => {
+    const handleEdit = (cliente) => {
+        setFormData(cliente);
+        console.log(formData);
+        setIsModalOpen(true);
         setIsEditMode(true); // Habilitar el modo edición
     };
     // para manejo de la eliminacion de los clientes
-    const handleDelete = async () => {
+    const handleDelete = async (identidad) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/clientes/${formData.Identidad}`);
+                await axios.delete(`http://localhost:5000/api/clientes/${identidad}`);
                 alert('Cliente eliminado');
                 setCliente(null);
                 setIdentidad('');
@@ -126,20 +129,28 @@ const handleSearch = async () => {
         }
     };
     
-
-// Obtener clientes al cargar el componente
-useEffect(() => {
-    const fetchClientes = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/api/todos');
-            setClientes(response.data);  // Llenar el estado con los datos de clientes
-        } catch (error) {
-            console.error('Error al obtener los clientes', error);
-        }
-    };
-
-    fetchClientes();
-}, []);
+    useEffect(() => {
+        const fetchClientes = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/clientesTodo');
+                // Formatear la fecha antes de establecer el estado
+                const clientesConFechaFormateada = response.data.map(cliente => {
+                    if (cliente.Fecha_nac && !isNaN(new Date(cliente.Fecha_nac).getTime())) {
+                        // Convertir la fecha a formato yyyy-MM-dd
+                        const fecha = new Date(cliente.Fecha_nac);
+                        const formattedDate = fecha.toISOString().split('T')[0]; // Formato yyyy-MM-dd
+                        cliente.Fecha_nac = formattedDate;
+                    }
+                    return cliente;
+                });
+                setClientes(clientesConFechaFormateada);  // Llenar el estado con los datos de clientes formateados
+            } catch (error) {
+                console.error('Error al obtener los clientes', error);
+            }
+        };
+    
+        fetchClientes();
+    }, []);
 
 
 
@@ -184,8 +195,8 @@ useEffect(() => {
                             clientes.map((cliente) => (
                                 <tr key={cliente.Identidad}>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Identidad}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre} {cliente.S_nombre}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido} {cliente.S_apellido}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre}  {cliente.S_nombre}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido}  {cliente.S_apellido}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Genero}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Direccion}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">
