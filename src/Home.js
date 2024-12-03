@@ -1,6 +1,6 @@
-import { TrashIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PlusIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
-import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -19,8 +19,23 @@ const Home = () => {
   const [error, setError] = useState(null);
 
 
+//Obtener empleados
+  const [empleados, setEmpleados] = useState([]);
+  useEffect(() => {
+    // Llamada al backend para obtener los datos de los empleados
+    fetch('http://localhost:5000/usuarios-completo/empleados')  // Cambia el puerto y la ruta si es necesario
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then((data) => setEmpleados(data))
+        .catch((error) => console.error('Error al obtener empleados:', error));
+  }, []);
+
   //buscar citas por fecha
- 
+
     const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
 
     const handleSearch = async () => {
@@ -663,10 +678,10 @@ useEffect(() => {
 
 
   return (
-    <div style={{ width: '100vw', overflowX: 'scroll' }} className="flex-col h-screen">
-      <div className=" bg-gray-100 min-h-full relative max-w-full">
-        {/* Imagen de fondo */}
-        <img className="relative h-96 w-full m-0 p-0" src="image/vehiculo.jpg" alt="vehículo" />
+    <div style={{ width: '98vw', height: '2000px' }} className="flex-col p-10 pt-20">
+    <div className=" bg-gray-100 min-h-full flex flex-col justify-start relative max-w-full">
+      {/* Imagen de fondo */}
+      <img className="relative h-96 opacity-85 opa w-full m-0 p-0  rounded-2xl" src="image/vehiculo.jpg" alt="vehículo" />
         {role === 'Mecanico' && (
         <div id='Vista_Mecanico'>
         
@@ -802,50 +817,63 @@ useEffect(() => {
       }}
     >
       <div
-        className="modal-content"
+        className="modal-content p-11 py-5 h-full w-1/2 flex flex-col justify-between overflow-y-auto scrollbar-thin max-w-full "
         style={{
           backgroundColor: 'white',
-          padding: '20px',
           borderRadius: '8px',
-          maxWidth: '600px',
           margin: 'auto',
         }}
-      >
-        <h2>Factura Generada</h2>
-        <p><strong>ID Factura:</strong> {factura.Id_cita}</p>
+    >
+    {/* Botón para cerrar el modal */}
+    <div className="flex items-baseline justify-between">
+        
+        <h2 className="text-2xl">Factura </h2>
+        <button
+        onClick={() => setShowModal(false)}
+        className="px-4 py-2  text-black rounded-md mt-4"
+        >
+          <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+        </button>
+        
+      </div>
         <p><strong>Fecha:</strong> {new Date(factura.Fecha).toLocaleString()}</p>
-        <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
-        <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
-        <p><strong>Total:</strong> {factura.Total}</p>
+        <div className="flex justify-between">
+            <div>
+            
+            <div className="mt-4">
+              <p><strong>No. Factura:</strong> {factura.Id_cita}</p>
+              <p><strong>Empleado:</strong> {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}</p>
+              </div>
+
+
+            </div>
+            <div className="mt-4">
+              <p><strong>Cliente:</strong> {factura.cliente.NombreCliente} {factura.cliente.ApellidoCliente}</p>
+              <p><strong>Identidad:</strong> {factura.cliente.IdentidadCliente}</p>
+            </div>
+        </div>
+
+       
 
         {/* Cliente */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Cliente</h3>
-          <p><strong>Nombre:</strong> {factura.cliente.NombreCliente} {factura.cliente.ApellidoCliente}</p>
-          <p><strong>Identidad:</strong> {factura.cliente.IdentidadCliente}</p>
-        </div>
+     
 
         {/* Empleado */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Empleado</h3>
-          <p><strong>Nombre:</strong> {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}</p>
-          <p><strong>Identidad:</strong> {factura.empleado.IdentidadEmpleado}</p>
-        </div>
-
+ 
         {/* Tabla de servicios */}
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Servicios</h3>
           {factura.servicios && factura.servicios.length > 0 ? (
             <table className="table-auto w-full text-xs">
-              <thead>
+              <thead className="border-b-2 border-zinc-600 ">
                 <tr>
                   <th className="text-center p-2">Servicio</th>
                   <th className="text-center p-2">Precio</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody >
                 {factura.servicios.map((servicio, index) => (
-                  <tr key={index}>
+                  <tr className="border-b-2 border-zinc-300 " key={index}>
                     <td className="text-center p-2">{servicio.NombreServicio}</td>
                     <td className="text-center p-2">{servicio.PrecioServicio}</td>
                   </tr>
@@ -861,8 +889,8 @@ useEffect(() => {
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Repuestos</h3>
           {factura.repuestos && factura.repuestos.length > 0 ? (
-            <table className="table-auto w-full text-xs">
-              <thead>
+            <table className=" table-auto w-full text-xs">
+              <thead  className="border-b-2 border-zinc-600 ">
                 <tr>
                   <th className="text-center p-2">Repuesto</th>
                   <th className="text-center p-2">Cantidad</th>
@@ -870,9 +898,9 @@ useEffect(() => {
                   <th className="text-center p-2">Total</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody >
                 {factura.repuestos.map((repuesto, index) => (
-                  <tr key={index}>
+                  <tr className="border-b-2 border-zinc-300 " key={index}>
                     <td className="text-center p-2">{repuesto.NombreRepuesto}</td>
                     <td className="text-center p-2">{repuesto.Cantidad}</td>
                     <td className="text-center p-2">{repuesto.PrecioUnidad}</td>
@@ -885,14 +913,17 @@ useEffect(() => {
             <p className="text-gray-500">No hay repuestos disponibles para esta cita.</p>
           )}
         </div>
+        <div className="flex justify-between">
+          <div><p>Direccion del taller</p></div>
+          <div>
+          <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
+        <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
+        <p><strong>Total:</strong> {factura.Total}</p>
+          </div>
+        </div>
 
-        {/* Botón para cerrar el modal */}
-        <button
-          onClick={() => setShowModal(false)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md mt-4"
-        >
-          Cerrar
-        </button>
+
+    
       </div>
     </div>
   )}
@@ -1350,12 +1381,53 @@ useEffect(() => {
         </div>)}
 
       {role === 'Administrador' && (
-      <div id='Vista_administrdor'>
+     <div id='Vista_administrdor' className="h-4/5 bg-gray-100">
 
-      </div>
-      )}
-      </div>
-    </div>
+     <div className="grid grid-cols-2 gap-6 py-10 ">
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24  text-white p-4 rounded">Dashboard</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Citas para hoy</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Item 3</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Item 4</div>
+     </div>
+
+     <div id="Actividades" className="h-96 w-full flex flex-col justify-between overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+<h1 className="sticky top-0 bg-white text-lg font-bold border-b"><strong>Actividades</strong></h1>
+<ul className="divide-y divide-gray-100">
+ {empleados.map((empleado) => (
+   <li key={empleado.idEmpleado} className="flex justify-between gap-x-6 py-5">
+     <div className="flex min-w-0 gap-x-4">
+       <img alt="" src={empleado.Identidad} className="h-12 w-12 flex-none rounded-full bg-gray-50" />
+       <div className="min-w-0 flex-auto">
+         <p className="text-sm font-semibold text-gray-900">{empleado.Nombre}</p>
+         <p className="mt-1 truncate text-xs text-gray-500">{empleado.Email}</p>
+       </div>
+     </div>
+     <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+       <p className="text-sm text-gray-900">Ultima vez</p>
+       {empleado.Identidad ? (
+         <p className="mt-1 text-xs text-gray-500">
+          {/* Last seen <time dateTime={empleado.lastSeenDateTime}>{empleado.lastSeen}</time>*/} 
+         </p>
+       ) : (
+         <div className="mt-1 flex items-center gap-x-1.5">
+           <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+           </div>
+           <p className="text-xs text-gray-500">Online</p>
+         </div>
+       )}
+     </div>
+   </li>
+ ))}
+</ul>
+</div>
+
+
+   </div>
+   )}
+   </div>
+ </div>
+      
   );
 };
 
