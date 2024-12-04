@@ -17,6 +17,21 @@ const Home = () => {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [cantidadCitasHoy, setCantidadCitasHoy] = useState(0);
+
+  useEffect(() => {
+    fetchCantidadCitasHoy(); // Obtener la cantidad de citas del día
+}, []);
+
+  //Obtener cias de hoy
+  const fetchCantidadCitasHoy = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/citas/hoy/cantidad'); // Endpoint para la cantidad de citas
+        setCantidadCitasHoy(response.data.cantidad || 0);
+    } catch (error) {
+        console.error('Error al obtener la cantidad de citas del día:', error);
+    }
+};
 
 
 //Obtener empleados
@@ -35,7 +50,6 @@ const Home = () => {
   }, []);
 
   //buscar citas por fecha
-
     const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
 
     const handleSearch = async () => {
@@ -1384,10 +1398,14 @@ useEffect(() => {
      <div id='Vista_administrdor' className="h-4/5 bg-gray-100">
 
      <div className="grid grid-cols-2 gap-6 py-10 ">
-     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24  text-white p-4 rounded">Dashboard</div>
-     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Citas para hoy</div>
-     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Item 3</div>
-     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white p-4 rounded">Item 4</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24  text-white text-center p-4 rounded">Dashboard</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Citas para hoy
+      <p>
+      {cantidadCitasHoy}
+      </p>
+     </div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Item 3</div>
+     <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Item 4</div>
      </div>
 
      <div id="Actividades" className="h-96 w-full flex flex-col justify-between overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
