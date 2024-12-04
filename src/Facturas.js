@@ -1,7 +1,4 @@
-import { TrashIcon, PlusIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
-import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import {  XMarkIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
  // Asegúrate de tener este icono
 

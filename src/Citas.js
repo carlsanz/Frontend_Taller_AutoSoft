@@ -2,6 +2,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import Mensaje from './Mensaje';
 
 Modal.setAppElement('#root');
 
@@ -12,6 +13,14 @@ const Citas = () => {
     useEffect(() => {
         fetchCitas(); // Cargar todas las citas al inicio
     }, []);
+
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
 
     const fetchCitas = async () => {
         try {
@@ -38,7 +47,7 @@ const Citas = () => {
             setCitas(response.data);
         } catch (error) {
             console.error('Error al buscar citas por mecánico:', error);
-            alert('No se encontraron citas para este mecánico.');
+            mostrarMensaje('No se encontraron citas para este mecánico.', 'alert');
         }
     };
 
@@ -52,6 +61,12 @@ const Citas = () => {
             style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: 'top' }} 
             className="-z-10 absolute p-32 pb-0 flex flex-col h-screen justify-center"
         >
+             <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
+            
             {/* Formulario de búsqueda */}
             <form className="flex h-auto justify-center min-w-full" onSubmit={handleBuscarPorMecanico}>
                 <input
