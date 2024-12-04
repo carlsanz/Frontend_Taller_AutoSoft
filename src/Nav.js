@@ -16,6 +16,7 @@ const Nav = () => {
         { name: 'Empleados', ruta: "/agregar-usuario", rol: ['Administrador'] },
         { name: 'Autos', ruta: "/autos", rol: ['Administrador','Mecanico'] },
         { name: 'Clientes', ruta: "/clientes", rol: ['Administrador','Mecanico']  },
+        { name: 'Facturas', ruta: "/Facturas", rol: ['Administrador','Mecanico']  },
     ];
 
     const role = localStorage.getItem('role') || '';

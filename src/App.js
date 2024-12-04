@@ -12,6 +12,7 @@ import Repuestos from './Repuestos';
 import Inventario from './Inventario';
 import Nav from './Nav';
 import Citas from './Citas';
+import Facturas from './Facturas';
 
 
 
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/repuestos" element={<Repuestos />} />
                     <Route path="/inventario" element={<Inventario rolUsuario={role} />} />
                     <Route path="/citas" element={<Citas />} />
+                    <Route path="/Facturas" element={<Facturas />} />
                 </Routes>
         </Router>
     );
