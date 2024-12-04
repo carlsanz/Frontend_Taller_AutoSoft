@@ -625,21 +625,29 @@ useEffect(() => {
   // Función para generar la factura
   const generarFactura = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
-      console.log('Respuesta de la API:', response.data);
-      
-      // Extraemos los datos de la factura, servicios y repuestos
-      const { datosFactura } = response.data;
-      setFactura(datosFactura);
-      setFacturaError('');
-      setShowModal(true);  // Abre el modal
-    } catch (err) {
-      console.error('Error:', err);
-      setFacturaError(err.response?.data?.message || 'Error al generar la factura');
-    }
-  };
-  
+        const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
+        console.log('Respuesta de la API:', response.data);
+        
+        // Extraemos los datos de la factura
+        const { datosFactura } = response.data;
+        setFactura(datosFactura);
+        setFacturaError(''); // Limpiamos cualquier error previo
+        setShowModal(true); // Abre el modal con la información de la factura
 
+        // Alerta de éxito
+        alert('Factura generada con éxito');
+        
+    } catch (err) {
+        console.error('Error:', err);
+
+        // Si el error es porque ya se generó la factura, mostramos un mensaje específico
+        const errorMessage = err.response?.data?.message || 'Error al generar la factura';
+        setFacturaError(errorMessage);
+
+        // Alerta con el mensaje del backend
+        alert(errorMessage); // Muestra el mensaje de error (ej. "Ya se ha generado una factura para esta cita")
+    }
+};
   //Opciones de las citas()
   const solutions = [
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},

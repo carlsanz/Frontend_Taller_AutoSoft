@@ -37,6 +37,32 @@ const Autos = () => {
         }
     };
 
+    const handleMostrarAuto = async (placa) => {
+        console.log("Buscando auto con placa:", placa);
+    
+        if (!placa) {
+            alert("Por favor, ingrese una placa válida.");
+            return;
+        }
+    
+        try {
+            const response = await axios.get(`http://localhost:5000/autos/placa/${placa}`);
+            if (response.data) {
+                setAutoSeleccionado(response.data);
+                setIdentidad(response.data.Identidad);
+                setModalAbierto(true);
+                setIsEditMode(true); // Modo edición al buscar
+                setIsAddingMode(false);
+            } else {
+                alert("Auto no encontrado");
+                setAutoSeleccionado(null);
+            }
+        } catch (error) {
+            alert('Error al buscar el auto');
+            setAutoSeleccionado(null);
+        }
+    };
+
     useEffect(()=>{
     const fetchModelos = async ()=> {
     try{
@@ -99,17 +125,26 @@ const Autos = () => {
         setIdentidad('');
     };
 
-    const handleEdit = () => {
-        setIsEditMode(true); // Habilitar el modo edición
-    };
+    // const handleEdit = () => {
+    //     setIsEditMode(true); // Habilitar el modo edición
+    //     setModalAbierto(true);
+    //     setIsAddingMode(false);
+
+    //     setIdentidad(autoSeleccionado);
+    //     setModelos(autoSeleccionado);
+    //     setTipos(autoSeleccionado);
+    //     setColores(autoSeleccionado);
+
+    // };
 
     // Función para guardar o actualizar un auto
     const handleGuardar = async () => {
-        if (!autoSeleccionado) return; // Agrega esta línea para evitar errores
-
+        if (!autoSeleccionado) return; // Evitar errores si no hay auto seleccionado
+        
+        console.log('Auto seleccionado para guardar:', autoSeleccionado.Placa); // Verifica que esta información es correcta
+    
         try {
             const autoParaGuardar = {
-                Id: autoSeleccionado.Id,
                 Placa: autoSeleccionado.Placa,
                 Id_modelo: parseInt(autoSeleccionado.Id_modelo, 10) || null,
                 Id_tipo: parseInt(autoSeleccionado.Id_tipo, 10) || null,
@@ -117,42 +152,71 @@ const Autos = () => {
                 Numero_vin: autoSeleccionado.Numero_vin,
                 Identidad: identidad,
             };
-
-            if (autoSeleccionado.Id && isEditMode) {
+    
+            if (autoSeleccionado.Placa && isEditMode) {
+                console.log('Actualizando auto...');
                 // Actualización
                 await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
                 alert('Auto actualizado exitosamente');
             } else if (isAddingMode) {
+                console.log('Guardando nuevo auto...');
                 // Nuevo registro
                 await axios.post('http://localhost:5000/autos', autoParaGuardar);
                 alert('Auto guardado exitosamente');
             }
-            setModalAbierto(false);
+    
+            // Después de actualizar o guardar, actualiza la lista de autos
+            fetchAutos();  // Llama la función que obtiene los autos de la base de datos
+            setModalAbierto(false);  // Cierra el modal después de guardar o actualizar
         } catch (error) {
             console.error('Error al guardar o actualizar el auto:', error);
         }
     };
+    
 
     // Función para eliminar un auto
     const handleEliminar = async () => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+        if (window.confirm('¿Estás seguro de que deseas eliminar este Automovil?')) {
+            console.log(autoSeleccionado, autoSeleccionado.Placa);
             try {
-                if (autoSeleccionado && autoSeleccionado.Id) {
-                    await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
-                    alert('Auto eliminado exitosamente');
+                if (autoSeleccionado && autoSeleccionado.Placa) {
+                    // Realizar la solicitud DELETE al backend
+                    const response = await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
+                    
+                    // Si la respuesta es exitosa, muestra el mensaje de éxito
+                    alert(response.data.message || 'Auto eliminado exitosamente');
+    
+                    // Actualiza la lista de autos en el frontend después de eliminarlo
+                    setAutos((prevAutos) => prevAutos.filter((auto) => auto.Placa !== autoSeleccionado.Placa));
+    
+                    // Cerrar el modal
+                    setModalAbierto(false);
                 }
-                setModalAbierto(false);
             } catch (error) {
-                console.error('Error al eliminar el auto:', error);
+                console.error('Error al eliminar el auto:', error); // Mostrar el error completo para depuración
+    
+                // Verificar si la respuesta de error tiene un mensaje
+                if (error.response && error.response.data && error.response.data.message) {
+                    alert(error.response.data.message); // Mostrar mensaje específico del backend
+                } else {
+                    alert('Hubo un error al eliminar el auto. Intenta nuevamente.'); // Mensaje genérico si no hay mensaje de backend
+                }
+    
+                // Mostrar el error completo para depuración
+                console.log('Detalles del error: ', error.response);
+                console.log('Error:', error.message);
+                console.log('Error de la respuesta:', error.response ? error.response.data : 'No hay respuesta');
             }
         }
     };
+    
+    
 
     // Función para manejar el cambio de identidad
     const handleIdentidadChange = async (e) => {
         const nuevaIdentidad = e.target.value;
         setIdentidad(nuevaIdentidad);
-
+    
         if (nuevaIdentidad.length === 13) {
             try {
                 const response = await axios.get(`http://localhost:5000/autos/identidad/${nuevaIdentidad}`);
@@ -167,24 +231,23 @@ const Autos = () => {
             }
         }
     };
-
     
 
+    const fetchAutos = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/autos/todos');
+            setAutos(response.data); // Actualiza el estado autos con la respuesta de la API
+        } catch (error) {
+            console.error('Error al obtener los autos:', error);
+        }
+    };
+
+    // useEffect para cargar los autos cuando el componente se monta
     useEffect(() => {
-        const fetchAutos = async () => {
-            try{
-                const response = await axios.get('http://localhost:5000/autos/todos') 
-                setAutos(response.data);
-            }
-            catch(error) {
-                console.error("Error al obtener los autos:", error);
-            }
+        fetchAutos(); // Llama a fetchAutos para cargar los autos
+    }, []); // Este efecto solo se ejecuta una vez, al montar el componente
 
-        };
-
-        fetchAutos();
-
-    }, []);
+    
 
 
 
@@ -235,7 +298,10 @@ const Autos = () => {
                         <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Color}</td>
                         <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Numero_vin}</td>
                         <td className="border-b-2 border-zinc-600  px-4 py-2 ">
-                                <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(autoSeleccionado)}>
+                                <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"  onClick={() => {
+                    console.log(auto.Placa); // Aquí imprimes el valor de auto.Placa en la consola
+                    handleMostrarAuto(auto.Placa); // Luego llamas a la función con la placa
+                }}>
                                     <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
                                 </button>
                                 <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEliminar(autoSeleccionado)}>
@@ -252,14 +318,14 @@ const Autos = () => {
         <form className="flex flex-col justify-between text-center w-full h-full ">
         <h2>{isAddingMode ? 'Agregar vehiculo' : 'Detalles del vehiculo'}</h2>
         <div style={{height:"25rem"}} className="flex flex-col justify-between p-6 ">
-            <input
-            className="h-12 block font-medium my-3 text-gray-900"
-                type="text"
-                placeholder="Placa"
-                value={autoSeleccionado?.Placa || ''}
-                onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Placa: e.target.value })}
-                readOnly={!isEditMode && !isAddingMode}
-            />
+        <input
+    className="h-12 block font-medium my-3 text-gray-900"
+    type="text"
+    placeholder="Placa"
+    value={autoSeleccionado?.Placa || ''}
+    onChange={(e) => setAutoSeleccionado({ ...autoSeleccionado, Placa: e.target.value })}
+    readOnly={!isEditMode && !isAddingMode}
+/>
             <input
             className="h-12 block font-medium my-3 text-gray-900"
                 type="text"
@@ -327,7 +393,7 @@ const Autos = () => {
                             </button>
                         )}
                         {autoSeleccionado?.Id_auto && (
-                            <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleEdit}>
+                            <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleGuardar}>
                                 Actualizar
                             </button>
                         )}
