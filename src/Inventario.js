@@ -108,13 +108,37 @@ const Inventario = ({ rolUsuario }) => {
         if (window.confirm('¿Está seguro de que desea eliminar este registro?')) {
             try {
                 await axios.delete(`http://localhost:5000/inventarios/inventario/${id}`);
-                obtenerInventario();
+                obtenerInventario(); // Refresca la tabla después de eliminar
+                alert('Inventario eliminado correctamente');
             } catch (error) {
+<<<<<<< HEAD
+                // Manejar errores esperados (como 400 Bad Request)
+                if (error.response) {
+                    // Si el servidor envió una respuesta con error
+                    if (error.response.status === 400) {
+                        alert(error.response.data.message); // Mostrar mensaje específico del backend
+                    } else {
+                        console.error('Error del servidor:', error.response.data);
+                        alert('Error inesperado en el servidor');
+                    }
+                } else if (error.request) {
+                    // Si no se recibió respuesta del servidor
+                    console.error('Error en la solicitud:', error.request);
+                    alert('No se pudo conectar al servidor');
+                } else {
+                    // Error desconocido
+                    console.error('Error desconocido:', error.message);
+                    alert('Ocurrió un error desconocido');
+                }
+=======
                 console.error('Error al eliminar el inventario:', error);
                 mostrarMensaje('Error al eliminar el inventario', 'error');
+>>>>>>> ce9124d202e8e1ffe7651cbeb31f3e4949000354
             }
         }
     };
+    
+    
 
     const resetForm = () => {
         setInventarioData({
