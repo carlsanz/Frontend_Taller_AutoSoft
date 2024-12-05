@@ -109,31 +109,26 @@ const Inventario = ({ rolUsuario }) => {
             try {
                 await axios.delete(`http://localhost:5000/inventarios/inventario/${id}`);
                 obtenerInventario(); // Refresca la tabla después de eliminar
-                alert('Inventario eliminado correctamente');
+                mostrarMensaje('Inventario eliminado correctamente', 'success');
             } catch (error) {
-<<<<<<< HEAD
-                // Manejar errores esperados (como 400 Bad Request)
+    
                 if (error.response) {
                     // Si el servidor envió una respuesta con error
                     if (error.response.status === 400) {
-                        alert(error.response.data.message); // Mostrar mensaje específico del backend
+                        mostrarMensaje(error.response.data.message); // Mostrar mensaje específico del backend
                     } else {
                         console.error('Error del servidor:', error.response.data);
-                        alert('Error inesperado en el servidor');
+                        mostrarMensaje('Error inesperado en el servidor', 'error');
                     }
                 } else if (error.request) {
                     // Si no se recibió respuesta del servidor
                     console.error('Error en la solicitud:', error.request);
-                    alert('No se pudo conectar al servidor');
+                    mostrarMensaje('No se pudo conectar al servidor', 'error');
                 } else {
                     // Error desconocido
                     console.error('Error desconocido:', error.message);
-                    alert('Ocurrió un error desconocido');
+                    mostrarMensaje('Ocurrió un error desconocido', 'error');
                 }
-=======
-                console.error('Error al eliminar el inventario:', error);
-                mostrarMensaje('Error al eliminar el inventario', 'error');
->>>>>>> ce9124d202e8e1ffe7651cbeb31f3e4949000354
             }
         }
     };
