@@ -1,7 +1,10 @@
 import {TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon,} from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import Mensaje from './Mensaje';
+
 Modal.setAppElement("#root");
+
   
   const Servicios = ({ rolUsuario }) => {
     const [servicios, setServicios] = useState([]);
@@ -16,6 +19,14 @@ Modal.setAppElement("#root");
     });
   
     console.log(localStorage.getItem("role")); // Verficar rol
+
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
   
     //FUNCIONES DEL CRUD
   
@@ -56,10 +67,10 @@ Modal.setAppElement("#root");
         }
   
         setServicios(servicios.filter((servicio) => servicio.Id_servicio !== Id_servicio));
-        alert("Servicio borrado exitosamente");
+        mostrarMensaje('Servicio borrado exitosamente', 'success');
       } catch (error) {
         console.error("Error al borrar el servicio:", error);
-        alert("Hubo un error al borrar el servicio");
+        mostrarMensaje('Hubo un error al borrar el servicio', 'error');
       }
     };
   
@@ -109,10 +120,10 @@ Modal.setAppElement("#root");
             )
           );
   
-          alert("Servicio actualizado exitosamente");
+          mostrarMensaje('Servicio actualizado exitosamente', 'success');
         } catch (error) {
           console.error("Error al actualizar el servicio:", error);
-          alert("Hubo un error al actualizar el servicio");
+          mostrarMensaje('Hubo un error al actualizar el servicio','error');
         }
       } else {
         try {
@@ -134,10 +145,10 @@ Modal.setAppElement("#root");
           const nuevoServicio = await response.json();
           setServicios([...servicios, nuevoServicio]);
   
-          alert("Servicio agregado exitosamente");
+          mostrarMensaje('Servicio agregado exitosamente', 'success');
         } catch (error) {
           console.error("Error al agregar el servicio:", error);
-          alert("Hubo un error al agregar el servicio");
+          mostrarMensaje('Hubo un error al agregar el servicio', 'error');
         }
       }
   
@@ -161,8 +172,14 @@ Modal.setAppElement("#root");
           backgroundSize: "cover",
           backgroundPosition: " top",
         }}
+
         className="-z-10 absolute  p-8 pb-0 flex flex-col h-screen justify-center"
       >
+          <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
         <div className="flex h-auto justify-center min-w-full"> 
           <input
             id="buscar-home"
@@ -201,7 +218,7 @@ Modal.setAppElement("#root");
                 <th className="text-center text-white p-2">Descripción</th>
                 <th className="text-center text-white p-2">Precio</th>
                 <th className="text-center text-white p-2">Tipo de Servicio</th>
-                {rolUsuario === "Administrador" && <th></th>}
+                <th></th>
               </tr>
             </thead>
             <tbody>

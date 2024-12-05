@@ -5,6 +5,7 @@ import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8Too
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import Mensaje from './Mensaje';
 
 
 
@@ -22,6 +23,14 @@ const Home = () => {
   useEffect(() => {
     fetchCantidadCitasHoy(); // Obtener la cantidad de citas del día
 }, []);
+
+const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+const mostrarMensaje = (msg, tipo) => {
+  setMensaje(msg);
+  setTipoMensaje(tipo);
+};
 
   //Obtener cias de hoy
   const fetchCantidadCitasHoy = async () => {
@@ -54,7 +63,7 @@ const Home = () => {
 
     const handleSearch = async () => {
       if (!searchDate) {
-          alert("Por favor, selecciona una fecha.");
+          mostrarMensaje('Debes seleccionar una fecha.', 'alert');
           return;
       }
   
@@ -71,12 +80,13 @@ const Home = () => {
           if (data.length > 0) {
               setCitas(data); // Actualizar el estado con las citas encontradas
           } else {
-              alert("No se encontraron citas para la fecha seleccionada.");
+
               setCitas([]); // Limpiar el estado si no hay citas
           }
+         
       } catch (error) {
           console.error("Error al buscar citas:", error);
-          alert("Ocurrió un error al buscar las citas. Verifica la consola para más detalles.");
+          mostrarMensaje('Ocurrió un error al buscar las citas. Verifica la consola para más detalles.', 'error');
       }
   };
 
@@ -214,11 +224,11 @@ const actualizarFecha = async (idCita) => {
     );
 
     console.log('Respuesta del servidor:', response.data);
-    alert('Fecha actualizada con éxito');
+    mostrarMensaje('Fecha actualizada con éxito', 'success');
     cerrarFechaModal(); // Cierra el modal
   } catch (error) {
     console.error('Error al actualizar la fecha:', error);
-    alert('Hubo un error al actualizar la fecha. Inténtalo de nuevo.');
+    mostrarMensaje('Hubo un error al actualizar la fecha. Inténtalo de nuevo.', 'error');
   }
   obtenerCitas();
 };
@@ -274,16 +284,15 @@ const actualizarFecha = async (idCita) => {
         });
         const data = await response.json();
           if (response.ok) {
-            console.log('Respuesta del servidor:', data);
+            mostrarMensaje('Servicio agregado a la cita.', 'success');
           } else {
-            // Si el servidor responde con un error, mostramos la alerta
-            alert(data.message || 'Hubo un problema al asociar el servicio.');
+            mostrarMensaje(data.message || 'Hubo un problema al agregar el servicio a la cita.', 'error');
           }
         }
         cerrarServiciosModal(); // Cerrar el modal después de enviar todos los servicios
         } catch (error) {
           console.error('Error al enviar servicios:', error);
-          alert('Hubo un error en la solicitud.');
+          mostrarMensaje('Hubo un error en la solicitud.', 'error');
         }
     };
 
@@ -319,6 +328,7 @@ const actualizarFecha = async (idCita) => {
  // Enviar un solo objeto, no un array
  const handleRepuestosFormSubmit = (e) => {
   e.preventDefault();
+  cerrarRepuestosModal();
 
   const repuestoAEnviar = repuestosData[0] || {};
   console.log('JSON enviado:', JSON.stringify(repuestoAEnviar));
@@ -340,13 +350,13 @@ const actualizarFecha = async (idCita) => {
       })
       .then((data) => {
           if (data.repetido) {
-              alert('El repuesto ya fue agregado para esta cita.');
+            mostrarMensaje('El repuesto ya fue agregado para esta cita.', 'error');
           } else {
-              alert('Repuesto agregado correctamente.');
+            mostrarMensaje('Repuesto agregado correctamente.', 'success');
           }
       })
       .catch((error) => {
-          alert(error.message || 'Ocurrió un error inesperado.');
+        mostrarMensaje(error.message || 'Ocurrió un error inesperado.');
       });
 };
 
@@ -429,15 +439,15 @@ const actualizarFecha = async (idCita) => {
               Id_cliente: data.Id_cliente, // Guardamos el ID del cliente internamente
             }));
   
-              // Alerta de éxito al encontrar el automóvil y cliente
-            alert(`Auto encontrado: ID Auto = ${data.Id_auto}, ID Cliente = ${data.Id_cliente}`);
+              // mostrarMensajea de éxito al encontrar el automóvil y cliente
+            mostrarMensaje(`Auto encontrado: ID Auto = ${data.placa}, ID Cliente = ${data.Nombre}`, 'success');
           }
         })
           .catch((error) => {
             console.error("Error al buscar el automóvil:", error.message);
-            // Solo muestra la alerta si realmente no se encuentra el automóvil
+            // Solo muestra la mostrarMensajea si realmente no se encuentra el automóvil
             if (error.message !== "Automóvil no encontrado") {
-              alert("Hubo un error al realizar la búsqueda.");
+              mostrarMensaje("Hubo un error al realizar la búsqueda.", 'error');
             }
           });
       }, 500); // Espera 500ms después de que el usuario deje de escribir
@@ -483,12 +493,12 @@ const actualizarFecha = async (idCita) => {
             setCitas((prevCitas) => [...prevCitas, response.data]);
         }
 
-        alert(isEditMode ? 'Cita actualizada exitosamente' : 'Cita agregada exitosamente');
+        mostrarMensaje(isEditMode ? 'Cita actualizada exitosamente': 'Cita agregada exitosamente');
         setIsModalOpen(false);
         resetForm();
     } catch (error) {
         console.error('Error al guardar la cita:', error);
-        alert('Error al guardar la cita');
+        mostrarMensaje('Error al guardar la cita', 'error');
     }
 };
 
@@ -520,15 +530,15 @@ const actualizarFecha = async (idCita) => {
         console.log('Respuesta del servidor:', response); // Log de la respuesta
         
         if (response.ok) {
-            alert('Cita cancelada con éxito.');
+            mostrarMensaje('Cita cancelada con éxito.', 'success');
             obtenerCitas(); // Refresca la lista de citas
         } else {
             const errorText = await response.text();
-            throw new Error(errorText || 'Error al cancelar la cita');
+            throw new Error(errorText || 'Error al cancelar la cita', 'error');
         }
     } catch (error) {
         console.error('Error al cancelar la cita:', error.message);
-        alert('Hubo un problema al cancelar la cita. Intente de nuevo.');
+        mostrarMensaje('Hubo un problema al cancelar la cita. Intente de nuevo.', 'error');
     }
 };
 
@@ -558,7 +568,7 @@ const fetchInitialStates = async () => {
     setStepsState(estadosIniciales);
   } catch (error) {
     console.error("Error al obtener los estados iniciales:", error);
-    alert("No se pudieron obtener los estados iniciales. Inténtalo nuevamente.");
+    mostrarMensaje("No se pudieron obtener los estados iniciales. Inténtalo nuevamente.");
   }
 };
 
@@ -578,13 +588,13 @@ useEffect(() => {
           ...prevState,
           [id]: nuevoEstado,
         }));
-        alert("Estado actualizado correctamente.");
+        mostrarMensaje('Estado actualizado correctamente.', 'success');
       } catch (error) {
         console.error("Error al actualizar el estado:", error);
-        alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
+        mostrarMensaje('No se pudo actualizar el estado. Inténtalo nuevamente.', 'error');
       }
     } else {
-      alert("La cita ya está finalizada.");
+      mostrarMensaje('La cita ya está finalizada.', 'success');
     }
   };
 
@@ -600,13 +610,13 @@ useEffect(() => {
           ...prevState,
           [id]: nuevoEstado,
         }));
-        alert("Estado actualizado correctamente.");
+        mostrarMensaje('Estado actualizado correctamente.', 'success');
       } catch (error) {
         console.error("Error al actualizar el estado:", error);
-        alert("No se pudo actualizar el estado. Inténtalo nuevamente.");
+        mostrarMensaje('No se pudo actualizar el estado. Inténtalo nuevamente.', 'error');
       }
     } else {
-      alert("Ya estás en el primer paso.");
+      mostrarMensaje('Ya estás en el primer paso.', 'alert');
     }
   };
    //fin progressbar 
@@ -625,21 +635,29 @@ useEffect(() => {
   // Función para generar la factura
   const generarFactura = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
-      console.log('Respuesta de la API:', response.data);
-      
-      // Extraemos los datos de la factura, servicios y repuestos
-      const { datosFactura } = response.data;
-      setFactura(datosFactura);
-      setFacturaError('');
-      setShowModal(true);  // Abre el modal
-    } catch (err) {
-      console.error('Error:', err);
-      setFacturaError(err.response?.data?.message || 'Error al generar la factura');
-    }
-  };
-  
+        const response = await axios.post(`http://localhost:5000/factura/generar/${idCitaSeleccionada}`);
+        console.log('Respuesta de la API:', response.data);
+        
+        // Extraemos los datos de la factura
+        const { datosFactura } = response.data;
+        setFactura(datosFactura);
+        setFacturaError(''); // Limpiamos cualquier error previo
+        setShowModal(true); // Abre el modal con la información de la factura
 
+        // Alerta de éxito
+        alert('Factura generada con éxito');
+        
+    } catch (err) {
+        console.error('Error:', err);
+
+        // Si el error es porque ya se generó la factura, mostramos un mensaje específico
+        const errorMessage = err.response?.data?.message || 'Error al generar la factura';
+        setFacturaError(errorMessage);
+
+        // Alerta con el mensaje del backend
+        alert(errorMessage); // Muestra el mensaje de error (ej. "Ya se ha generado una factura para esta cita")
+    }
+};
   //Opciones de las citas()
   const solutions = [
     { name: 'Agregar Servicio', description: 'Agregar los servicios que se apicaran al vehiculo', href: '#', icon: WrenchScrewdriverIcon,  onClick: abrirServiciosModal},
@@ -662,10 +680,10 @@ useEffect(() => {
         prevServicios.filter((servicio) => servicio.id_servicio !== idServicio)
       );
   
-      alert('Servicio eliminado correctamente.');
+      mostrarMensaje('Servicio eliminado correctamente.', 'success');
     } catch (error) {
       console.error('Error al eliminar el servicio:', error.response?.data || error.message);
-      alert('Hubo un error al eliminar el servicio.');
+      mostrarMensaje('Hubo un error al eliminar el servicio.', 'error');
     }
   };
 
@@ -682,10 +700,10 @@ useEffect(() => {
         prevRepuestos.filter((repuesto) => repuesto.id_inventario !== idInventario)
       );
   
-      alert('Repuesto eliminado correctamente y cantidad devuelta al inventario.');
+      mostrarMensaje('Repuesto eliminado correctamente y cantidad devuelta al inventario.', 'success');
     } catch (error) {
       console.error('Error al eliminar el repuesto:', error.response?.data || error.message);
-      alert('Hubo un error al eliminar el repuesto.');
+      mostrarMensaje('Hubo un error al eliminar el repuesto.', 'error');
     }
   };
 
@@ -698,7 +716,13 @@ useEffect(() => {
       <img className="relative h-96 opacity-85 opa w-full m-0 p-0  rounded-2xl" src="image/vehiculo.jpg" alt="vehículo" />
         {role === 'Mecanico' && (
         <div id='Vista_Mecanico'>
-        
+         
+          <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
+            
         {/* Barra de búsqueda */}
         <div className="flex items-center justify-center w-full mt-5">
           <input
@@ -1007,7 +1031,7 @@ useEffect(() => {
                 onClick={cerrarRepuestosModal}
                 className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-gray-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
-                  Cancelar
+                  Cerrar
                 </button>
               </div>
             </div>
@@ -1133,6 +1157,8 @@ useEffect(() => {
                     </div>
                   </div>
                 </form>
+                 {/* Componente de mensajes */}
+      
               </Modal>
 
 
@@ -1388,10 +1414,12 @@ useEffect(() => {
                   </div>
             </article>
             ))}
+             
               </div>)}
               </div>
             </div>
           </div>
+          
         </div>)}
 
       {role === 'Administrador' && (
