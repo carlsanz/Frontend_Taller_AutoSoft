@@ -1,10 +1,12 @@
-import {  XMarkIcon } from '@heroicons/react/24/outline';
+import {  XMarkIcon, ArrowDownTrayIcon, BarsArrowDownIcon } from '@heroicons/react/24/outline';
 import {jsPDF} from "jspdf";
 import "jspdf-autotable";
 import React, { useEffect, useState } from 'react';
 import { TrashIcon} from '@heroicons/react/24/outline';
 import axios from 'axios';
+import Mensaje from './Mensaje';
  // Asegúrate de tener este icono
+
 
 const Facturas = () => {
     const [facturas, setFacturas] = useState([]);
@@ -13,6 +15,17 @@ const Facturas = () => {
     const [showModal, setShowModal] = useState(false); // Para controlar el estado del modal
     const [facturaError, setFacturaError] = useState(null); // Para mostrar errores
     const rol = localStorage.getItem('role');
+
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
+
+
+
 
     useEffect(() => {
         const idEmpleado = localStorage.getItem('idEmpleados');
@@ -58,10 +71,10 @@ const Facturas = () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
             try {
                 await axios.delete(`http://localhost:5000/factura/eliminarFactura/${id}`);
-                alert('Factura eliminada exitoso');
+                mostrarMensaje('Factura eliminada exitosamente', 'success');
                 setFacturas(facturas.filter((factura) => factura.Id_cita !== id));
             } catch (error) {
-                alert('Error al eliminar la factura');
+                mostrarMensaje('Error al eliminar la factura', 'error');
             }
         }
     };
@@ -185,7 +198,14 @@ const Facturas = () => {
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto pt-40 px-40">
+
+        <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+        />
+
             <h2 className="text-2xl font-bold mb-4">Facturas Generadas</h2>
             {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
             {facturas.length === 0 ? (
@@ -197,7 +217,7 @@ const Facturas = () => {
                             <th className="border px-4 py-2">Cliente</th>
                             <th className="border px-4 py-2">Empleado</th>
                             <th className="border px-4 py-2">Total</th>
-                            <th className="border px-4 py-2">Acciones</th>
+                            <th className="border px-4 py-2">Detalle</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -210,16 +230,16 @@ const Facturas = () => {
                                     {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}
                                 </td>
                                 <td className="border px-4 py-2">{factura.Total}</td>
-                                <td className="border px-4 py-2">
+                                <td className="border px-4 py-2 flex justify-center">
                                     <button
-                                        className="text-blue-500"
+                                    
                                         onClick={() => openModal(factura)}
                                     >
-                                        Ver Factura
+                                        <BarsArrowDownIcon aria-hidden="true" className="bg-amber-400 text-yellow-50  border-2 border-yellow-50 h-8 w-8 p-1 rounded-md  hover:bg-yellow-50 hover:text-amber-400 hover:border-white" />
                                     </button>
                                     
                                     {rol === "Administrador" &&(
-                                    <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+                                    <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-white hover:text-red-500 hover:bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
                                     onClick={() => handleDelete(factura.Id_cita)}>
                                     <TrashIcon aria-hidden="true" className="h-6 w-6" />
                                 </button>
@@ -261,9 +281,9 @@ const Facturas = () => {
                             <h2 className="text-2xl">Factura</h2>
                             <button
                                 onClick={closeModal}
-                                className="px-4 py-2 text-black rounded-md mt-4"
+                                className="px-4 py-2 bg-red-600  text-white mt-4 hover:bg-red-400"
                             >
-                                <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+                                <XMarkIcon aria-hidden="true" className="h-5 w-5" />
                             </button>
                         </div>
                         <p><strong>Fecha:</strong> {new Date(selectedFactura.Fecha).toLocaleString()}</p>
@@ -343,9 +363,10 @@ const Facturas = () => {
                                 <p><strong>Total:</strong> {selectedFactura.Total}</p>
                             </div>
                         </div>
+                        <div className="flex justify-around items-baseline">
 
-                        <button onClick = {handleGenerarPreviaPDF}>Generar pdf</button>
-
+                        <button onClick = {handleGenerarPreviaPDF}><ArrowDownTrayIcon aria-hidden="true" className="bg-blue-500  border-2 border-black h-10 w-40 p-2 rounded-md hover:bg-blue-400 hover:text-gray-50 hover:border-white" /></button>
+                        </div>
                     </div>
 
                     

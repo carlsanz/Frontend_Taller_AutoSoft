@@ -180,11 +180,11 @@ const Repuestos = ({ rolUsuario }) => {
                  className=" w-11 h-11  my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"onClick={handleSearch}>
                     <MagnifyingGlassIcon  className="h-6 w-6" />
                 </button>
-                {rolUsuario === "Administrador" && (
+                
                 <button  type="button"
               className=" w-11 h-11 my-5 mx-2 flex items-center justify-center  rounded-md bg-yellow-500  p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={handleAdd}>
                 <PlusIcon className="h-6 w-6" />
-                </button>)}
+                </button>
       </div>
       <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
         <div className="overflow-y-auto bg-white max-h-full w-full">
@@ -196,25 +196,25 @@ const Repuestos = ({ rolUsuario }) => {
                         <th className="text-center text-white m-12 p-2">Proveedor</th>
                         <th className="text-center text-white m-12 p-2">Descripción</th>
                         <th className="text-center text-white m-12 p-2">Precio</th>
-                        {rolUsuario === "Administrador" && <th className="text-center text-white m-12 p-2"></th>}
+                        <th className="text-center text-white m-12 p-2"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {repuestos.map((repuesto) => (
-                        <tr key={repuesto.Id_repuesto}>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.Nombre}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.NombreMarca}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.NombreProveedor}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.Descripcion}</td>
-                            <td className="border-b-2 border-zinc-600  text-left px-14 ">{repuesto.Precio}</td>
-                            {rolUsuario === "Administrador" && (<td className="border-b-2 border-zinc-600  text-left px-14 ">
-                                <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(repuesto)}>
-                                    <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                        <tr className="border-b-2 text-center border-zinc-400 px-14 " key={repuesto.Id_repuesto}>
+                            <td >{repuesto.Nombre}</td>
+                            <td >{repuesto.NombreMarca}</td>
+                            <td >{repuesto.NombreProveedor}</td>
+                            <td >{repuesto.Descripcion}</td>
+                            <td >{repuesto.Precio}</td>
+                            <td className="flex">
+                                <button    className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(repuesto)}>
+                                    <ArrowPathIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                 </button>
-                                <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(repuesto.Id_repuesto)}>
-                                    <TrashIcon aria-hidden="true" className="h-6 w-6"  />
+                                <button  className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(repuesto.Id_repuesto)}>
+                                    <TrashIcon aria-hidden="true" className="h-4 w-4 text-xs"  />
                                 </button>
-                            </td> )}
+                            </td> 
                         </tr>
                     ))}
                 </tbody>

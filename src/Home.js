@@ -867,9 +867,9 @@ useEffect(() => {
         <h2 className="text-2xl">Factura </h2>
         <button
         onClick={() => setShowModal(false)}
-        className="px-4 py-2  text-black rounded-md mt-4"
+        className="px-4 py-2 bg-red-600  text-white mt-4 hover:bg-red-400"
         >
-          <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+          <XMarkIcon aria-hidden="true" className="  h-6 w-6" />
         </button>
         
       </div>

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import Mensaje from './Mensaje';
 Modal.setAppElement('#root'); 
+
 
 
 const Clientes = () => {
@@ -27,6 +29,15 @@ const Clientes = () => {
         Genero: 'Femenino', // Valor por defecto
     });
     const role = localStorage.getItem('role');
+
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
+
 
     //obtener las colonias al cargar componentes
     useEffect(()=>{
@@ -55,7 +66,7 @@ const handleSearch = async () => {
         setIsEditMode(false);  // No edición al buscar
         setIsAddingMode(false);  // No agregar
     } catch (error) {
-        alert('Cliente no encontrado');
+        mostrarMensaje('Cliente no encontrado', 'error');
         setCliente(null);
     }
 };
@@ -88,12 +99,12 @@ const handleSearch = async () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
                 await axios.delete(`http://localhost:5000/api/clientes/${formData.Identidad}`);
-                alert('Cliente eliminado');
+                mostrarMensaje('Cliente eliminado correctamente', 'success');
                 setCliente(null);
                 setIdentidad('');
                 setIsModalOpen(false);  // Cerrar modal al eliminar
             } catch (error) {
-                alert('Error al eliminar el cliente');
+                mostrarMensaje('Error al eliminar el cliente', 'error');
             }
         }
     };
@@ -110,18 +121,18 @@ const handleSearch = async () => {
             if (isAddingMode) {
                 // Si estamos en modo de agregar, hacer POST
                 await axios.post('http://localhost:5000/api/clientes', formData);
-                alert('Cliente agregado exitosamente');
+                mostrarMensaje('Cliente agregado exitosamente', 'success');
             } else if (isEditMode) {
                 // Si estamos en modo de edición, hacer PUT para actualizar
                 await axios.put(`http://localhost:5000/api/clientes/${formData.Identidad}`, formData);
-                alert('Cliente actualizado exitosamente');
+                mostrarMensaje('Cliente actualizado exitosamente', 'success');
             }
             // Cerrar modal y limpiar estado
             setIsModalOpen(false);
             setCliente(null);
             setIdentidad('');  // Limpiar campo de identidad
         } catch (error) {
-            alert('Error al agregar o actualizar el cliente');
+            mostrarMensaje('Error al agregar o actualizar el cliente', 'error');
             console.error(error);
         }
     };
@@ -148,6 +159,12 @@ useEffect(() => {
         style={{ width: '100vw', overflowX: 'hidden',  overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
         className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center" >
         <div className="flex h-auto justify-center min-w-full">
+        <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
+
             <input
                 className="w-3/5 my-5 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-950 sm:text-sm/6"
                 type="text"
@@ -163,6 +180,7 @@ useEffect(() => {
             </button>    
         </div>
         <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+
         <div className="overflow-y-auto bg-white max-h-full w-full">
             <table className="min-w-full w-full divide-y divide-gray-200">
                     <thead className="sticky top-0">
@@ -182,19 +200,19 @@ useEffect(() => {
                             </tr>
                         ) : (
                             clientes.map((cliente) => (
-                                <tr key={cliente.Identidad}>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Identidad}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre} {cliente.S_nombre}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido} {cliente.S_apellido}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Genero}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Direccion}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">
+                                <tr className="border-b-2 text-center border-zinc-400 px-14 " key={cliente.Identidad}>
+                                    <td >{cliente.Identidad}</td>
+                                    <td >{cliente.P_nombre} {cliente.S_nombre}</td>
+                                    <td >{cliente.P_apellido} {cliente.S_apellido}</td>
+                                    <td >{cliente.Genero}</td>
+                                    <td >{cliente.Direccion}</td>
+                                    <td className="flex" >
                                         <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(cliente)}>
-                                            <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                            <ArrowPathIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                         </button>
                                         {role === 'Administrador'&&(
                                         <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(cliente.Identidad)}>
-                                            <TrashIcon aria-hidden="true" className="h-6 w-6" />
+                                            <TrashIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                         </button>)}
                                     </td>
                                 </tr>

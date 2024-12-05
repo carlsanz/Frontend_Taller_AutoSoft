@@ -221,18 +221,18 @@ useEffect(() => {
                         </tr>
                     ) : (
                         empleados.map((empleado) => (
-                            <tr key={empleado.Identidad}>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Identidad}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Nombre}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Apellido}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Genero}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Direccion}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2">
+                            <tr  className="border-b-2 text-center border-zinc-400 px-14 " key={empleado.Identidad}>
+                                <td >{empleado.Identidad}</td>
+                                <td >{empleado.Nombre}</td>
+                                <td >{empleado.Apellido}</td>
+                                <td >{empleado.Genero}</td>
+                                <td >{empleado.Direccion}</td>
+                                <td className="flex">
                                     <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-                                        <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                        <ArrowPathIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                     </button>
                                     <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-                                        <TrashIcon aria-hidden="true" className="h-6 w-6"  />
+                                        <TrashIcon aria-hidden="true" className="h-4 w-4 text-xs"  />
                                     </button>
                                 </td>
                             </tr>

@@ -182,7 +182,7 @@ const Inventario = ({ rolUsuario }) => {
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th className="text-center text-xs text-white mr-0 m-12 py-2 px-4"><button 
+                        <th className="text-center text-xs text-white "><button 
                             className="w-32 h-10 bg-zinc-700 m-2 flex items-center justify-evenly rounded-md  text-yellow-500  hover:text-yellow-500 focus:outline-none focus:ring-2 hover:bg-gray-500 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                             onClick={() => navigate("/repuestos")}>
                             <PlusCircleIcon aria-hidden="true" className="h-5 w-5" /> Nuevo Repuesto
@@ -204,29 +204,29 @@ const Inventario = ({ rolUsuario }) => {
                 <tbody>
                     {inventario.length > 0 ? (
                         inventario.map((item) => (
-                            <tr key={item.Id_inventario}>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.nombre}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.descripcion}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.marca}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.proveedor}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.precio}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Cantidad_disponible}</td>
-                                <td className="border-b-2 border-zinc-600  text-left px-8 ">{item.Fecha_ingreso || "Fecha inválida"}</td>
+                            <tr className="border-b-2 text-center border-zinc-400 px-14 " key={item.Id_inventario}>
+                                <td >{item.nombre}</td>
+                                <td >{item.descripcion}</td>
+                                <td >{item.marca}</td>
+                                <td >{item.proveedor}</td>
+                                <td >{item.precio}</td>
+                                <td >{item.Cantidad_disponible}</td>
+                                <td >{item.Fecha_ingreso || "Fecha inválida"}</td>
                                 
                                 {/* Mostrar botones de editar y eliminar solo para Administrador */}
                                 {rolUsuario === "Administrador"  && (
-                                    <td className="border-b-2 border-zinc-600  text-left px-8 ">
+                                    <td className="flex">
                                         <button 
                                             className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                             onClick={() => handleEditar(item)}
                                         >
-                                        <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                        <ArrowPathIcon aria-hidden="true" className="h-4 w-4 text-xs"/>
                                         </button>
                                         <button 
                                             className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                             onClick={() => handleEliminar(item.Id_inventario)}
                                         >
-                                            <TrashIcon aria-hidden="true" className="h-6 w-6"  />
+                                            <TrashIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                         </button>
                                     </td>
                                 )}

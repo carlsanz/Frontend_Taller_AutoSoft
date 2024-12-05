@@ -307,21 +307,21 @@ const Autos = () => {
            </tr>
            ) : (
                 autos.map((auto) => (
-                    <tr key={auto.Id_auto}>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Placa}</td>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Modelo}</td>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Tipo}</td>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Color}</td>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">{auto.Numero_vin}</td>
-                        <td className="border-b-2 border-zinc-600  px-4 py-2 ">
+                    <tr className="border-b-2 text-center border-zinc-400 px-14 " key={auto.Id_auto}>
+                        <td >{auto.Placa}</td>
+                        <td >{auto.Modelo}</td>
+                        <td >{auto.Tipo}</td>
+                        <td >{auto.Color}</td>
+                        <td >{auto.Numero_vin}</td>
+                        <td className="flex">
                                 <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"  onClick={() => {
                     console.log(auto.Placa); // Aquí imprimes el valor de auto.Placa en la consola
                     handleMostrarAuto(auto.Placa); // Luego llamas a la función con la placa
                 }}>
-                                    <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                    <ArrowPathIcon aria-hidden="true" className="h-4 w-4 text-xs" />
                                 </button>
                                 <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEliminar(autoSeleccionado)}>
-                                    <TrashIcon aria-hidden="true" className="h-6 w-6"  />
+                                    <TrashIcon aria-hidden="true" className="h-4 w-4 text-xs"  />
                                 </button>
                        </td>
                     </tr>

@@ -222,21 +222,21 @@ Modal.setAppElement("#root");
                 </tr>
               ) : (
                 servicios.map((servicio) => (
-                  <tr key={servicio.Id_servicio}>
-                    <td className="border-b-2 border-zinc-600 text-left px-8">
+                  <tr className="border-b-2 text-center border-zinc-400 px-14 " key={servicio.Id_servicio}>
+                    <td >
                       {servicio.Nombre}
                     </td>
-                    <td className="border-b-2 border-zinc-600 text-justify px-8">
+                    <td >
                       {servicio.Descripcion}
                     </td>
-                    <td className="border-b-2 border-zinc-600 text-center px-8">
+                    <td >
                       {servicio.Precio}
                     </td>
-                    <td className="border-b-2 border-zinc-600 text-center px-8">
+                    <td>
                       {servicio.Tipo_servicio}
                     </td>
                   
-                      <td className="border-b-2 border-zinc-600 px-8">
+                      <td className="flex">
                         <button
                           type="button"
                           onClick={() => handleEdit(servicio)}
