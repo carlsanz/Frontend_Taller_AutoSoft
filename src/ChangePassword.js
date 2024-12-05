@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import logo2 from './styles/pictures/logo2-removebg-preview.png';
 import taller3 from './styles/pictures/taller3.jpg';
+import Mensaje from './Mensaje';
 
 const ChangePassword = () => {
   const [email, setEmail] = useState(localStorage.getItem('email') || '');
@@ -11,15 +12,25 @@ const ChangePassword = () => {
   const navigate = useNavigate();
   let alertParam = false;
 
+  const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+  const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+  const mostrarMensaje = (msg, tipo) => {
+  setMensaje(msg);
+  setTipoMensaje(tipo);
+  };
+
   // Recibe query parameter alert
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     alertParam = urlParams.get('alert');
 
     if (alertParam === 'true') {
-      alert('Debes cambiar tu contraseña para continuar');
+      mostrarMensaje('Debes cambiar tu contraseña para continuar', 'alert');
     }
   }, []);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,11 +40,11 @@ const ChangePassword = () => {
         oldPassword,
         newPassword
       });
-      alert(response.data.message);
+      mostrarMensaje(response.data.message, 'success');
       navigate('/home');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error al cambiar la contraseña';
-      alert(errorMessage);
+      mostrarMensaje(errorMessage, 'error');
     }
   };
 
@@ -42,6 +53,7 @@ const ChangePassword = () => {
     style={{  width: '100vw', overflowX: 'visible',  backgroundSize: 'cover', backgroundPosition: ' top', backgroundImage: `url(${taller3})` }}
     className="relative min-h-full flex items-center justify-center"
     >
+ 
       <div className="bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto my-10"
            style={{ backgroundColor: '#1F1F1F', opacity: 0.9 }}>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -52,6 +64,11 @@ const ChangePassword = () => {
             style={{ height: '170px', width: 'auto' }}
           />
         </div>
+        <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
 
         <div className="mt-10">
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -80,17 +80,14 @@ const handleSearch = async () => {
         console.log('Estado del modal: ',isModalOpen);
     };
     // para manejo de la actualizacion de los clientes
-    const handleEdit = (cliente) => {
-        setFormData(cliente);
-        console.log(formData);
-        setIsModalOpen(true);
+    const handleEdit = () => {
         setIsEditMode(true); // Habilitar el modo edición
     };
     // para manejo de la eliminacion de los clientes
-    const handleDelete = async (identidad) => {
+    const handleDelete = async () => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/clientes/${identidad}`);
+                await axios.delete(`http://localhost:5000/api/clientes/${formData.Identidad}`);
                 alert('Cliente eliminado');
                 setCliente(null);
                 setIdentidad('');
@@ -129,36 +126,28 @@ const handleSearch = async () => {
         }
     };
     
-    useEffect(() => {
-        const fetchClientes = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/clientesTodo');
-                // Formatear la fecha antes de establecer el estado
-                const clientesConFechaFormateada = response.data.map(cliente => {
-                    if (cliente.Fecha_nac && !isNaN(new Date(cliente.Fecha_nac).getTime())) {
-                        // Convertir la fecha a formato yyyy-MM-dd
-                        const fecha = new Date(cliente.Fecha_nac);
-                        const formattedDate = fecha.toISOString().split('T')[0]; // Formato yyyy-MM-dd
-                        cliente.Fecha_nac = formattedDate;
-                    }
-                    return cliente;
-                });
-                setClientes(clientesConFechaFormateada);  // Llenar el estado con los datos de clientes formateados
-            } catch (error) {
-                console.error('Error al obtener los clientes', error);
-            }
-        };
-    
-        fetchClientes();
-    }, []);
+
+// Obtener clientes al cargar el componente
+useEffect(() => {
+    const fetchClientes = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/todos');
+            setClientes(response.data);  // Llenar el estado con los datos de clientes
+        } catch (error) {
+            console.error('Error al obtener los clientes', error);
+        }
+    };
+
+    fetchClientes();
+}, []);
 
 
 
     return (
         <div 
-        style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute p-32 bg-red-300 flex flex-col h-screen justify-center" >
-        <div className="flex h-auto justify-center min-w-full mt-5">
+        style={{ width: '100vw', overflowX: 'hidden',  overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center" >
+        <div className="flex h-auto justify-center min-w-full">
             <input
                 className="w-3/5 my-5 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-950 sm:text-sm/6"
                 type="text"
@@ -174,9 +163,9 @@ const handleSearch = async () => {
             </button>    
         </div>
         <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
-        <div className="overflow-y-auto bg-white max-h-96 w-full">
+        <div className="overflow-y-auto bg-white max-h-full w-full">
             <table className="min-w-full w-full divide-y divide-gray-200">
-                    <thead>
+                    <thead className="sticky top-0">
                         <tr className="bg-zinc-600 h-8">
                             <th className="text-center text-white px-4 py-2">Identidad</th>
                             <th className="text-center text-white px-4 py-2">Nombre</th>
@@ -195,8 +184,8 @@ const handleSearch = async () => {
                             clientes.map((cliente) => (
                                 <tr key={cliente.Identidad}>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Identidad}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre}  {cliente.S_nombre}</td>
-                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido}  {cliente.S_apellido}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_nombre} {cliente.S_nombre}</td>
+                                    <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.P_apellido} {cliente.S_apellido}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Genero}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">{cliente.Direccion}</td>
                                     <td className="border-b-2 border-zinc-600 text-center px-4 py-2">

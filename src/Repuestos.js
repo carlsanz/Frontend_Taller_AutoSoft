@@ -2,6 +2,7 @@ import axios from 'axios';
 import { TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
+import Mensaje from './Mensaje';
 Modal.setAppElement('#root'); 
 
 
@@ -21,6 +22,14 @@ const Repuestos = ({ rolUsuario }) => {
             Descripcion: '',
             Precio: '',
         });
+
+        const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+        const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+    
+        const mostrarMensaje = (msg, tipo) => {
+        setMensaje(msg);
+        setTipoMensaje(tipo);
+        };
     
 
 
@@ -114,10 +123,10 @@ const Repuestos = ({ rolUsuario }) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este repuesto?')) {
             try {
                 await axios.delete(`http://localhost:5000/repuestos/${idRepuesto}`);
-                alert('Repuesto eliminado');
+                mostrarMensaje('Repuesto eliminado exitosamente', 'success');
                 obtenerRepuestos(); // Refresca la lista de repuestos después de eliminar
             } catch (error) {
-                alert('Error al eliminar el repuesto');
+                mostrarMensaje('Error al eliminar el repuesto', 'error');
                 console.error(error);
             }
         }
@@ -135,28 +144,31 @@ const Repuestos = ({ rolUsuario }) => {
         try {
             if (isAddingMode) {
                 await axios.post('http://localhost:5000/repuestos', formData);
-                alert('Repuesto agregado exitosamente');
+                mostrarMensaje('Repuesto agregado exitosamente', 'success');
             } else if (isEditMode) {
                 await axios.put(`http://localhost:5000/repuestos/${formData.Id_repuesto}`, formData);
-                alert('Repuesto actualizado exitosamente');
+                mostrarMensaje('Repuesto actualizado exitosamente', 'success');
             }
             setModalIsOpen(false);
             setRepuestos([]);
             setNombreBusqueda('');
             obtenerRepuestos();
         } catch (error) {
-            alert('Error al agregar o actualizar el repuesto');
+            mostrarMensaje('Error al agregar o actualizar el repuesto', 'error');
             console.error(error);
         }
     };
 
     return (
         <div 
-        style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute p-32 pb-0 bg-red-300 flex flex-col h-screen justify-center" >
-
-
+        style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
       <div className="flex h-auto justify-center min-w-full">
+      <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
       <input
                     type="text"
                     placeholder="Buscar por nombre del repuesto"
@@ -175,9 +187,9 @@ const Repuestos = ({ rolUsuario }) => {
                 </button>)}
       </div>
       <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
-        <div className="overflow-y-auto bg-white max-h-96 w-full">
+        <div className="overflow-y-auto bg-white max-h-full w-full">
             <table className="min-w-full w-full divide-y divide-gray-200">
-                <thead>
+            <thead className="sticky top-0">
                     <tr  className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
                         <th className="text-center text-white m-12 p-2">Nombre</th>
                         <th className="text-center text-white m-12 p-2">Marca</th>

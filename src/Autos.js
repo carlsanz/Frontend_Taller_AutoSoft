@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { TrashIcon, ArrowPathIcon,PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import Mensaje from './Mensaje'; 
+
 Modal.setAppElement('#root'); 
 
 const Autos = () => {
@@ -15,6 +17,15 @@ const Autos = () => {
     const [colores, setColores] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddingMode, setIsAddingMode] = useState(false);
+
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
+  
   
 
 
@@ -32,7 +43,7 @@ const Autos = () => {
 
             
         } catch (error) {
-            alert('Auto no encontrado');
+            mostrarMensaje('Auto no encontrado', 'error');
             setAutoSeleccionado(null);
         }
     };
@@ -41,7 +52,7 @@ const Autos = () => {
         console.log("Buscando auto con placa:", placa);
     
         if (!placa) {
-            alert("Por favor, ingrese una placa válida.");
+            mostrarMensaje('Por favor, ingrese una placa válida.', 'alert');
             return;
         }
     
@@ -54,11 +65,11 @@ const Autos = () => {
                 setIsEditMode(true); // Modo edición al buscar
                 setIsAddingMode(false);
             } else {
-                alert("Auto no encontrado");
+                mostrarMensaje('Auto no encontrado', 'error');
                 setAutoSeleccionado(null);
             }
         } catch (error) {
-            alert('Error al buscar el auto');
+            mostrarMensaje('Error al buscar el auto', 'error');
             setAutoSeleccionado(null);
         }
     };
@@ -157,12 +168,12 @@ const Autos = () => {
                 console.log('Actualizando auto...');
                 // Actualización
                 await axios.put(`http://localhost:5000/autos/${autoSeleccionado.Placa}`, autoParaGuardar);
-                alert('Auto actualizado exitosamente');
+                mostrarMensaje('Auto actualizado exitosamente', 'success');
             } else if (isAddingMode) {
                 console.log('Guardando nuevo auto...');
                 // Nuevo registro
                 await axios.post('http://localhost:5000/autos', autoParaGuardar);
-                alert('Auto guardado exitosamente');
+                mostrarMensaje('Auto guardado exitosamente', 'success');
             }
     
             // Después de actualizar o guardar, actualiza la lista de autos
@@ -184,7 +195,7 @@ const Autos = () => {
                     const response = await axios.delete(`http://localhost:5000/autos/${autoSeleccionado.Placa}`);
                     
                     // Si la respuesta es exitosa, muestra el mensaje de éxito
-                    alert(response.data.message || 'Auto eliminado exitosamente');
+                    mostrarMensaje(response.data.message || 'Auto eliminado exitosamente', 'success');
     
                     // Actualiza la lista de autos en el frontend después de eliminarlo
                     setAutos((prevAutos) => prevAutos.filter((auto) => auto.Placa !== autoSeleccionado.Placa));
@@ -197,9 +208,9 @@ const Autos = () => {
     
                 // Verificar si la respuesta de error tiene un mensaje
                 if (error.response && error.response.data && error.response.data.message) {
-                    alert(error.response.data.message); // Mostrar mensaje específico del backend
+                    mostrarMensaje(error.response.data.message); // Mostrar mensaje específico del backend
                 } else {
-                    alert('Hubo un error al eliminar el auto. Intenta nuevamente.'); // Mensaje genérico si no hay mensaje de backend
+                    mostrarMensaje('Hubo un error al eliminar el auto. Intenta nuevamente.', 'error'); // Mensaje genérico si no hay mensaje de backend
                 }
     
                 // Mostrar el error completo para depuración
@@ -221,13 +232,13 @@ const Autos = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/autos/identidad/${nuevaIdentidad}`);
                 if (response.data) {
-                    alert(`Cliente encontrado: ${response.data.Nombre}`);
+                    mostrarMensaje(`Cliente encontrado: ${response.data.Nombre}`, 'success');
                 } else {
-                    alert('Cliente no encontrado');
+                    mostrarMensaje('Cliente no encontrado', 'error');
                 }
             } catch (error) {
                 console.error('Error al verificar la identidad:', error);
-                alert('Cliente no encontrado');
+                mostrarMensaje('Cliente no encontrado', 'error');
             }
         }
     };
@@ -254,9 +265,14 @@ const Autos = () => {
 
     return (
         <div 
-        style={{ width: '100vw', overflowX: 'scroll', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute  p-32 pb-0 flex flex-col h-screen justify-center" >
+        style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
       <div className="flex h-auto justify-center min-w-full">
+      <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
       <input
                 type="text"
                 placeholder="Buscar por número de placa"
@@ -272,9 +288,9 @@ const Autos = () => {
             </button>
       </div>
       <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
-        <div className="overflow-y-auto bg-white max-h-96 w-full">
+        <div className="overflow-y-auto bg-white max-h-full w-full">
             <table className="min-w-full w-full divide-y divide-gray-200">
-            <thead>
+            <thead className="sticky top-0">
                 <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
                     <th className="text-center text-white   m-12 px-4 py-2">Placa</th>
                     <th className="text-center text-white   m-12 px-4 py-2">Modelo</th>
@@ -316,6 +332,11 @@ const Autos = () => {
 
         <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 top-11 rounded-lg max-w-2xl mx-auto my-8 "   isOpen={modalAbierto} onRequestClose={() => setModalAbierto(false)}>
         <form className="flex flex-col justify-between text-center w-full h-full ">
+        <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+          />
         <h2>{isAddingMode ? 'Agregar vehiculo' : 'Detalles del vehiculo'}</h2>
         <div style={{height:"25rem"}} className="flex flex-col justify-between p-6 ">
         <input

@@ -645,17 +645,16 @@ useEffect(() => {
         setShowModal(true); // Abre el modal con la información de la factura
 
         // Alerta de éxito
-        alert('Factura generada con éxito');
+        mostrarMensaje ('Factura generada con éxito', 'success');
         
     } catch (err) {
         console.error('Error:', err);
 
         // Si el error es porque ya se generó la factura, mostramos un mensaje específico
-        const errorMessage = err.response?.data?.message || 'Error al generar la factura';
-        setFacturaError(errorMessage);
+        mostrarMensaje('No se pudo generar la factura', 'error');
 
         // Alerta con el mensaje del backend
-        alert(errorMessage); // Muestra el mensaje de error (ej. "Ya se ha generado una factura para esta cita")
+        mostrarMensaje('Ya existe una factura para esta cita', 'alert'); // Muestra el mensaje de error (ej. "Ya se ha generado una factura para esta cita")
     }
 };
   //Opciones de las citas()

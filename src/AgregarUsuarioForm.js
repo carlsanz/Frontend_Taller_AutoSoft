@@ -1,7 +1,8 @@
 import { TrashIcon, ArrowPathIcon, PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal'; 
+import Modal from 'react-modal';
+import Mensaje from './Mensaje'; 
 Modal.setAppElement('#root'); 
 
 const AgregarUsuario = () => {
@@ -30,6 +31,14 @@ const AgregarUsuario = () => {
         Primer_ingreso:''
     });
    
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
+
     //obetener los departamentos
     useEffect(()=>{
         const fetchDepartamentos = async ()=> {
@@ -75,7 +84,7 @@ const handleBuscarUsuario = async (e) => {
         setIsModalOpen(true);
     } catch (error) {
         console.error('Error al buscar usuario:', error);
-        alert('Usuario no encontrado.');
+        mostrarMensaje('Usuario no encontrado.', 'alert');
     }
 };
 
@@ -98,11 +107,11 @@ const handleSubmit = async (e) => {
             throw new Error('Error al guardar usuario');
         }
 
-        alert(isEditMode ? 'Usuario actualizado exitosamente' : 'Datos agregados exitosamente');
+        mostrarMensaje(isEditMode ? 'Usuario actualizado exitosamente' : 'Datos agregados exitosamente');
         setIsModalOpen(false);
         resetForm();
     } catch (error) {
-        alert('Error al guardar los datos');
+        mostrarMensaje('Error al guardar los datos', 'error');
         console.error('Error:', error);
     }
 };
@@ -115,15 +124,15 @@ const handleEliminarUsuario = async () => {
     try {
         const response = await axios.delete(`http://localhost:5000/usuarios-completo/${formData.Identidad }/${formData.Email}`);
         if (response.status === 200) {
-            alert('Usuario eliminado exitosamente');
+            mostrarMensaje('Usuario eliminado exitosamente', 'success');
             setIsModalOpen(false);
             resetForm();
         } else {
-            alert('Error al eliminar el usuario');
+            mostrarMensaje('Error al eliminar el usuario', 'error');
         }
     } catch (error) {
         console.error('Error al eliminar usuario:', error);
-        alert('Error al eliminar el usuario');
+        mostrarMensaje('Error al eliminar el usuario', 'error');
     }
 };
 
@@ -166,8 +175,14 @@ useEffect(() => {
 
     return (
         <div 
-        style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
-        className="-z-10 absolute p-32 pb-0  flex flex-col h-screen justify-center" >
+        style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
+
+        <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+        />
      
       <form className="flex h-auto justify-center min-w-full" onSubmit={handleBuscarUsuario}>
                 <input
@@ -187,9 +202,9 @@ useEffect(() => {
         </form>
 
         <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
-        <div className="overflow-y-auto bg-white max-h-96 w-full">
-            <table className="min-w-full w-full divide-y divide-gray-200">
-                <thead>
+            <div className="overflow-y-auto bg-white max-h-full w-full">
+                <table className="min-w-full w-full divide-y divide-gray-200">
+                    <thead className="sticky top-0">
                     <tr className=" bg-zinc-600 h-8 rounded-none m-0 p-0">
                         <th className="text-center text-white m-12 px-4 py-2">Identidad</th>
                         <th className="text-center text-white m-12 px-4 py-2">Nombre</th>
