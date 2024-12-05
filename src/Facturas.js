@@ -1,5 +1,9 @@
 import {  XMarkIcon } from '@heroicons/react/24/outline';
+import {jsPDF} from "jspdf";
+import "jspdf-autotable";
 import React, { useEffect, useState } from 'react';
+import { TrashIcon} from '@heroicons/react/24/outline';
+import axios from 'axios';
  // Asegúrate de tener este icono
 
 const Facturas = () => {
@@ -8,6 +12,7 @@ const Facturas = () => {
     const [selectedFactura, setSelectedFactura] = useState(null); // Para almacenar la factura seleccionada
     const [showModal, setShowModal] = useState(false); // Para controlar el estado del modal
     const [facturaError, setFacturaError] = useState(null); // Para mostrar errores
+    const rol = localStorage.getItem('role');
 
     useEffect(() => {
         const idEmpleado = localStorage.getItem('idEmpleados');
@@ -48,6 +53,123 @@ const Facturas = () => {
         fetchFacturas();
     }, []);
 
+    // Eliminar facturas solo administrador
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
+            try {
+                await axios.delete(`http://localhost:5000/factura/eliminarFactura/${id}`);
+                alert('Factura eliminada exitoso');
+                setFacturas(facturas.filter((factura) => factura.Id_cita !== id));
+            } catch (error) {
+                alert('Error al eliminar la factura');
+            }
+        }
+    };
+    
+        // Función para generar el PDF
+       
+        const handleGenerarPreviaPDF = () => {
+            if (!selectedFactura) {
+                console.error("No se ha seleccionado ninguna factura.");
+                return;
+            }
+        
+            const { cliente, empleado, servicios, repuestos, Fecha, Subtotal, Impuesto, Total } = selectedFactura;
+        
+            if (!cliente || !empleado || !Fecha || !Subtotal || !Impuesto || !Total) {
+                console.error("Datos incompletos de la factura.");
+                return;
+            }
+        
+            const doc = new jsPDF();
+        
+            // Cargar imagen desde la carpeta public
+            const img = new Image();
+            img.src = `${process.env.PUBLIC_URL}/image/logo2-removebg-preview.png`; // Ruta del logo en 'public'
+            img.onload = () => {
+                const pageWidth = doc.internal.pageSize.getWidth();
+        
+                // Agregar logo en la esquina superior izquierda
+                const logoWidth = 40;
+                const logoHeight = 40;
+                doc.addImage(img, "PNG", 10, 10, logoWidth, logoHeight);
+        
+                // Encabezado centrado
+                doc.setFontSize(18);
+                doc.text("Factura", pageWidth / 2, 20, { align: "center" });
+        
+                doc.setFontSize(12);
+                doc.text(`Fecha: ${new Date(Fecha).toLocaleDateString()}`, pageWidth / 2, 30, { align: "center" });
+                doc.text(`Cliente: ${cliente.NombreCliente} ${cliente.ApellidoCliente}`, pageWidth / 2, 40, { align: "center" });
+                doc.text(`Empleado: ${empleado.NombreEmpleado} ${empleado.ApellidoEmpleado}`, pageWidth / 2, 50, { align: "center" });
+        
+                // Tabla de servicios
+                let currentY = 60;
+                if (servicios && servicios.length > 0) {
+                    const serviciosData = servicios.map((servicio, index) => [
+                        index + 1,
+                        servicio.NombreServicio,
+                        `L ${servicio.PrecioServicio.toFixed(2)}`,
+                    ]);
+                    doc.autoTable({
+                        head: [["#", "Servicio", "Precio"]],
+                        body: serviciosData,
+                        startY: currentY,
+                    });
+                    currentY = doc.lastAutoTable.finalY + 10;
+                } else {
+                    doc.text("No hay servicios disponibles.", 10, currentY);
+                    currentY += 10;
+                }
+        
+                // Tabla de repuestos
+                if (repuestos && repuestos.length > 0) {
+                    const repuestosData = repuestos.map((repuesto, index) => [
+                        index + 1,
+                        repuesto.NombreRepuesto,
+                        repuesto.Cantidad,
+                        `L ${repuesto.PrecioUnidad.toFixed(2)}`,
+                        `L ${repuesto.TotalRepuesto.toFixed(2)}`,
+                    ]);
+                    doc.autoTable({
+                        head: [["#", "Repuesto", "Cantidad", "Precio Unitario", "Total"]],
+                        body: repuestosData,
+                        startY: currentY,
+                    });
+                    currentY = doc.lastAutoTable.finalY + 10;
+                } else {
+                    doc.text("No hay repuestos disponibles.", 10, currentY);
+                    currentY += 10;
+                }
+        
+                // Tabla de totales (alineada a la derecha)
+                const tableWidth = 70;
+                const marginRight = 20;
+        
+                doc.autoTable({
+                    head: [["Descripción", "Monto"]],
+                    body: [
+                        ["Subtotal", `L ${Subtotal.toFixed(2)}`],
+                        ["Impuesto", `L ${Impuesto.toFixed(2)}`],
+                        ["Total", `L ${Total.toFixed(2)}`],
+                    ],
+                    startY: currentY,
+                    margin: { left: pageWidth - tableWidth - marginRight },
+                    theme: "grid",
+                });
+        
+                // Generar PDF
+                const pdfBlob = doc.output("blob");
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                const newWindow = window.open(pdfUrl, "Factura");
+                if (newWindow) {
+                    newWindow.document.title = "Factura";
+                }
+            };
+        };
+        
+    
+        
     const openModal = (factura) => {
         setSelectedFactura(factura);
         setShowModal(true); // Abrir el modal
@@ -93,8 +215,15 @@ const Facturas = () => {
                                         className="text-blue-500"
                                         onClick={() => openModal(factura)}
                                     >
-                                        Ver Cita
+                                        Ver Factura
                                     </button>
+                                    
+                                    {rol === "Administrador" &&(
+                                    <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+                                    onClick={() => handleDelete(factura.Id_cita)}>
+                                    <TrashIcon aria-hidden="true" className="h-6 w-6" />
+                                </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -214,7 +343,12 @@ const Facturas = () => {
                                 <p><strong>Total:</strong> {selectedFactura.Total}</p>
                             </div>
                         </div>
+
+                        <button onClick = {handleGenerarPreviaPDF}>Generar pdf</button>
+
                     </div>
+
+                    
                 </div>
             )}
         </div>

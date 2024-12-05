@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
+import Mensaje from './Mensaje'; 
 
 Modal.setAppElement('#root');
 
@@ -19,6 +20,15 @@ const Inventario = ({ rolUsuario }) => {
     });
 
     const navigate = useNavigate();
+
+    
+    const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
+    const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
+
+    const mostrarMensaje = (msg, tipo) => {
+    setMensaje(msg);
+    setTipoMensaje(tipo);
+    };
 
     useEffect(() => {
         obtenerInventario();
@@ -55,7 +65,7 @@ const Inventario = ({ rolUsuario }) => {
     const handleAgregarInventario = async (e) => {
         e.preventDefault();
         if (!repuestoSeleccionado) {
-            alert('Por favor seleccione un repuesto');
+            mostrarMensaje('Por favor seleccione un repuesto', 'alert');
             return;
         }
 
@@ -79,7 +89,7 @@ const Inventario = ({ rolUsuario }) => {
             setModalIsOpen(false); // Cierra el modal después de agregar
         } catch (error) {
             console.error('Error al agregar o editar el inventario:', error);
-            alert('Error al procesar el inventario');
+            mostrarMensaje('Error al procesar el inventario', 'error');
         }
     };
 
@@ -101,6 +111,7 @@ const Inventario = ({ rolUsuario }) => {
                 obtenerInventario(); // Refresca la tabla después de eliminar
                 alert('Inventario eliminado correctamente');
             } catch (error) {
+<<<<<<< HEAD
                 // Manejar errores esperados (como 400 Bad Request)
                 if (error.response) {
                     // Si el servidor envió una respuesta con error
@@ -119,6 +130,10 @@ const Inventario = ({ rolUsuario }) => {
                     console.error('Error desconocido:', error.message);
                     alert('Ocurrió un error desconocido');
                 }
+=======
+                console.error('Error al eliminar el inventario:', error);
+                mostrarMensaje('Error al eliminar el inventario', 'error');
+>>>>>>> ce9124d202e8e1ffe7651cbeb31f3e4949000354
             }
         }
     };
@@ -146,11 +161,16 @@ const Inventario = ({ rolUsuario }) => {
     };
 
     return (
-        <div
-            style={{ width: '100vw', overflowX: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: 'top' }}
-            className="-z-10 absolute p-32 pb-0 flex flex-col h-screen justify-center"
-        >
-            <div className="flex h-auto justify-center min-w-full">
+        <div 
+        style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
+        <div className="flex h-auto justify-center min-w-full">
+
+            <Mensaje
+            mensaje={mensaje}
+            tipo={tipoMensaje}
+            onClose={() => setMensaje(null)} // Cierra el mensaje
+        />
                 <input
                     id="buscar-home"
                     name="Buscar-cliente"
@@ -175,9 +195,9 @@ const Inventario = ({ rolUsuario }) => {
             </div>
 
             <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
-        <div className="overflow-y-auto bg-white max-h-96 w-full">
-            <table className="min-w-full w-full divide-y divide-gray-200">
-      <thead>
+            <div className="overflow-y-auto bg-white max-h-full w-full">
+                <table className="min-w-full w-full divide-y divide-gray-200">
+                    <thead className="sticky top-0">
                     <tr className=" bg-zinc-600  h-8 rounded-none m-0 p-0" >
                         <th></th>
                         <th></th>
@@ -221,10 +241,10 @@ const Inventario = ({ rolUsuario }) => {
                                 {rolUsuario === "Administrador"  && (
                                     <td className="border-b-2 border-zinc-600  text-left px-8 ">
                                         <button 
-                                             className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                            className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                             onClick={() => handleEditar(item)}
                                         >
-                                             <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                        <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
                                         </button>
                                         <button 
                                             className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"

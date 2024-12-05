@@ -163,24 +163,15 @@ Modal.setAppElement("#root");
       });
     };
   
-    return (
-      <div
-        style={{
-          width: "100vw",
-          overflowX: "hidden",
-          backgroundImage: "url(/image/vehiculo.jpg)",
-          backgroundSize: "cover",
-          backgroundPosition: " top",
-        }}
-
-        className="-z-10 absolute  p-8 pb-0 flex flex-col h-screen justify-center"
-      >
-          <Mensaje
+    return (<div 
+      style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+      className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
+    <div className="flex h-auto justify-center min-w-full">
+        <Mensaje
             mensaje={mensaje}
             tipo={tipoMensaje}
             onClose={() => setMensaje(null)} // Cierra el mensaje
           />
-        <div className="flex h-auto justify-center min-w-full"> 
           <input
             id="buscar-home"
             name="Buscar-cliente"
@@ -210,9 +201,10 @@ Modal.setAppElement("#root");
         
         </div>
   
-        <div className="w-full h-96 overflow-x-auto bg-white shadow-md rounded-md">
-          <table className="min-w-full bg-white">
-            <thead>
+        <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+        <div className="overflow-y-auto bg-white max-h-full w-full">
+        <table className="min-w-full w-full divide-y divide-gray-200">
+          <thead className="sticky top-0">
               <tr className="bg-zinc-600 h-8">
                 <th className="text-center text-white p-2">Nombre</th>
                 <th className="text-center text-white p-2">Descripción</th>
@@ -346,6 +338,7 @@ Modal.setAppElement("#root");
             </div>
           </form>
         </Modal>
+      </div>
       </div>
     );
   };
