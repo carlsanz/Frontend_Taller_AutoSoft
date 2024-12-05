@@ -2,8 +2,8 @@ import {  XMarkIcon } from '@heroicons/react/24/outline';
 import {jsPDF} from "jspdf";
 import "jspdf-autotable";
 import React, { useEffect, useState } from 'react';
-import { TrashIcon
-} from '@heroicons/react/24/outline'
+import { TrashIcon} from '@heroicons/react/24/outline';
+import axios from 'axios';
  // Asegúrate de tener este icono
 
 const Facturas = () => {
@@ -53,6 +53,18 @@ const Facturas = () => {
         fetchFacturas();
     }, []);
 
+    // Eliminar facturas solo administrador
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
+            try {
+                await axios.delete(`http://localhost:5000/factura/eliminarFactura/${id}`);
+                alert('Factura eliminada exitoso');
+                setFacturas(facturas.filter((factura) => factura.Id_cita !== id));
+            } catch (error) {
+                alert('Error al eliminar la factura');
+            }
+        }
+    };
     
         // Función para generar el PDF
        
@@ -205,8 +217,10 @@ const Facturas = () => {
                                     >
                                         Ver Factura
                                     </button>
+                                    
                                     {rol === "Administrador" &&(
-                                    <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
+                                    <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+                                    onClick={() => handleDelete(factura.Id_cita)}>
                                     <TrashIcon aria-hidden="true" className="h-6 w-6" />
                                 </button>
                                     )}
