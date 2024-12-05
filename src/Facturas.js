@@ -2,6 +2,8 @@ import {  XMarkIcon } from '@heroicons/react/24/outline';
 import {jsPDF} from "jspdf";
 import "jspdf-autotable";
 import React, { useEffect, useState } from 'react';
+import { TrashIcon
+} from '@heroicons/react/24/outline'
  // Asegúrate de tener este icono
 
 const Facturas = () => {
