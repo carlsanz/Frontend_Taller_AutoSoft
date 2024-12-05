@@ -192,9 +192,10 @@ useEffect(() => {
                                         <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleEdit(cliente)}>
                                             <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
                                         </button>
+                                        {role === 'Administrador'&&(
                                         <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-red-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => handleDelete(cliente.Identidad)}>
                                             <TrashIcon aria-hidden="true" className="h-6 w-6" />
-                                        </button>
+                                        </button>)}
                                     </td>
                                 </tr>
                             ))
