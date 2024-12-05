@@ -10,6 +10,7 @@ const AgregarUsuario = () => {
     const [departamentos, setDepartamentos] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [identidadABuscar, setIdentidadABuscar] = useState('');
+    
     const [formData, setFormData] = useState({
         Nombre: '',
         Email: '', // Este es el único campo de correo
@@ -27,7 +28,8 @@ const AgregarUsuario = () => {
         Ocupacion: '',
         Salario: '',
         Fecha_contratacion: '',
-        Primer_ingreso:''
+        Primer_ingreso:'',
+        Rol: ''
     });
    
     //obetener los departamentos
@@ -79,7 +81,7 @@ const handleBuscarUsuario = async (e) => {
     }
 };
 
-const handleSubmit = async (e) => {
+/*const handleSubmit = async (e) => {
     e.preventDefault();
     try {
         const method = isEditMode ? 'PUT' : 'POST';
@@ -105,9 +107,65 @@ const handleSubmit = async (e) => {
         alert('Error al guardar los datos');
         console.error('Error:', error);
     }
+};*/
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const method = isEditMode ? 'PUT' : 'POST';
+        const url = isEditMode
+            ? `http://localhost:5000/usuarios-completo/${formData.Identidad}`
+            : 'http://localhost:5000/usuarios-completo';
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error al guardar usuario:', errorData);
+            throw new Error('Error al guardar usuario');
+        }
+
+        alert(isEditMode ? 'Usuario actualizado exitosamente' : 'Datos agregados exitosamente');
+        setIsModalOpen(false);
+        resetForm();
+    } catch (error) {
+        alert('Error al guardar los datos');
+        console.error('Error:', error);
+    }
 };
 
-// eliminar usuario
+
+
+//Eliminar usuario
+
+const handleEliminarUsuario = async (identidad, email) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        return;
+    }
+    try {
+        const response = await axios.delete(`http://localhost:5000/usuarios-completo/${identidad}/${email}`);
+        if (response.status === 200) {
+            alert('Usuario eliminado exitosamente');
+            setEmpleados(empleados.filter(emp => emp.Identidad !== identidad)); // Actualizar la tabla
+        } else {
+            alert('Error al eliminar el usuario');
+        }
+    } catch (error) {
+        console.error('Error al eliminar usuario:', error);
+        alert('Error al eliminar el usuario');
+    }
+};
+
+
+
+
+
+/*// eliminar usuario
 const handleEliminarUsuario = async () => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
         return;
@@ -126,6 +184,22 @@ const handleEliminarUsuario = async () => {
         alert('Error al eliminar el usuario');
     }
 };
+*/
+
+
+/****************************************************************************************** */
+const handleEditarEmpleado = (empleado) => {
+    // Formatear las fechas antes de cargarlas en el estado (si aplica)
+
+  
+    setFormData(empleado); // Cargar los datos del empleado seleccionado en el formulario
+    setIsEditMode(true); // Activar el modo de edición
+    setIsModalOpen(true); // Abrir la modal
+  };
+  
+/********************************************************************************************** */
+
+
 
 const resetForm = () => {
     setFormData({
@@ -213,10 +287,18 @@ useEffect(() => {
                                 <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Genero}</td>
                                 <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Direccion}</td>
                                 <td className="border-b-2 border-zinc-600  text-center px-4 py-2">
-                                    <button  className=" w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
-                                        <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
-                                    </button>
-                                    <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" >
+                                <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+                                    onClick={() => {
+                                        const empleadoConRol = {
+                                        ...empleado,
+                                        Rol: empleado.Rol || '', 
+                                        };
+                                    handleEditarEmpleado(empleadoConRol);}}>
+                                    <ArrowPathIcon aria-hidden="true" className="h-6 w-6" />
+                                </button>
+
+                                    <button className=" w-7 h-7  m-2 flex items-center justify-center rounded-md bg-red-500 p-1  text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+                                    onClick={() => handleEliminarUsuario(empleado.Identidad, empleado.Email)}>
                                         <TrashIcon aria-hidden="true" className="h-6 w-6"  />
                                     </button>
                                 </td>
@@ -270,21 +352,35 @@ useEffect(() => {
                             <textarea  className="h-36 block font-medium my-2 text-gray-900"  type="text" placeholder='Ingrese la direccion del empleado' name="Direccion" value={formData.Direccion} onChange={handleInputChange} />
                              <input className="h-12 block font-medium my-2 text-gray-900"  type="text" placeholder='Telefono' name="Telefono" value={formData.Telefono} onChange={handleInputChange} />
 
-                            <input            
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="date" 
-                                placeholder='Fecha de nacimiento' 
-                                name="Fecha_nac" 
-                                value={formData.Fecha_nac} 
-                                onChange={handleInputChange} 
-                                required 
-                            />
+                             <div className="flex flex-col">
+                                <label htmlFor="Fecha_nac" className="text-gray-700 font-medium">Fecha de nacimiento</label>
+                                <input
+                                    id="Fecha_nac"
+                                    className="h-12 block font-medium my-2 text-gray-900"
+                                    type="date"
+                                    name="Fecha_nac"
+                                    value={formData.Fecha_nac}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
                     </div>
                     <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
                             <h3>Datos de Usuario</h3>
                                     <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Nombre de usuario'  name="Nombre" value={formData.Nombre} onChange={handleInputChange} required />
                                     <input className="h-12 block font-medium my-2 text-gray-900" type="email" placeholder='Correo electrónico'  name="Email" value={formData.Email} onChange={handleInputChange} required />
-                                    <input className="h-12 block font-medium my-2 text-gray-900" type="text" placeholder='Rol'  name="Rol" value={formData.Rol} onChange={handleInputChange} required />
+                                    <select
+                                        className="h-12 block font-medium my-2 text-gray-900"
+                                        name="Rol"
+                                        value={formData.Rol}
+                                        onChange={handleInputChange}
+                                        required
+                                                >
+                                            <option value="" disabled>Elige un rol</option>
+                                            <option value="Administrador">Administrador</option>
+                                            <option value="Mecanico">Mecánico</option>
+                                    </select>
+
                             <div className='flex flex-col justify-center items-center'>
                             <label> Primer inicio de sesión:</label>
                             <input
@@ -305,14 +401,18 @@ useEffect(() => {
 
                             <input className="h-12 block font-medium my-2 text-gray-900"  placeholder='Salario'  type="number" name="Salario" value={formData.Salario} onChange={handleInputChange} required />
 
-                           <input className="h-12 block font-medium my-2 text-gray-900"           
-                                type="date" 
-                                placeholder='Fecha de contratacion' 
-                                name="Fecha_contratacion" 
-                                value={formData.Fecha_contratacion} 
-                                onChange={handleInputChange} 
-                                required 
-                            />
+                            <div className="flex flex-col">
+                                <label htmlFor="Fecha_contratacion" className="text-gray-700 font-medium">Fecha de contratación</label>
+                                <input
+                                    id="Fecha_contratacion"
+                                    className="h-12 block font-medium my-2 text-gray-900"
+                                    type="date"
+                                    name="Fecha_contratacion"
+                                    value={formData.Fecha_contratacion}
+                                    onChange={handleInputChange}
+                                    required
+                                        />
+                            </div>
                         </div>
                         </div>
                         <div className=" flex content-end justify-evenly items-center  pt-8 w-full h-20" >
@@ -327,6 +427,7 @@ useEffect(() => {
                 
                 </form>
             </Modal>
+
         </div>
     
     );
