@@ -1,5 +1,5 @@
-import { TrashIcon, PlusIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import {  Popover, PopoverButton, PopoverPanel  } from '@headlessui/react'
+import { TrashIcon, PlusIcon, MagnifyingGlassIcon, XMarkIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
+import {  Popover, } from '@headlessui/react'
 import {ChevronLeftIcon, ChevronUpIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import { WrenchScrewdriverIcon, ArrowPathRoundedSquareIcon ,NoSymbolIcon,Cog8ToothIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react';
@@ -18,11 +18,24 @@ const Home = () => {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [cantidadCitasHoy, setCantidadCitasHoy] = useState(0);
 
-  useEffect(() => {
-    fetchCantidadCitasHoy(); // Obtener la cantidad de citas del día
-}, []);
+
+  const getGreeting = () => {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour >= 0 && hour < 12) {
+      return 'Buenos días';
+    } else if (hour >= 12 && hour < 19) {
+      return 'Buenas tardes';
+    } else {
+      return 'Buenas noches';
+    }}
+
+
+  const nombre_empleado=localStorage.getItem('nombre') || '';
+
+
 
 const [mensaje, setMensaje] = useState(''); // Mensaje a mostrar
 const [tipoMensaje, setTipoMensaje] = useState(''); // Tipo de mensaje
@@ -33,15 +46,7 @@ const mostrarMensaje = (msg, tipo) => {
 };
 
   //Obtener cias de hoy
-  const fetchCantidadCitasHoy = async () => {
-    try {
-        const response = await axios.get('http://localhost:5000/citas/hoy/cantidad'); // Endpoint para la cantidad de citas
-        setCantidadCitasHoy(response.data.cantidad || 0);
-    } catch (error) {
-        console.error('Error al obtener la cantidad de citas del día:', error);
-    }
-};
-
+  
 
 //Obtener empleados
   const [empleados, setEmpleados] = useState([]);
@@ -59,41 +64,56 @@ const mostrarMensaje = (msg, tipo) => {
   }, []);
 
   //buscar citas por fecha
-    const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
+  const [searchDate, setSearchDate] = useState(""); // Estado para la fecha seleccionada
+  const [isFirstClick, setIsFirstClick] = useState(true); // Control del botón
 
-    const handleSearch = async () => {
-      if (!searchDate) {
-          mostrarMensaje('Debes seleccionar una fecha.', 'alert');
-          return;
-      }
-  
-      try {
-          const response = await fetch(`http://localhost:5000/citas/fecha/${searchDate}`);
-  
-          if (!response.ok) {
-              const errorText = await response.text(); // Obtiene el mensaje en caso de error
-              throw new Error(`Error: ${response.status} - ${errorText}`);
-          }
-  
-          const data = await response.json(); // Analiza la respuesta solo si es válida
-  
-          if (data.length > 0) {
-              setCitas(data); // Actualizar el estado con las citas encontradas
-          } else {
+  const handleSearch = async () => {
+    if (!searchDate) {
+      mostrarMensaje("Debes seleccionar una fecha.", "alert");
+      return;
+    }
 
-              setCitas([]); // Limpiar el estado si no hay citas
-          }
-         
-      } catch (error) {
-          console.error("Error al buscar citas:", error);
-          mostrarMensaje('Ocurrió un error al buscar las citas. Verifica la consola para más detalles.', 'error');
+    try {
+      const response = await fetch(`http://localhost:5000/citas/fecha/${searchDate}`);
+
+      if (!response.ok) {
+        const errorText = await response.text(); // Obtiene el mensaje en caso de error
+        throw new Error(`Error: ${response.status} - ${errorText}`);
       }
+
+      const data = await response.json(); // Analiza la respuesta solo si es válida
+
+      if (data.length > 0) {
+        setCitas(data); // Actualizar el estado con las citas encontradas
+      } else {
+        setCitas([]); // Limpiar el estado si no hay citas
+      }
+    } catch (error) {
+      console.error("Error al buscar citas:", error);
+      mostrarMensaje(
+        "Ocurrió un error al buscar las citas. Verifica la consola para más detalles.",
+        "error"
+      );
+    }
   };
 
   const handleVerTodas = () => {
-    setSearchDate(''); // Limpia el input
+    setSearchDate(""); // Limpia el input
     obtenerCitas(obtenerIdUsuario());
-   };
+  };
+
+  const clickBuscar = () => {
+    if (isFirstClick) {
+      if (!searchDate) {
+        mostrarMensaje("Debes seleccionar una fecha.", "alert");
+        return; // No cambia el estado del botón
+      }
+      handleSearch();
+    } else {
+      handleVerTodas();
+    }
+    setIsFirstClick(!isFirstClick);
+  };
 
   //Obtener cita por id_empleado 
   const [citas, setCitas] = useState([]);
@@ -575,7 +595,7 @@ const fetchInitialStates = async () => {
 // Llama a esta función cuando el componente se monte
 useEffect(() => {
   fetchInitialStates();
-}, []);
+});
   // Función para manejar el siguiente estado
   const handleNext = async (id) => {
     const currentStep = stepsState[id] || 0;
@@ -709,10 +729,28 @@ useEffect(() => {
 
 
   return (
-    <div style={{ width: '98vw', height: '2000px' }} className="flex-col p-10 pt-20">
+    <div style={{ width: '98vw', height: '2000px' }} className="flex-col sm:p-10 sm:pt-20 p-4 pt-20">
     <div className=" bg-gray-100 min-h-full flex flex-col justify-start relative max-w-full">
-      {/* Imagen de fondo */}
-      <img className="relative h-96 opacity-85 opa w-full m-0 p-0  rounded-2xl" src="image/vehiculo.jpg" alt="vehículo" />
+    <div className="relative">
+    {/* Imagen de fondo */}
+    <img 
+    className="w-full sm:h-96 h-32 sm:rounded-2xl rounded-md m-0 p-0" 
+    src="image/vehiculo.jpg" 
+    alt="vehículo" 
+  />
+  {/* Capa superpuesta para oscurecer */}
+  <div 
+    className="absolute inset-0 bg-black bg-opacity-40 sm:rounded-2xl rounded-md"
+  ></div>
+    {/* Texto superpuesto */}
+    <p 
+      className="absolute inset-0 flex items-end justify-start p-3 text-white text-2xl font-bold  sm:text-6xl"
+      style={{ fontFamily: "'Saira', sans-serif" }}
+    >
+      {getGreeting()}, {nombre_empleado}
+    </p>
+  
+  </div>
         {role === 'Mecanico' && (
         <div id='Vista_Mecanico'>
          
@@ -729,38 +767,38 @@ useEffect(() => {
           name="Buscar-cliente"
           type="date"
           placeholder="Busca un cita"
-          className="w-4/5 lg:w-2/3 ml-4 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-950"
+          className="w-4/5 lg:w-2/3 ml-4 mx-2 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-950"
           value={searchDate}
           onChange={(e) => setSearchDate(e.target.value)}
           />
-          <button
-          type="button"
-          className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-          onClick={handleSearch}
-          >
-            <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
-          </button>
+       
+        <button
+        type="button"
+        onClick={clickBuscar}
+        title={isFirstClick ? "Buscar citas" : "Ver todas las citas"}
+        className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        {isFirstClick ? (
+          <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
+        ) : (
+          <>
+            <ChevronUpDownIcon aria-hidden="true" className="h-6 w-6" />
+          </>
+        )}
+      </button>
           <button
           onClick={() => { setIsModalOpen(true); resetForm(); }}
           className="w-11 h-11 mx-2 flex items-center justify-center rounded-md bg-amber-500 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon aria-hidden="true" className="h-6 w-6" />
           </button>
-          <button
-                    type="button"
-                    className="w-auto h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-blue-500 px-4 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    onClick={handleVerTodas}
-                >
-                    Ver todas las citas
-            </button>
+         
         </div>
 
         <Modal
-        style={{
-          content: { backgroundColor: "white" },
-          overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },
-        }}
-        className="h-full w-full absolute scroll left-96 top-8 p-5 rounded-lg max-w-2xl mx-auto my-3"
+       className="p-5 w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+       top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+       style={{content:{backgroundColor:"white", zIndex: 60},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)", zIndex: 50}}}
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         contentLabel="Formulario de Cita"
@@ -831,86 +869,68 @@ useEffect(() => {
         </Modal>
 
 
- {/* Modal para Factura */}
-<div>
+        <div>
   {/* Mostrar errores si hay */}
   {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
 
   {/* Mostrar el modal solo si showModal es true y factura está disponible */}
   {showModal && factura && (
     <div
-      className="modal"
-      style={{
-        background: 'rgba(0, 0, 0, 0.5)',
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        zIndex: '9999',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
     >
       <div
-        className="modal-content p-11 py-5 h-full w-1/2 flex flex-col justify-between overflow-y-auto scrollbar-thin max-w-full "
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          margin: 'auto',
-        }}
-    >
-    {/* Botón para cerrar el modal */}
-    <div className="flex items-baseline justify-between">
-        
-        <h2 className="text-2xl">Factura </h2>
-        <button
-        onClick={() => setShowModal(false)}
-        className="px-4 py-2 bg-red-600  text-white mt-4 hover:bg-red-400"
-        >
-          <XMarkIcon aria-hidden="true" className="  h-6 w-6" />
-        </button>
-        
-      </div>
-        <p><strong>Fecha:</strong> {new Date(factura.Fecha).toLocaleString()}</p>
-        <div className="flex justify-between">
-            <div>
-            
-            <div className="mt-4">
-              <p><strong>No. Factura:</strong> {factura.Id_cita}</p>
-              <p><strong>Empleado:</strong> {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}</p>
-              </div>
-
-
-            </div>
-            <div className="mt-4">
-              <p><strong>Cliente:</strong> {factura.cliente.NombreCliente} {factura.cliente.ApellidoCliente}</p>
-              <p><strong>Identidad:</strong> {factura.cliente.IdentidadCliente}</p>
-            </div>
+        className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl sm:max-w-md h-auto max-h-full overflow-auto"
+      >
+        {/* Botón para cerrar el modal */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Factura</h2>
+          <button
+            onClick={() => setShowModal(false)}
+            className="text-red-600 hover:bg-red-200 rounded-full p-1"
+          >
+            <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+          </button>
         </div>
 
-       
+        {/* Información de la factura */}
+        <p>
+          <strong>Fecha:</strong> {new Date(factura.Fecha).toLocaleString()}
+        </p>
+        <div className="flex flex-wrap justify-between gap-4">
+          <div>
+            <p>
+              <strong>No. Factura:</strong> {factura.Id_cita}
+            </p>
+            <p>
+              <strong>Empleado:</strong> {factura.empleado.NombreEmpleado}{" "}
+              {factura.empleado.ApellidoEmpleado}
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>Cliente:</strong> {factura.cliente.NombreCliente}{" "}
+              {factura.cliente.ApellidoCliente}
+            </p>
+            <p>
+              <strong>Identidad:</strong> {factura.cliente.IdentidadCliente}
+            </p>
+          </div>
+        </div>
 
-        {/* Cliente */}
-     
-
-        {/* Empleado */}
- 
         {/* Tabla de servicios */}
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Servicios</h3>
           {factura.servicios && factura.servicios.length > 0 ? (
-            <table className="table-auto w-full text-xs">
-              <thead className="border-b-2 border-zinc-600 ">
+            <table className="table-auto w-full text-sm">
+              <thead className="border-b">
                 <tr>
                   <th className="text-center p-2">Servicio</th>
                   <th className="text-center p-2">Precio</th>
                 </tr>
               </thead>
-              <tbody >
+              <tbody>
                 {factura.servicios.map((servicio, index) => (
-                  <tr className="border-b-2 border-zinc-300 " key={index}>
+                  <tr key={index} className="border-b">
                     <td className="text-center p-2">{servicio.NombreServicio}</td>
                     <td className="text-center p-2">{servicio.PrecioServicio}</td>
                   </tr>
@@ -926,8 +946,8 @@ useEffect(() => {
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Repuestos</h3>
           {factura.repuestos && factura.repuestos.length > 0 ? (
-            <table className=" table-auto w-full text-xs">
-              <thead  className="border-b-2 border-zinc-600 ">
+            <table className="table-auto w-full text-sm">
+              <thead className="border-b">
                 <tr>
                   <th className="text-center p-2">Repuesto</th>
                   <th className="text-center p-2">Cantidad</th>
@@ -935,9 +955,9 @@ useEffect(() => {
                   <th className="text-center p-2">Total</th>
                 </tr>
               </thead>
-              <tbody >
+              <tbody>
                 {factura.repuestos.map((repuesto, index) => (
-                  <tr className="border-b-2 border-zinc-300 " key={index}>
+                  <tr key={index} className="border-b">
                     <td className="text-center p-2">{repuesto.NombreRepuesto}</td>
                     <td className="text-center p-2">{repuesto.Cantidad}</td>
                     <td className="text-center p-2">{repuesto.PrecioUnidad}</td>
@@ -950,21 +970,29 @@ useEffect(() => {
             <p className="text-gray-500">No hay repuestos disponibles para esta cita.</p>
           )}
         </div>
-        <div className="flex justify-between">
-          <div><p>Direccion del taller</p></div>
+
+        {/* Subtotales */}
+        <div className="flex flex-col sm:flex-row justify-between mt-6">
           <div>
-          <p><strong>Subtotal:</strong> {factura.Subtotal}</p>
-        <p><strong>Impuesto:</strong> {factura.Impuesto}</p>
-        <p><strong>Total:</strong> {factura.Total}</p>
+            <p>Dirección del taller</p>
+          </div>
+          <div>
+            <p>
+              <strong>Subtotal:</strong> {factura.Subtotal}
+            </p>
+            <p>
+              <strong>Impuesto:</strong> {factura.Impuesto}
+            </p>
+            <p>
+              <strong>Total:</strong> {factura.Total}
+            </p>
           </div>
         </div>
-
-
-    
       </div>
     </div>
   )}
 </div>
+
 
 
 
@@ -976,24 +1004,17 @@ useEffect(() => {
         <Modal
         isOpen={isRepuestosModalOpen}
         onRequestClose={cerrarRepuestosModal}
-        style={{
-          content: {
-            backgroundColor: 'white',
-            zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-          },
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.80)',
-            zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-          },}}
+        className="p-5 max-w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+        top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+        style={{content:{backgroundColor:"white", zIndex: 60},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)", zIndex: 50}}} 
         contentLabel="Formulario de Repuestos"
-        className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
         >
           <form onSubmit={handleRepuestosFormSubmit} className="flex flex-col justify-around text-center w-full h-full">
             <h2>Agregar Repuestos</h2>
-            <div className="flex flex-col justify-between p-6 pt-0">
+            <div className="flex flex-col  justify-between p-6 pt-0">
               {repuestosData.map((repuesto, index) => (
                 <div key={index} className="flex flex-col my-4">
-                  <div className="flex justify-between">
+                  <div className="flex flex-col justify-between sm:flex-row overflow-y-auto p-6">
                     <select
                     className="h-12 block font-medium my-3 text-gray-900"
                     value={repuesto.id_inventario}
@@ -1021,7 +1042,7 @@ useEffect(() => {
               <div className="flex justify-between">
                 <button
                 type="submit"
-                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="h-11 w-44 my-5 mx-2 flex  items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   Agregar Repuestos
                 </button>
@@ -1042,17 +1063,11 @@ useEffect(() => {
         <Modal
         isOpen={isFechaModalOpen}
         onRequestClose={cerrarFechaModal}
-        style={{
-          content: {
-            backgroundColor: 'white',
-            zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-          },
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.80)',
-            zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-          },}}
+        className="p-5 max-w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+        top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+        style={{content:{backgroundColor:"white", zIndex: 60},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)", zIndex: 50}}}
         contentLabel="Formulario de Reagendar Cita"
-        className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
+       
         >
           <form 
             onSubmit={(e) => {
@@ -1101,17 +1116,11 @@ useEffect(() => {
             <Modal
             isOpen={isServiciosModalOpen}
             onRequestClose={cerrarServiciosModal}
-            style={{
-              content: {
-                backgroundColor: 'white',
-                zIndex: 9999, // Asegúrate de que el modal tenga un valor alto de z-index
-              },
-              overlay: {
-                backgroundColor: 'rgba(0, 0, 0, 0.80)',
-                zIndex: 9998, // También ajusta el z-index del overlay para que esté por debajo del modal
-              },}}
+            className="p-5 max-w-[90%] sm:max-w-2xl mx-auto z-50 bg-white rounded-lg shadow-lg relative 
+              top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+              style={{content:{backgroundColor:"white", zIndex: 60},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)", zIndex: 50}}}
                 contentLabel="Formulario de Servicios"
-                className="h-auto w-full absolute left-96 top-20 p-5 rounded-lg max-w-2xl mx-auto my-8"
+                
               >
                 <form
                   onSubmit={handleServiciosFormSubmit}
@@ -1169,7 +1178,12 @@ useEffect(() => {
         <div className="bg-gray-100">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-16">
-              <h2 className="text-2xl font-bold text-gray-900">Citas</h2>
+            <div className=" sm:h-12 h-10 w-full bg-gray-100 border-2 text-pretty font-bold border-gray-300 flex justify-center items-center sticky top-16 z-20">
+            <h2 className="sm:text-2xl text-lg text-gray-900"
+            style={{ fontFamily: "'Itim', cursive" }}
+              >Citas</h2>
+            </div>
+              
               {error && <p className="text-red-600">{error}</p>}
               {loading && <p>Cargando citas...</p>}
               {!loading && citas.length === 0 && !error && <p>No tienes citas asignadas.</p>}
@@ -1199,54 +1213,65 @@ useEffect(() => {
                   </time>
 
                       
-                      <Popover className="relative">
-                                    <PopoverButton className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                        <span  
-                                        className='flex items-center justify-start content-center text-gray-700  px-3 py-2 rounded-md text-sm font-medium'
-                                        >Opciones  <ChevronDownIcon aria-hidden="true" className='h-5' /> </span>
-                                    </PopoverButton>
+                  <Popover className="relative">
+  {({ close }) => (
+    <>
+      <Popover.Button className="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+        <span
+          className="flex items-center justify-start content-center text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+        >
+          Opciones <ChevronDownIcon aria-hidden="true" className="h-5" />
+        </span>
+      </Popover.Button>
 
-                                    <PopoverPanel
-                                        transition
-                                        className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
-                                    >
-                                        <div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm/6 shadow-lg ring-1 ring-gray-900/5">
-                                        <div className="p-4">
-                                            {solutions.map((item) => (
-                                            <div key={item.name} className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                                                <div className="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                                <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" />
-                                                </div>
-                                                <div>
-                                                  
-                                                <a href={item.href} className="font-semibold text-gray-900"
-                                                onClick={(e) => {
-                                                  // Si el ítem tiene una función onClick, se ejecuta
-                                                  if (item.onClick) {
-                                                    e.preventDefault();  // Evitar el comportamiento por defecto de los enlaces
-                                                    item.onClick();       // Ejecutar la función onClick
-                                                  }
-                                                }}>
-                                                    {item.name}
-                                                    <span className="absolute inset-0"
-                                                    />
-                                                    
-                                                </a>
-                                                <p className="mt-1 text-gray-600">{item.description}</p>
-                                                </div>
-                                            </div>
-                                            ))}
-                                        </div>
-                                        <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                                        <div>
+      <Popover.Panel
+        transition
+        className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+      >
+        <div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm/6 shadow-lg ring-1 ring-gray-900/5">
+          <div className="p-4">
+            {solutions.map((item) => (
+              <div
+                key={item.name}
+                className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50"
+              >
+                <div className="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                  <item.icon
+                    aria-hidden="true"
+                    className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                  />
+                </div>
+                <div>
+                  <a
+                    href={item.href}
+                    className="font-semibold text-gray-900"
+                    onClick={(e) => {
+                      // Si el ítem tiene una función onClick, se ejecuta
+                      if (item.onClick) {
+                        e.preventDefault(); // Evitar el comportamiento por defecto de los enlaces
+                        item.onClick(); // Ejecutar la función onClick
+                      }
+                      // Cerrar el Popover
+                      close();
+                    }}
+                  >
+                    {item.name}
+                    <span className="absolute inset-0" />
+                  </a>
+                  <p className="mt-1 text-gray-600">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+            <div></div>
+          </div>
+        </div>
+      </Popover.Panel>
+    </>
+  )}
+</Popover>
 
-                                            
-                                          </div>
-                                           
-                                        </div>
-                                        </div>
-                                    </PopoverPanel>
-                                    </Popover>
                                         </div>
                                         <div className="h-auto flex items-center content-centerw-full" >
                                         <h3 className="mt-3 mr-2  text-lg font-semibold text-gray-900 group-hover:text-gray-600">
@@ -1427,9 +1452,7 @@ useEffect(() => {
      <div className="grid grid-cols-2 gap-6 py-10 ">
      <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24  text-white text-center p-4 rounded">Dashboard</div>
      <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Citas para hoy
-      <p>
-      {cantidadCitasHoy}
-      </p>
+     
      </div>
      <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Item 3</div>
      <div className="bg-gray-700 border-solid border-1 border-slate-400 h-24 text-white text-center p-4 rounded">Item 4</div>

@@ -221,159 +221,196 @@ useEffect(() => {
                     </tbody>
                 </table>
 
-                <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 top-11 p-5 px-10 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-                    <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
-                        <h2>{isAddingMode ? 'Agregar Cliente' : 'Detalles del Cliente'}</h2>
-                        <div style={{height:"25rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
-                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
-                                
-                                <input
-                                placeholder='DNI'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="Identidad"
-                                value={formData.Identidad}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
-                                />
+                <Modal  style={{ content: { backgroundColor: "white" },overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },}}
+                className="p-5 max-w-[90%] sm:max-w-5xl mx-auto bg-white rounded-lg shadow-lg relative top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0 overflow-hidden"
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+>
+    <form
+        className="flex flex-col justify-between h-full max-h-[90vh]"
+        onSubmit={handleSubmit}
+    >
+        <h2>{isAddingMode ? "Agregar Cliente" : "Detalles del Cliente"}</h2>
+        {/* Cambia a flex-col en pantallas pequeñas */}
+        <div
+            style={{ height: "25rem", width: "auto" }}
+      className="flex flex-col sm:flex-row overflow-y-auto p-6"
+        >
+            <div
+                style={{ height: "23rem" }}
+                className="flex flex-col justify-between p-5"
+            >
+                <input
+                    placeholder="DNI"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="Identidad"
+                    value={formData.Identidad}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode} // Solo editable si estamos en modo edición
+                />
+                <input
+                    placeholder="Primer nombre"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="P_nombre"
+                    value={formData.P_nombre}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <input
+                    placeholder="Segundo nombre"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="S_nombre"
+                    value={formData.S_nombre}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <input
+                    placeholder="Primer apellido"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="P_apellido"
+                    value={formData.P_apellido}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <input
+                    placeholder="Segundo apellido"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="S_apellido"
+                    value={formData.S_apellido}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+            </div>
+            <div
+                style={{ height: "23rem" }}
+                className="flex flex-col justify-between p-5"
+            >
+                <input
+                    className="form-input"
+                    type="date"
+                    name="Fecha_nac"
+                    value={formData.Fecha_nac}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <select
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    name="Id_departamento"
+                    value={formData.Id_departamento}
+                    onChange={handleInputChange}
+                    disabled={!isEditMode && !isAddingMode}
+                >
+                    <option value="">Selecciona un departamento</option>
+                    {departamentos.map((departamentos) => (
+                        <option
+                            key={departamentos.Id_departamento}
+                            value={departamentos.Id_departamento}
+                        >
+                            {departamentos.Nombre}
+                        </option>
+                    ))}
+                </select>
+                <textarea
+                    placeholder="Ingrese su direccion"
+                    className="h-36 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="Direccion"
+                    value={formData.Direccion}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+            </div>
+            <div
+                style={{ height: "23rem" }}
+                className="flex flex-col justify-between p-5"
+            >
+                <input
+                    placeholder="Telefono"
+                    className="h-12 block font-medium my-2 text-gray-900"
+                    type="text"
+                    name="Telefono"
+                    value={formData.Telefono}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <input
+                    placeholder="Correo eléctronico"
+                    className="form-input"
+                    type="email"
+                    name="correo"
+                    value={formData.correo}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode && !isAddingMode}
+                />
+                <select
+                    placeholder="Genero"
+                    className="form-input"
+                    name="Genero"
+                    value={formData.Genero}
+                    onChange={handleInputChange}
+                    disabled={!isEditMode && !isAddingMode}
+                >
+                    <option value="Femenino">Femenino</option>
+                    <option value="Masculino">Masculino</option>
+                </select>
+            </div>
+        </div>
+        <div className="flex content-end justify-evenly items-center pt-8 w-full h-20">
+            {isAddingMode ? (
+                <>
+                    <button
+                        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        type="button"
+                        onClick={() => setIsModalOpen(false)}
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        type="submit"
+                    >
+                        Aceptar
+                    </button>
+                </>
+            ) : (
+                <>
+                    <button
+                        className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        type="submit"
+                    >
+                        Aceptar
+                    </button>
+                    {role === "Administrador" && (
+                        <>
+                            <button
+                                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                type="button"
+                                onClick={handleEdit}
+                                disabled={!cliente}
+                            >
+                                Actualizar
+                            </button>
+                            <button
+                                className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                type="button"
+                                onClick={handleDelete}
+                                disabled={!cliente}
+                            >
+                                Eliminar
+                            </button>
+                        </>
+                    )}
+                </>
+            )}
+        </div>
+    </form>
+</Modal>
 
-
-                                <input
-                                placeholder='Primer nombre'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="P_nombre"
-                                value={formData.P_nombre}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-                                <input
-                                placeholder='Segundo nombre'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="S_nombre"
-                                value={formData.S_nombre}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-                                <input
-                                placeholder='Primer apellido'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="P_apellido"
-                                value={formData.P_apellido}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-                                <input
-                                placeholder='Segundo apellido'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="S_apellido"
-                                value={formData.S_apellido}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-                            </div>
-                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
-                            <input
-                                className='form-input'
-                                type="date"
-                                name="Fecha_nac"
-                                value={formData.Fecha_nac}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-                                <select
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                name="Id_departamento"
-                                value={formData.Id_departamento}
-                                onChange={handleInputChange}
-                                disabled={!isEditMode && !isAddingMode}
-                                >
-                                    <option value="">Selecciona un departamento</option>
-                                    {departamentos.map((departamentos) => (
-                                        <option key={departamentos.Id_departamento} value={departamentos.Id_departamento}>
-                                            {departamentos.Nombre}
-                                        </option>
-                                    ))}
-                                </select>
-                                <textarea
-                                placeholder='Ingrese su direccion'
-                                className="h-36 block font-medium my-2 text-gray-900"
-                                type="text"
-                                name="Direccion"
-                                value={formData.Direccion}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-                            </div>
-                            <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
-                                <input
-                                placeholder='Telefono'
-                                className="h-12 block font-medium my-2 text-gray-900" 
-                                type="text"
-                                name="Telefono"
-                                value={formData.Telefono}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-
-                                <input
-                                placeholder='Correo eléctronico'
-                                className='form-input'
-                                type="email"
-                                name="correo"
-                                value={formData.correo}
-                                onChange={handleInputChange}
-                                readOnly={!isEditMode && !isAddingMode}
-                                />
-
-                                <select
-                                placeholder='Genero'
-                                className='form-input'
-                                name="Genero"
-                                value={formData.Genero}
-                                onChange={handleInputChange}
-                                disabled={!isEditMode && !isAddingMode}
-                                >
-                                        
-                                    <option value="Femenino">Femenino</option>
-                                    <option value="Masculino">Masculino</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className=" flex content-end justify-evenly items-center  pt-8 w-full h-20">
-                        {isAddingMode ? (
-                                            <>
-                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={() => setIsModalOpen(false)}>
-                            Cancelar
-                        </button>
-                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en agregar */}
-                                            </>
-                                        ) : (
-                                            <>
-                        <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="submit">Aceptar</button>  {/* Llama a handleSubmit en editar */}
-                        {role === 'Administrador' && (
-                            <>
-                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleEdit} disabled={!cliente}>
-                                    Actualizar
-                                </button>
-                                <button className="h-11 w-44 my-5 mx-2 flex items-center justify-center rounded-sm bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" type="button" onClick={handleDelete} disabled={!cliente}>
-                                    Eliminar
-                                </button>
-                                                    </>
-                                                )}
-                                            </>
-                                        )}
-                            </div>        
-            </form>
-        </Modal>
             </div>
         </div>
     </div>

@@ -330,7 +330,9 @@ const Autos = () => {
             </tbody>
         </table>
 
-        <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-full absolute left-96 p-5 top-11 rounded-lg max-w-2xl mx-auto my-8 "   isOpen={modalAbierto} onRequestClose={() => setModalAbierto(false)}>
+        <Modal className="p-5 max-w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+               top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+               style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}}  isOpen={modalAbierto} onRequestClose={() => setModalAbierto(false)}>
         <form className="flex flex-col justify-between text-center w-full h-full ">
         <Mensaje
             mensaje={mensaje}

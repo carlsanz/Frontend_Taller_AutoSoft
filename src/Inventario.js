@@ -263,14 +263,12 @@ const Inventario = ({ rolUsuario }) => {
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
-                className=" h-auto w-full absolute left-96 p-5 top-36 rounded-lg max-w-2xl mx-auto my-8 " 
-                style={{
-                    content: { backgroundColor: "white", maxWidth: "600px", margin: "auto", padding: "20px" },
-                    overlay: { backgroundColor: "rgba(0, 0, 0, 0.8)" }
-                }}
+                className="p-5 max-w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+               top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+               style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} 
             >
                 <form onSubmit={handleAgregarInventario}
-                className="flex flex-col justify-between text-center h-full ">
+                className="flex flex-col justify-between text-center h-full space-y-4">
                     <h2> {editMode ? 'Actualizar inventario': 'Agregar inventario'}</h2>
                     <div style={{height:"15rem"}} className="flex flex-col justify-between p-6 ">
                     

@@ -196,7 +196,7 @@ const handleEliminarUsuario = async () => {
 */
 
 
-/****************************************************************************************** */
+
 const handleEditarEmpleado = (empleado) => {
     // Formatear las fechas antes de cargarlas en el estado (si aplica)
 
@@ -206,7 +206,6 @@ const handleEditarEmpleado = (empleado) => {
     setIsModalOpen(true); // Abrir la modal
   };
   
-/********************************************************************************************** */
 
 
 
@@ -295,13 +294,13 @@ useEffect(() => {
                         </tr>
                     ) : (
                         empleados.map((empleado) => (
-                            <tr key={empleado.Identidad}>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Identidad}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Nombre}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Apellido}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Genero}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2" >{empleado.Direccion}</td>
-                                <td className="border-b-2 border-zinc-600  text-center px-4 py-2">
+                            <tr className="border-b-2 text-center border-zinc-400 px-14 "  key={empleado.Identidad}>
+                                <td  >{empleado.Identidad}</td>
+                                <td  >{empleado.Nombre}</td>
+                                <td  >{empleado.Apellido}</td>
+                                <td  >{empleado.Genero}</td>
+                                <td  >{empleado.Direccion}</td>
+                                <td className="flex" >
                                 <button className="w-7 h-7 m-2 flex items-center justify-center rounded-md bg-green-600 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
                                     onClick={() => {
                                         const empleadoConRol = {
@@ -325,11 +324,14 @@ useEffect(() => {
         </div>
         </div>
 
-            <Modal style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} className=" h-auto w-screen absolute left-10 top-11 p-5 px-10 rounded-lg max-w-screen-xl mx-auto my-8" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-             <form className="flex flex-col justify-between text-center h-full " onSubmit={handleSubmit}>
+            <Modal  style={{ content: { backgroundColor: "white" },overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },}}
+                className="p-5 max-w-[90%] sm:max-w-7xl mx-auto bg-white rounded-lg shadow-lg relative top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0 overflow-hidden"
+                isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+             <form  className="flex flex-col justify-between h-full max-h-[90vh]" onSubmit={handleSubmit}>
              <h2>{isEditMode ? 'Actualizar Usuario' : 'Formulario de Registro'}</h2>
 
-                <div style={{height:"25rem", width:"auto"}} className="flex flex-row justify-between p-6 ">
+                <div style={{ height: "25rem", width: "auto" }}
+      className="flex flex-col sm:flex-row overflow-y-auto p-6">
                   <div style={{height:"23rem"}} className="flex flex-col justify-between p-5 ">
                                 <input className="h-12 block font-medium my-2 text-gray-900"  type="text" placeholder='Identidad' name="Identidad" value={formData.Identidad} onChange={handleInputChange} required />
                                 <input className="h-12 block font-medium my-2 text-gray-900"   type="text" placeholder='Primer nombre'  name="P_nombre" value={formData.P_nombre} onChange={handleInputChange} required />

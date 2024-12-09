@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
@@ -56,6 +56,22 @@ const Citas = () => {
         fetchCitas(); // Recarga todas las citas
     };
 
+    const [isFirstClick, setIsFirstClick] = useState(true); 
+
+    const clickBuscar = (e) => {
+        if (isFirstClick) {
+          if (!nombreMecanico.trim()) {
+            mostrarMensaje('Debes ingresar el nombre del mecánico.', 'alert');
+            return; // Evita realizar la búsqueda si el input está vacío
+          }
+          handleBuscarPorMecanico(e); // Pasa el evento correctamente
+        } else {
+          handleVerTodas(); // Muestra todas las citas
+        }
+        setIsFirstClick(!isFirstClick);
+      };
+      
+
     return (
         <div 
         style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
@@ -76,26 +92,29 @@ const Citas = () => {
                     onChange={(e) => setNombreMecanico(e.target.value)}
                     required
                 />
-                <button 
-                    className="w-11 h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
-                    type="submit"
-                >
-                    <MagnifyingGlassIcon className="h-6 w-6" />
-                </button>
-                {/* Botón para ver todas las citas */}
                 <button
-                    type="button"
-                    className="w-auto h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-blue-500 px-4 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    onClick={handleVerTodas}
+                type="button"
+                onClick={clickBuscar}
+                title={isFirstClick ? "Buscar citas" : "Ver todas las citas"}
+                className="w-11 h-11 my-5 mx-2 flex items-center justify-center rounded-md bg-yellow-500 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
                 >
-                    Ver todas las citas
+                {isFirstClick ? (
+                <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
+                ) : (
+                <>
+                <ChevronUpDownIcon aria-hidden="true" className="h-6 w-6" />
+                </>
+                )}
                 </button>
+                
+                {/* Botón para ver todas las citas */}
+                
             </form>
 
             {/* Tabla de citas */}
             <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
             <div className="overflow-y-auto bg-white max-h-full w-full">
-                <table className="min-w-full w-full divide-y divide-gray-200">
+                <table className="min-w-full w-full divide-y ">
                     <thead className="sticky top-0">
                             <tr className="bg-zinc-600 h-8 rounded-none m-0 p-0">
                                 <th className="text-center text-white m-12 p-2">Nombre Cliente</th>
@@ -108,13 +127,13 @@ const Citas = () => {
                         </thead>
                         <tbody>
                             {citas.map((cita) => (
-                                <tr key={cita.Id_cita} className="border-b">
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{cita.Nombre_Cliente}</td>
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{cita.Nombre_Empleado}</td>
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{cita.Placa}</td>
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{formatDate(cita.Fecha)}</td>
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{cita.Descripcion}</td>
-                                    <td className="border-b-2 border-zinc-600 text-left px-14">{cita.Estado}</td>
+                                <tr className="border-b-2 text-center border-zinc-400 px-14" key={cita.Id_cita}>
+                                    <td>{cita.Nombre_Cliente}</td>
+                                    <td>{cita.Nombre_Empleado}</td>
+                                    <td>{cita.Placa}</td>
+                                    <td>{formatDate(cita.Fecha)}</td>
+                                    <td>{cita.Descripcion}</td>
+                                    <td>{cita.Estado}</td>
                                 </tr>
                             ))}
                         </tbody>

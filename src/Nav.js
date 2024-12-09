@@ -1,5 +1,5 @@
 import { Disclosure,  Menu } from '@headlessui/react'
-import {  Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {  Bars3Icon,  XMarkIcon } from '@heroicons/react/24/outline'
 import Modal from 'react-modal';
 import logo from './styles/pictures/logo.PNG';
 import { Link, useNavigate, useLocation  } from 'react-router-dom';
@@ -9,7 +9,7 @@ const Nav = () => {
 
     const navigation = [
         { name: 'Home', ruta: "/home" },
-        { name: 'Citas', ruta: "/citas", rol: ['Administrador','Mecanico'] },
+        { name: 'Citas', ruta: "/citas", rol: ['Administrador'] },
         { name: 'Servicios', ruta: "/servicios", rol: ['Administrador','Mecanico'] },
         { name: 'Inventario', ruta: "/inventario", rol: ['Administrador']},
         { name: 'Repuestos', ruta: "/repuestos", rol: ['Mecanico']},
@@ -55,10 +55,12 @@ const Nav = () => {
                                         )}
                                     </Disclosure.Button>
                                 </div>
-                                <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
+                                <div className="flex items-center justify-center sm:justify-start w-full">
                                     <div className="flex-shrink-0">
-                                        <img className="h-10 w-auto" src={logo} alt="Your Company" />
+                                    <img className="h-10 w-auto" src={logo} alt="Your Company" />
                                     </div>
+
+
                                     <div className="hidden sm:block sm:ml-6">
                                         <div className="flex space-x-4">
                                             {filteredNavigation.map((item) => (
@@ -81,12 +83,7 @@ const Nav = () => {
 
                                 </div>
                                 <div className="flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                                    <button
-                                        type="button"
-                                        className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                                    >
-                                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                                    </button>
+                                    
                                     <Menu as="div" className="ml-3 relative">
                                         <div>
                                             <Menu.Button className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
@@ -125,7 +122,7 @@ const Nav = () => {
                         </div>
 
                         {/* Menú desplegable en vista móvil */}
-                        <Disclosure.Panel className="sm:hidden">
+                        <Disclosure.Panel className="sm:hidden absolute top-16 left-0 w-full z-50 bg-gray-800 shadow-lg">
                             <div className="px-2 pt-2 pb-3 space-y-1">
                                 {navigation.map((item) => (
                                     <Disclosure.Button

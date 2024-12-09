@@ -50,13 +50,20 @@ const ChangePassword = () => {
 
   return (
     <div
-    style={{  width: '100vw', overflowX: 'visible',  backgroundSize: 'cover', backgroundPosition: ' top', backgroundImage: `url(${taller3})` }}
-    className="relative min-h-full flex items-center justify-center"
-    >
+  className="absolute inset-0 bg-cover bg-center p-0 h-screen flex justify-center items-center"
+  style={{
+    width: '100vw',
+    backgroundSize: 'cover',
+    backgroundPosition: 'top',
+    backgroundImage: `url(${taller3})`,
+  }}
+>
  
-      <div className="bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto my-10"
-           style={{ backgroundColor: '#1F1F1F', opacity: 0.9 }}>
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+ <div
+    className="bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-[90%] sm:h-[90%] max-w-md "
+    style={{ backgroundColor: '#1F1F1F', opacity: 0.9 }}
+  >
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
           <img
             alt="Your Company"
             src={logo2}
@@ -73,9 +80,6 @@ const ChangePassword = () => {
         <div className="mt-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white">
-                Correo electrónico
-              </label>
               <div className="mt-2">
                 <input
                   id="email"
@@ -90,9 +94,7 @@ const ChangePassword = () => {
             </div>
 
             <div>
-              <label htmlFor="oldPassword" className="block text-sm font-medium text-white">
-                Contraseña Anterior
-              </label>
+              
               <div className="mt-2">
                 <input
                   id="oldPassword"
@@ -108,9 +110,7 @@ const ChangePassword = () => {
             </div>
 
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-white">
-                Nueva Contraseña
-              </label>
+             
               <div className="mt-2">
                 <input
                   id="newPassword"

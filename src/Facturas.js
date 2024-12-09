@@ -198,7 +198,9 @@ const Facturas = () => {
     }
 
     return (
-        <div className="container mx-auto pt-40 px-40">
+        <div 
+        style={{ width: '100vw', overflowX: 'hidden', overflowY: 'hidden', backgroundImage: 'url(/image/vehiculo.jpg)', backgroundSize: 'cover', backgroundPosition: ' top' }} 
+        className="-z-10 absolute pt-32 pb-20 px-9 flex flex-col h-screen justify-center"  >
 
         <Mensaje
             mensaje={mensaje}
@@ -206,31 +208,33 @@ const Facturas = () => {
             onClose={() => setMensaje(null)} // Cierra el mensaje
         />
 
-            <h2 className="text-2xl font-bold mb-4">Facturas Generadas</h2>
+            <h2 className="text-2xl text-white font-bold mb-4">Facturas Generadas</h2>
             {facturaError && <p style={{ color: 'red' }}>{facturaError}</p>}
             {facturas.length === 0 ? (
                 <p>No se encontraron facturas.</p>
             ) : (
-                <table className="min-w-full table-auto border-collapse">
+                <div className="w-full min-h-full flex col-start-1 justify-center  text-black mt-5">
+                <div className="overflow-y-auto bg-white max-h-full w-full">
+                <table className="min-w-full w-full divide-y">
                     <thead>
-                        <tr>
-                            <th className="border px-4 py-2">Cliente</th>
-                            <th className="border px-4 py-2">Empleado</th>
-                            <th className="border px-4 py-2">Total</th>
-                            <th className="border px-4 py-2">Detalle</th>
+                        <tr className="bg-zinc-600 h-8 rounded-none m-0 p-0">
+                            <th className="text-center text-white m-12 p-2">Cliente</th>
+                            <th className="text-center text-white m-12 p-2">Empleado</th>
+                            <th className="text-center text-white m-12 p-2">Total</th>
+                            <th className="text-center text-white m-12 p-2">Detalle</th>
                         </tr>
                     </thead>
                     <tbody>
                         {facturas.map((factura) => (
-                            <tr key={factura.Id_cita}>
-                                <td className="border px-4 py-2">
+                            <tr className="border-b-2 text-center border-zinc-400 px-14" key={factura.Id_cita}>
+                                <td >
                                     {factura.cliente.NombreCliente} {factura.cliente.ApellidoCliente}
                                 </td>
-                                <td className="border px-4 py-2">
+                                <td >
                                     {factura.empleado.NombreEmpleado} {factura.empleado.ApellidoEmpleado}
                                 </td>
-                                <td className="border px-4 py-2">{factura.Total}</td>
-                                <td className="border px-4 py-2 flex justify-center">
+                                <td >{factura.Total}</td>
+                                <td className=" flex justify-center">
                                     <button
                                     
                                         onClick={() => openModal(factura)}
@@ -249,12 +253,13 @@ const Facturas = () => {
                         ))}
                     </tbody>
                 </table>
+                </div></div>
             )}
 
             {/* Modal de la factura */}
             {showModal && selectedFactura && (
                 <div
-                    className="modal"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
                     style={{
                         background: 'rgba(0, 0, 0, 0.5)',
                         position: 'fixed',
@@ -269,7 +274,7 @@ const Facturas = () => {
                     }}
                 >
                     <div
-                        className="modal-content p-11 py-5 h-full w-1/2 flex flex-col justify-between overflow-y-auto scrollbar-thin max-w-full"
+                       className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl sm:max-w-md h-auto max-h-full overflow-auto"
                         style={{
                             backgroundColor: 'white',
                             borderRadius: '8px',
@@ -277,7 +282,7 @@ const Facturas = () => {
                         }}
                     >
                         {/* Botón para cerrar el modal */}
-                        <div className="flex items-baseline justify-between">
+                        <div  className="flex items-center justify-between mb-4">
                             <h2 className="text-2xl">Factura</h2>
                             <button
                                 onClick={closeModal}

@@ -48,12 +48,12 @@ const LoginForm = () => {
 
   return (
     <div
-      className="absolute inset-0 bg-cover border-y-indigo-500 bg-center h-screen"
+      className="absolute inset-0 bg-cover border-y-indigo-500 bg-center h-screen flex flex-col justify-center items-center"
       style={{  width: '100vw',  backgroundSize: 'cover', backgroundPosition: ' top', backgroundImage: `url(${taller3})` }}
     >
-      <div className="place-self-center bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-md mx-auto mt-10"
+      <div className="place-self-center bg-opacity-70 rounded-lg shadow-lg p-8 sm:max-w-md w-full max-w-[90%] mx-auto mt-10"
             style={{ backgroundColor: '#1F1F1F', opacity: 0.9}}>
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
           <img
             alt="Your Company"
             src={logo2}
@@ -62,7 +62,7 @@ const LoginForm = () => {
           />
         </div>
 
-        <div className="mt-10">
+        <div className="mt-10 ">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-white">

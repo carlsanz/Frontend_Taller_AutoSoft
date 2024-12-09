@@ -260,11 +260,9 @@ Modal.setAppElement("#root");
           </table>
         </div>
         <Modal
-          style={{
-            content: { backgroundColor: "white" },
-            overlay: { backgroundColor: "rgba(0, 0, 0, 0.80)" },
-          }}
-          className="h-auto w-full absolute left-96 top-11 p-5 rounded-lg max-w-2xl mx-auto my-8"
+          className="p-5 max-w-[90%] sm:max-w-2xl mx-auto bg-white rounded-lg shadow-lg relative 
+          top-1/2 sm:top-20 transform -translate-y-1/2 sm:translate-y-0"
+          style={{content:{backgroundColor:"white"},overlay:{backgroundColor:"rgba(0, 0, 0, 0.80)"}}} 
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
         >
